@@ -23,13 +23,13 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                <li class="nav-item {{ Route::currentRouteName() == 'perusahaan-dashboard' ? 'active' : '' }}">
+                    <a href="{{ route('perusahaan-dashboard') }}" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item">
+            <li class="nav-item {{ request()->routeIs('perusahaan-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
@@ -38,13 +38,13 @@
                     <div class="collapse" id="base">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href="components/avatars.html">
-                                    <span class="sub-item">Ajukan Kurikulum</span>
+                                <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}">
+                                    <span class="sub-item">Kurikulum diajukan</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="components/buttons.html">
-                                    <span class="sub-item">List Kurikulum</span>
+                                <a href="{{ route('perusahaan-kurikulum-list-validasi') }}">
+                                    <span class="sub-item">Kurikulum Sekolah</span>
                                 </a>
                             </li>
                         </ul>

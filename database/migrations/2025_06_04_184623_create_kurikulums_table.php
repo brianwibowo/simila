@@ -24,8 +24,8 @@ class CreateKurikulumsTable extends Migration
             $table->string('file_kurikulum');
             $table->longText('tahun_ajaran');
             $table->longText('komentar')->nullable();
-            $table->enum('validasi_sekolah', ['disetujui', 'tidak_disetujui']);
-            $table->enum('validasi_perusahaan', ['disetujui', 'tidak_disetujui']);
+            $table->enum('validasi_sekolah', ['disetujui', 'proses','tidak_disetujui'])->nullable();
+            $table->enum('validasi_perusahaan', ['disetujui', 'proses','tidak_disetujui'])->nullable();
             $table->timestamps();
         });
     }

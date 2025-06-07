@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KurikulumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,9 +29,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {
-    Route::get('/', function () {
-        return view('perusahaan.dashboard');
-    })->name('perusahaan-dashboard');
+    Route::get('/', function () {return view('perusahaan.dashboard');})->name('perusahaan-dashboard');
+    Route::get('/kurikulum', [KurikulumController::class, 'perusahaanList'])->name('perusahaan-kurikulum-list-diajukan');
+    Route::get('/kurikulum/validasi', [KurikulumController::class, 'perusahaanValidasi'])->name('perusahaan-kurikulum-list-validasi');
+    Route::get('/kurikulum/ajukan', function () {return view('perusahaan.kurikulum.ajukan');})->name('perusahaan-kurikulum-ajukan');
+    Route::post('/ajukan-kurikulum', [KurikulumController::class, 'perusahaanStore'])->name('perusahaan-kurikulum-store');
+    Route::delete('/kurikulum/{kurikulum}/delete', [KurikulumController::class, 'perusahaanDestroy'])->name('perusahaan-kurikulum-destroy');
+    Route::get('/kurikulum/{kurikulum}/edit', [KurikulumController::class, 'perusahaanEdit'])->name('perusahaan-kurikulum-edit');
+    Route::put('/kurikulum/{kurikulum}/update', [KurikulumController::class, 'perusahaanUpdate'])->name('perusahaan-kurikulum-update');
+    Route::put('/kurikulum/{kurikulum}/setuju', [KurikulumController::class, 'perusahaanSetuju'])->name('perusahaan-kurikulum-setuju');
+    Route::put('/kurikulum/{kurikulum}/tolak', [KurikulumController::class, 'perusahaanTolak'])->name('perusahaan-kurikulum-tolak');
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {

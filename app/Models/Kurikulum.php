@@ -10,10 +10,20 @@ class Kurikulum extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
-        'nama',
+        'nama_kurikulum',
         'deskripsi',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'pengirim_id',
+        'tahun_ajaran',
+        'file_kurikulum',
+        'komentar',
+        'validasi_sekolah',
+        'validasi_perusahaan'
     ];
+
+    public function pengirim()
+    {
+        return $this->belongsTo(User::class, 'pengirim_id');
+    }
 }
