@@ -34,7 +34,9 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        switch ($user->role) {
+        $role = $user->getRoleNames()->first();
+
+        switch ($role) {
             case 'admin':
                 return redirect()->route('admin-dashboard');
             case 'perusahaan':
@@ -52,7 +54,7 @@ class AuthenticatedSessionController extends Controller
             case 'lsp':
                 return redirect()->route('lsp-dashboard');
             default:
-                return redirect()->route('home'); // fallback, bisa arahkan ke 404 juga
+                return redirect()->route('login'); // fallback, bisa arahkan ke 404 juga
         }
     }
 
@@ -70,6 +72,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect(route('login'));
     }
 }
