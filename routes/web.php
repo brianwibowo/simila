@@ -17,10 +17,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {
+    Route::get('/', function () {
+        return view('perusahaan.dashboard');
+    })->name('perusahaan-dashboard');
 });
 
 require __DIR__ . '/auth.php';
