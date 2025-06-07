@@ -32,7 +32,28 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $user = $request->user();
+
+        switch ($user->role) {
+            case 'admin':
+                return redirect()->route('admin-dashboard');
+            case 'perusahaan':
+                return redirect()->route('perusahaan-dashboard');
+            case 'siswa':
+                return redirect()->route('siswa-dashboard');
+            case 'guru':
+                return redirect()->route('guru-dashboard');
+            case 'waka_kurikulum':
+                return redirect()->route('waka-kurikulum-dashboard');
+            case 'waka_humas':
+                return redirect()->route('waka-humas-dashboard');
+            case 'alumni':
+                return redirect()->route('alumni-dashboard');
+            case 'lsp':
+                return redirect()->route('lsp-dashboard');
+            default:
+                return redirect()->route('home'); // fallback, bisa arahkan ke 404 juga
+        }
     }
 
     /**
