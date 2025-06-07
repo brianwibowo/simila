@@ -53,6 +53,8 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->route('alumni-dashboard');
             case 'lsp':
                 return redirect()->route('lsp-dashboard');
+            case 'user':
+                return redirect()->route('user');
             default:
                 return redirect()->route('login'); // fallback, bisa arahkan ke 404 juga
         }

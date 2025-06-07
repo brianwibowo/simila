@@ -18,7 +18,7 @@
                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                     aria-expanded="false">
                     <div class="avatar-sm">
-                        <img src="{{ asset('template/assets/img/profile.jpg') }}" alt="..."
+                        <img src="https://api.dicebear.com/9.x/miniavs/svg?seed={{ Auth::user()->name }}" alt="..."
                             class="avatar-img rounded-circle" />
                     </div>
                     <span class="profile-username">
@@ -31,7 +31,7 @@
                         <li>
                             <div class="user-box">
                                 <div class="avatar-lg">
-                                    <img src="{{ asset('template/assets/img/profile.jpg') }}" alt="image profile"
+                                    <img src="https://api.dicebear.com/9.x/miniavs/svg?seed={{ Auth::user()->name }}" alt="image profile"
                                         class="avatar-img rounded" />
                                 </div>
                                 <div class="u-text">

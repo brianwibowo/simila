@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware(['auth'])->get('/user', function () {
+    return view('user');
+})->name('user');
+
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');

@@ -22,5 +22,6 @@ class RoleSeeder extends Seeder
         Role::create(['name' => 'waka_humas', 'guard_name' => 'web']);
         Role::create(['name' => 'alumni', 'guard_name' => 'web']);
         Role::create(['name' => 'lsp', 'guard_name' => 'web']);
+        Role::create(['name' => 'user', 'guard_name' => 'web']);
     }
 }
