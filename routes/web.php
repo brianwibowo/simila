@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');
-    })->name('dashboard');
+    })->name('admin-dashboard');
 });
 
 Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {
