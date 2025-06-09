@@ -23,7 +23,7 @@ class Anggota_Riset extends Model
      * @var array
      */
     protected $fillable = [
-        'riset_id',
+        'id_risets',
         'user_id',
     ];
 
@@ -33,7 +33,7 @@ class Anggota_Riset extends Model
      * @var array
      */
     protected $casts = [
-        'riset_id' => 'integer',
+        'id_risets' => 'integer',
         'user_id' => 'integer',
     ];
 
@@ -42,7 +42,7 @@ class Anggota_Riset extends Model
      */
     public function riset(): BelongsTo
     {
-        return $this->belongsTo(Riset::class);
+        return $this->belongsTo(Riset::class, 'id_risets');
     }
 
     /**

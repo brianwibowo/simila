@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="logo">
+            <a href="{{ route('waka-humas-dashboard') }}" class="logo">
                 <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="navbar brand"
                     class="navbar-brand" height="20" />
             </a>
@@ -145,22 +145,22 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#chart">
-                        <i class="far fa-chart-bar"></i>
+                <li class="nav-item {{ request()->routeIs('riset.*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#risetInovasi" class="{{ request()->routeIs('riset.*') ? 'active' : '' }}">
+                        <i class="fas fa-flask"></i>
                         <p>Riset & Inovasi Produk</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="submenu">
+                    <div class="collapse {{ request()->routeIs('riset.*') ? 'show' : '' }}" id="risetInovasi">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">List Riset Inovasi</span>
+                            <li class="{{ request()->routeIs('riset.index') || request()->routeIs('riset.show') ? 'active' : '' }}">
+                                <a href="{{ route('riset.index') }}">
+                                    <span class="sub-item">Daftar Riset</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Hasil Inovasi</span>
+                            <li class="{{ request()->routeIs('riset.create') ? 'active' : '' }}">
+                                <a href="{{ route('riset.create') }}">
+                                    <span class="sub-item">Tambah Riset Baru</span>
                                 </a>
                             </li>
                         </ul>

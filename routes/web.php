@@ -56,13 +56,22 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
 Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->group(function () {
     Route::get('/', function () {
         return view('waka_kurikulum.dashboard');
-    })->name('waka_kurikulum-dashboard');
+    })->name('waka-kurikulum-dashboard');
 });
 
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {
-    Route::get('/', function () {
-        return view('waka_humas.dashboard');
-    })->name('waka_humas-dashboard');
+    Route::get('/', function () { return view('waka_humas.dashboard'); })->name('waka-humas-dashboard');
+
+    // Riset Inovasi Produk Routes
+    Route::resource('riset', \App\Http\Controllers\RisetController::class)->names([
+        'index' => 'riset.index',
+        'create' => 'riset.create',
+        'store' => 'riset.store',
+        'show' => 'riset.show',
+        'edit' => 'riset.edit',
+        'update' => 'riset.update',
+        'destroy' => 'riset.destroy',
+    ]);
 });
 
 Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->group(function () {

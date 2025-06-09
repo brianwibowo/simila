@@ -46,6 +46,6 @@ class Riset extends Model
      */
     public function anggota(): HasMany
     {
-        return $this->hasMany(Anggota_Riset::class);
+        return $this->hasMany(Anggota_Riset::class, 'id_risets');
     }
 }
