@@ -62,7 +62,6 @@ Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->gr
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {
     Route::get('/', function () { return view('waka_humas.dashboard'); })->name('waka-humas-dashboard');
 
-    // Riset Inovasi Produk Routes
     Route::resource('riset', \App\Http\Controllers\RisetController::class)->names([
         'index' => 'riset.index',
         'create' => 'riset.create',
