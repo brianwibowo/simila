@@ -5,7 +5,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h4 mb-0">Daftar Kurikulum Diajukan</h1>
-        <a href="{{ route('perusahaan-kurikulum-ajukan') }}" class="btn btn-success">
+        <a href="{{ route('perusahaan-kurikulum-create') }}" class="btn btn-success">
             + Ajukan Kurikulum
         </a>
     </div>

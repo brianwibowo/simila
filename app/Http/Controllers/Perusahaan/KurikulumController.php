@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Perusahaan;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
 use App\Models\Kurikulum;
 
 class KurikulumController extends Controller
 {
-    public function perusahaanStore(Request $request)
+    public function store(Request $request)
     {
 
         $request->validate([
@@ -34,34 +36,39 @@ class KurikulumController extends Controller
         return redirect()->route('perusahaan-kurikulum-list-diajukan');
     }
 
-    public function perusahaanList()
+    public function create()
+    {
+        return view('perusahaan.kurikulum.create');
+    }
+
+    public function index()
     {
         return view('perusahaan.kurikulum.list-diajukan', [
             'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)->get()
         ]);
     }
 
-    public function perusahaanValidasi()
+    public function validasi()
     {
         return view('perusahaan.kurikulum.list-validasi', [
             'kurikulums' => Kurikulum::where('pengirim_id','!==', auth()->user()->id)->get()
         ]);
     }
 
-    public function perusahaanDestroy(Kurikulum $kurikulum)
+    public function destroy(Kurikulum $kurikulum)
     {
         $kurikulum->delete();
         return redirect()->route('perusahaan-kurikulum-list-diajukan');
     }
 
-    public function perusahaanEdit(Kurikulum $kurikulum)
+    public function edit(Kurikulum $kurikulum)
     {
         return view('perusahaan.kurikulum.edit', [
             'kurikulum' => $kurikulum
         ]);
     }
 
-    public function perusahaanUpdate(Request $request, Kurikulum $kurikulum)
+    public function update(Request $request, Kurikulum $kurikulum)
     {
 
         $request->validate([
@@ -90,7 +97,7 @@ class KurikulumController extends Controller
 
         return redirect()->route('perusahaan-kurikulum-list-diajukan');
     }
-    public function perusahaanSetuju(Kurikulum $kurikulum)
+    public function setuju(Kurikulum $kurikulum)
     {
         $kurikulum->update([
             'validasi_perusahaan' => 'disetujui'
@@ -98,7 +105,7 @@ class KurikulumController extends Controller
         return redirect()->route('perusahaan-kurikulum-list-validasi');
     }
 
-    public function perusahaanTolak(Kurikulum $kurikulum, Request $request)
+    public function tolak(Kurikulum $kurikulum, Request $request)
     {
         $kurikulum->update([
             'validasi_perusahaan' => 'tidak_disetujui',

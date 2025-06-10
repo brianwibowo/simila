@@ -37,12 +37,12 @@
                     </a>
                     <div class="collapse" id="base">
                         <ul class="nav nav-collapse">
-                            <li>
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-diajukan' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum diajukan</span>
                                 </a>
                             </li>
-                            <li>
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-validasi' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-validasi') }}">
                                     <span class="sub-item">Kurikulum Sekolah</span>
                                 </a>
@@ -50,7 +50,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('perusahaan-project*') ? 'active' : '' }} ">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="fas fa-th-list"></i>
                         <p>Project Mitra</p>
@@ -58,14 +58,9 @@
                     </a>
                     <div class="collapse" id="sidebarLayouts">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="sidebar-style-2.html">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-project-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-project-index') }}">
                                     <span class="sub-item">List Projek</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Buat Projek Baru</span>
                                 </a>
                             </li>
                         </ul>
