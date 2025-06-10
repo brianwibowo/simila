@@ -35,7 +35,7 @@
                     <td>{{ $kurikulum->pengirim->name }}</td>
                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                     <td>{{ $kurikulum->tahun_ajaran }}</td>
-                    <td><a href="/kurikulum/{{ $kurikulum->file_kurikulum }}" target="_blank">Unduh</a></td>
+                    <td><a href="{{ asset('storage/'.$kurikulum->file_kurikulum)}}" target="_blank">Unduh</a></td>
                     <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td>
                     <td>{{ $kurikulum->validasi_sekolah }}</td>
                     <td>

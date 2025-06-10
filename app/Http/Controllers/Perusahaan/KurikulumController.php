@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Perusahaan;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Storage;
+
 use App\Models\Kurikulum;
 
 class KurikulumController extends Controller
@@ -19,16 +21,14 @@ class KurikulumController extends Controller
             'file' => 'required | mimes:pdf',
         ]);
 
-        $file = $request->file('file');
-        $fileName = time() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('kurikulum'), $fileName);
+        $path = $request->file('file')->store('kurikulum/', 'public');
 
         Kurikulum::create([
             'nama_kurikulum' => $request->nama,
             'pengirim_id' => auth()->user()->id,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
-            'file_kurikulum' => $fileName,
+            'file_kurikulum' => $path,
             'validasi_sekolah' => 'proses',
             'validasi_perusahaan' => 'disetujui'
         ]);
@@ -80,14 +80,12 @@ class KurikulumController extends Controller
 
         
         if ($request->hasFile('file')) {
-            // dd($request->all());
-            $file = $request->file('file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('kurikulum'), $fileName);
-            $kurikulum->file_kurikulum = $fileName;
+            Storage::delete($kurikulum->file_kurikulum);
+            $path = $request->file('file')->store('kurikulum/', 'public');
+            $kurikulum->file_kurikulum = $path;
+            $kurikulum->save();
         }
 
-        $kurikulum->save();
 
         $kurikulum->update([
             'nama_kurikulum' => $request->nama,

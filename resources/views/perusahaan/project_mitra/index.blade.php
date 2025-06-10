@@ -102,13 +102,13 @@
                         
                         <div class="row mb-3">
                             <div class="col-6">
-                                <a href="/project/{{ $project->file_brief }}" target="_blank" class="btn btn-outline-info btn-sm w-100">
+                                <a href="{{ asset('storage/'.$project->file_brief)}}" target="_blank" class="btn btn-outline-info btn-sm w-100">
                                     <i class="bi bi-file-earmark-text"></i> Brief
                                 </a>
                             </div>
                             <div class="col-6">
                                 @if($project->file_laporan)
-                                    <a href="/project/laporan/{{ $project->file_laporan }}" target="_blank" class="btn btn-outline-success btn-sm w-100">
+                                    <a href="{{ asset('storage/'.$project->file_laporan)}}" target="_blank" class="btn btn-outline-success btn-sm w-100">
                                         <i class="bi bi-file-earmark-check"></i> Laporan
                                     </a>
                                 @else
@@ -178,7 +178,7 @@
                                 <div class="col-md-6">
                                     <h6><strong>Files:</strong></h6>
                                     <p>
-                                        <a href="/project/brief/{{ $project->file_brief }}" target="_blank" class="btn btn-info btn-sm">
+                                        <a href="{{ asset('storage/'.$project->file_brief)}}" target="_blank" class="btn btn-info btn-sm">
                                             <i class="bi bi-download"></i> Download Brief
                                         </a>
                                     </p>
