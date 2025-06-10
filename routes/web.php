@@ -4,7 +4,7 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
-use App\Http\Controllers\RisetController;
+use App\Http\Controllers\WakaHumas\RisetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +80,14 @@ Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(func
     Route::get('/', function () {
         return view('waka_humas.dashboard');
     })->name('waka-humas-dashboard');
+
+    Route::resource('guru-tamu', \App\Http\Controllers\WakaHumas\GuruTamuController::class)->names('waka-humas.guru-tamu');
+    Route::put('guru-tamu/{guru_tamu}/approve', [\App\Http\Controllers\WakaHumas\GuruTamuController::class, 'approve'])
+        ->where('guru_tamu', '[0-9]+')
+        ->name('waka-humas.guru-tamu.approve');
+    Route::put('guru-tamu/{guru_tamu}/reject', [\App\Http\Controllers\WakaHumas\GuruTamuController::class, 'reject'])
+        ->where('guru_tamu', '[0-9]+')
+        ->name('waka-humas.guru-tamu.reject');
 
     Route::resource('riset', RisetController::class)->names([
         'index' => 'riset.index',

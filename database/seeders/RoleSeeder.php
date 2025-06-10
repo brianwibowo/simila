@@ -14,14 +14,28 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::create(['name' => 'admin', 'guard_name' => 'web']);
-        Role::create(['name' => 'waka_kurikulum', 'guard_name' => 'web']);
-        Role::create(['name' => 'perusahaan', 'guard_name' => 'web']);
-        Role::create(['name' => 'siswa', 'guard_name' => 'web']);
-        Role::create(['name' => 'guru', 'guard_name' => 'web']);
-        Role::create(['name' => 'waka_humas', 'guard_name' => 'web']);
-        Role::create(['name' => 'alumni', 'guard_name' => 'web']);
-        Role::create(['name' => 'lsp', 'guard_name' => 'web']);
-        Role::create(['name' => 'user', 'guard_name' => 'web']);
+        // Daftar peran yang ingin Anda buat
+        $roles = [
+            'admin',
+            'waka_kurikulum',
+            'perusahaan',
+            'siswa',
+            'guru',
+            'waka_humas',
+            'alumni',
+            'lsp',
+            'user',
+        ];
+
+        // Loop melalui setiap peran dan buat jika belum ada
+        foreach ($roles as $roleName) {
+            // Periksa apakah peran sudah ada untuk guard 'web'
+            if (! Role::where('name', $roleName)->where('guard_name', 'web')->exists()) {
+                Role::create(['name' => $roleName, 'guard_name' => 'web']);
+                $this->command->info("Role '{$roleName}' created successfully."); // Opsional: untuk debug
+            } else {
+                $this->command->warn("Role '{$roleName}' already exists. Skipping creation."); // Opsional: untuk debug
+            }
+        }
     }
 }

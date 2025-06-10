@@ -39,7 +39,6 @@ class Guru_Tamu extends Model
      * @var array
      */
     protected $casts = [
-        'keahlian' => 'array',
         'jadwal' => 'datetime',
     ];
 
@@ -65,6 +64,6 @@ class Guru_Tamu extends Model
      */
     public function getFormattedJadwalAttribute()
     {
-        return $this->jadwal ? Carbon::parse($this->jadwal)->format('d F Y H:i') : '-';
+        return $this->jadwal ? $this->jadwal->format('d F Y H:i') : '-';
     }
 }

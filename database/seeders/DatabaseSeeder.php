@@ -4,7 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Role; // Ini tidak diperlukan di DatabaseSeeder, tapi tidak masalah
+use Illuminate\Support\Facades\Hash; // Penting untuk Hash::make()
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,54 +16,85 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // 1. Panggil RoleSeeder terlebih dahulu. Pastikan RoleSeeder sudah memiliki pengecekan "exists".
         $this->call(RoleSeeder::class);
+        $this->call(GuruTamuSeeder::class);
 
-        User::create([
-            'name' => 'admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('admin'),
-        ])->assignRole('admin');
+        // Daftar pengguna yang ingin Anda buat beserta peran mereka
+        $usersToCreate = [
+            [
+                'name' => 'admin',
+                'email' => 'admin@example.com',
+                'password' => 'admin', // Gunakan password plain text di sini, akan di-bcrypt
+                'role' => 'admin',
+            ],
+            [
+                'name' => 'siswa',
+                'email' => 'siswa@example.com',
+                'password' => 'siswa',
+                'role' => 'siswa',
+            ],
+            [
+                'name' => 'guru',
+                'email' => 'guru@example.com',
+                'password' => 'guru',
+                'role' => 'guru',
+            ],
+            [
+                'name' => 'perusahaan',
+                'email' => 'perusahaan@example.com',
+                'password' => 'perusahaan',
+                'role' => 'perusahaan',
+            ],
+            [
+                'name' => 'waka_kurikulum',
+                'email' => 'waka_kurikulum@example.com',
+                'password' => 'waka_kurikulum',
+                'role' => 'waka_kurikulum',
+            ],
+            [
+                'name' => 'waka_humas',
+                'email' => 'waka_humas@example.com',
+                'password' => 'waka_humas',
+                'role' => 'waka_humas',
+            ],
+            [
+                'name' => 'alumni',
+                'email' => 'alumni@example.com',
+                'password' => 'alumni',
+                'role' => 'alumni',
+            ],
+            [
+                'name' => 'lsp',
+                'email' => 'lsp@example.com',
+                'password' => 'lsp',
+                'role' => 'lsp',
+            ],
+        ];
 
-        User::create([
-            'name' => 'siswa',
-            'email' => 'siswa@example.com',
-            'password' => bcrypt('siswa'),
-        ])->assignRole('siswa');
+        foreach ($usersToCreate as $userData) {
+            // Periksa apakah pengguna dengan email ini sudah ada
+            if (! User::where('email', $userData['email'])->exists()) {
+                $user = User::create([
+                    'name' => $userData['name'],
+                    'email' => $userData['email'],
+                    'password' => Hash::make($userData['password']), // Gunakan Hash::make() untuk password
+                ]);
 
-        User::create([
-            'name' => 'guru',
-            'email' => 'guru@example.com',
-            'password' => bcrypt('guru'),
-        ])->assignRole('guru');
+                // Tetapkan peran kepada pengguna yang baru dibuat
+                $user->assignRole($userData['role']);
 
-        User::create([
-            'name' => 'perusahaan',
-            'email' => 'perusahaan@example.com',
-            'password' => bcrypt('perusahaan'),
-        ])->assignRole('perusahaan');
+                $this->command->info("User '{$userData['email']}' created and assigned role '{$userData['role']}'.");
+            } else {
+                $this->command->warn("User '{$userData['email']}' already exists. Skipping creation.");
 
-        User::create([
-            'name' => 'waka_kurikulum',
-            'email' => 'waka_kurikulum@example.com',
-            'password' => bcrypt('waka_kurikulum'),
-        ])->assignRole('waka_kurikulum');
-
-        User::create([
-            'name' => 'waka_humas',
-            'email' => 'waka_humas@example.com',
-            'password' => bcrypt('waka_humas'),
-        ])->assignRole('waka_humas');
-
-        User::create([
-            'name' => 'alumni',
-            'email' => 'alumni@example.com',
-            'password' => bcrypt('alumni'),
-        ])->assignRole('alumni');
-
-        User::create([
-            'name' => 'lsp',
-            'email' => 'lsp@example.com',
-            'password' => bcrypt('lsp'),
-        ])->assignRole('lsp');
+                // Opsional: Jika user sudah ada, tapi mungkin perannya belum terassign, Anda bisa tambahkan ini
+                $existingUser = User::where('email', $userData['email'])->first();
+                if ($existingUser && ! $existingUser->hasRole($userData['role'])) {
+                    $existingUser->assignRole($userData['role']);
+                    $this->command->info("Assigned role '{$userData['role']}' to existing user '{$userData['email']}'.");
+                }
+            }
+        }
     }
 }

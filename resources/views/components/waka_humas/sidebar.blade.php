@@ -23,12 +23,13 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                <li class="nav-item {{ Route::currentRouteName() == 'waka-humas-dashboard' ? 'active' : '' }}">
+                    <a href="{{ route('waka-humas-dashboard') }}" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
@@ -71,17 +72,17 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
-                        <i class="fas fa-pen-square"></i>
+                <li class="nav-item {{ str_contains(Route::currentRouteName(), 'waka-humas.guru-tamu') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#guruTamuMenu">
+                        <i class="fas fa-chalkboard-teacher"></i>
                         <p>Guru Tamu</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="forms">
+                    <div class="collapse {{ str_contains(Route::currentRouteName(), 'waka-humas.guru-tamu') ? 'show' : '' }}" id="guruTamuMenu">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Ajukan Guru Tamu</span>
+                            <li class="{{ Route::currentRouteName() == 'waka-humas.guru-tamu.index' ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas.guru-tamu.index') }}">
+                                    <span class="sub-item">Daftar Guru Tamu</span>
                                 </a>
                             </li>
                         </ul>

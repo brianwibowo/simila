@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\WakaHumas;
 
+use App\Http\Controllers\Controller;
 use App\Models\Riset;
 use App\Models\Anggota_Riset;
 use App\Models\User;
@@ -34,17 +35,19 @@ class RisetController extends Controller
         $validated = $request->validate([
             'topik' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'tim_riset' => 'required|array|min:1',
+            'tim_riset' => 'required|array',
             'tim_riset.*' => 'exists:users,id',
-            'file_proposal' => 'required|file|mimes:pdf|max:10240',
-            'dokumentasi' => 'required|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'file_proposal' => 'required|file|mimes:pdf|max:10240', // max 10MB
+            'dokumentasi' => 'required|image|max:2048' // max 2MB
         ]);
 
-        // Upload files
+        // Upload file proposal
         $proposalPath = $request->file('file_proposal')->store('public/riset/proposal');
+        
+        // Upload file dokumentasi
         $dokumentasiPath = $request->file('dokumentasi')->store('public/riset/dokumentasi');
 
-        // Create riset
+        // Buat data riset
         $riset = Riset::create([
             'topik' => $validated['topik'],
             'deskripsi' => $validated['deskripsi'],
@@ -53,7 +56,7 @@ class RisetController extends Controller
             'dokumentasi' => $dokumentasiPath,
         ]);
 
-        // Add team members
+        // Tambahkan anggota riset
         foreach ($validated['tim_riset'] as $userId) {
             Anggota_Riset::create([
                 'id_risets' => $riset->id,
@@ -61,7 +64,8 @@ class RisetController extends Controller
             ]);
         }
 
-        return redirect()->route('riset.index')->with('success', 'Riset berhasil diajukan');
+        return redirect()->route('riset.index')
+            ->with('success', 'Riset berhasil diajukan');
     }
 
     // Show single riset
@@ -77,8 +81,11 @@ class RisetController extends Controller
         $users = User::whereHas('roles', function($q) {
             $q->where('name', '!=', 'admin');
         })->orDoesntHave('roles')->get();
+        
         $selectedMembers = $riset->anggota->pluck('user_id')->toArray();
-        return view('waka_humas.riset_inovasi_produk.edit', compact('riset', 'users', 'selectedMembers'));
+        
+        return view('waka_humas.riset_inovasi_produk.edit', 
+                   compact('riset', 'users', 'selectedMembers'));
     }
 
     // Update riset
@@ -93,7 +100,7 @@ class RisetController extends Controller
             'dokumentasi' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Update file if new one is uploaded
+        // Update file if new one is uploadedAdd commentMore actions
         if ($request->hasFile('file_proposal')) {
             Storage::delete($riset->file_proposal);
             $validated['file_proposal'] = $request->file('file_proposal')->store('public/riset/proposal');
