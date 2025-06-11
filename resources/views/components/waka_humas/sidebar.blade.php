@@ -88,17 +88,17 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#tables">
-                        <i class="fas fa-table"></i>
+                <li class="nav-item {{ str_contains(Route::currentRouteName(), 'waka-humas.pkl') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#pklMenu">
+                        <i class="fas fa-briefcase"></i>
                         <p>PKL</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="tables">
+                    <div class="collapse {{ str_contains(Route::currentRouteName(), 'waka-humas.pkl') ? 'show' : '' }}" id="pklMenu">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="tables/tables.html">
-                                    <span class="sub-item">Penilaian</span>
+                            <li class="{{ Route::currentRouteName() == 'waka-humas.pkl.index' ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas.pkl.index') }}">
+                                    <span class="sub-item">Daftar Laporan PKL</span>
                                 </a>
                             </li>
                         </ul>

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\WakaHumas\RisetController;
+use App\Http\Controllers\WakaHumas\GuruTamuController;
+use App\Http\Controllers\WakaHumas\PklController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +100,18 @@ Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(func
         'update' => 'riset.update',
         'destroy' => 'riset.destroy',
     ]);
+
+    // Routes for PKL Management
+    Route::resource('pkl', PklController::class)->names([
+        'index' => 'waka-humas.pkl.index',
+        'show' => 'waka-humas.pkl.show',
+    ]);
+    
+    Route::post('pkl/{pkl}/validate', [PklController::class, 'validateReport'])
+        ->name('waka-humas.pkl.validate');
+        
+    Route::get('pkl/{pkl}/download', [PklController::class, 'downloadReport'])
+        ->name('waka-humas.pkl.download');
 });
 
 Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->group(function () {

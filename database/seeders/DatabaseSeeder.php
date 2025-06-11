@@ -19,13 +19,14 @@ class DatabaseSeeder extends Seeder
         // 1. Panggil RoleSeeder terlebih dahulu. Pastikan RoleSeeder sudah memiliki pengecekan "exists".
         $this->call(RoleSeeder::class);
         $this->call(GuruTamuSeeder::class);
+        $this->call(PklSeeder::class);
 
         // Daftar pengguna yang ingin Anda buat beserta peran mereka
         $usersToCreate = [
             [
                 'name' => 'admin',
                 'email' => 'admin@example.com',
-                'password' => 'admin', // Gunakan password plain text di sini, akan di-bcrypt
+                'password' => 'admin',
                 'role' => 'admin',
             ],
             [

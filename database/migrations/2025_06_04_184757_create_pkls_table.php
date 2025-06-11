@@ -16,8 +16,8 @@ class CreatePKLSTable extends Migration
         Schema::create('pkls', function (Blueprint $table) {
             $table->id();
             $table->text('laporan_akhir');
-            $table->enum('status_pembimbing', ['disetujui', 'revisi']);
-            $table->enum('status_waka_humas', ['disetujui']);
+            $table->enum('status_pembimbing', ['disetujui', 'revisi', 'proses']);
+            $table->enum('status_waka_humas', ['disetujui', 'proses']);
             $table->bigInteger('nilai');
             $table->timestamps();
         });
