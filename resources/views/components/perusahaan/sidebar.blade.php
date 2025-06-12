@@ -66,7 +66,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('perusahaan-guru-tamu*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#forms">
                         <i class="fas fa-pen-square"></i>
                         <p>Guru Tamu</p>
@@ -74,9 +74,14 @@
                     </a>
                     <div class="collapse" id="forms">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Ajukan Guru Tamu</span>
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-guru-tamu-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-guru-tamu-index') }}">
+                                    <span class="sub-item">Pengajuan Guru Tamu</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-guru-tamu-list' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-guru-tamu-list') }}">
+                                    <span class="sub-item">Guru Tamu</span>
                                 </a>
                             </li>
                         </ul>

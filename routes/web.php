@@ -4,6 +4,7 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
+use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\WakaHumas\RisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController;
@@ -58,6 +59,16 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'update' => 'perusahaan-project-update',
         'destroy' => 'perusahaan-project-destroy',
     ]);
+
+    Route::resource('guru-tamu', PerusahaanGuruTamuController::class)->names([
+        'index' => 'perusahaan-guru-tamu-index',
+        'create' => 'perusahaan-guru-tamu-create',
+        'store' => 'perusahaan-guru-tamu-store',
+        'edit' => 'perusahaan-guru-tamu-edit',
+        'update' => 'perusahaan-guru-tamu-update',
+        'destroy' => 'perusahaan-guru-tamu-destroy',
+    ])->except('show');
+    Route::get('/guru-tamu/list', [PerusahaanGuruTamuController::class, 'list'])->name('perusahaan-guru-tamu-list');
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {

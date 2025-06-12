@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
-class Guru_Tamu extends Model
+class GuruTamu extends Model
 {
     use HasFactory;
 
@@ -55,6 +56,20 @@ class Guru_Tamu extends Model
             'ditolak' => 'Ditolak',
             'selesai' => 'Selesai',
         ];
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($kurikulum) {
+            if ($kurikulum->file_cv) {
+                Storage::disk('public')->delete($kurikulum->file_cv);
+            }
+            if ($kurikulum->file_materi) {
+                Storage::disk('public')->delete($kurikulum->file_materi);
+            }
+        });
     }
 
     /**
