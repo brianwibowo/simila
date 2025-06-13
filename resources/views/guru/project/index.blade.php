@@ -147,7 +147,7 @@
                 </div>
             </div>
 
-            <!-- Modal Detail Project -->
+            <!-- Detail Project -->
             <div class="modal fade" id="detailModal{{ $project->id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $project->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -210,7 +210,7 @@
                 </div>
             </div>
 
-            <!-- Modal Upload Laporan -->
+            <!-- Upload Laporan -->
             <div class="modal fade" id="uploadLaporanModal{{ $project->id }}" tabindex="-1" aria-labelledby="uploadLaporanModalLabel{{ $project->id }}" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -236,7 +236,7 @@
                 </div>
             </div>
 
-            <!-- Modal Update Laporan -->
+            <!-- Update Laporan -->
             <div class="modal fade" id="updateLaporanModal{{ $project->id }}" tabindex="-1" aria-labelledby="updateLaporanModalLabel{{ $project->id }}" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">

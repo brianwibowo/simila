@@ -11,16 +11,14 @@ use Illuminate\Support\Facades\Storage;
 
 class RisetController extends Controller
 {
-    // Display list of riset
     public function index()
     {
         $risets = Riset::with('anggota.user')
                      ->latest()
-                     ->paginate(10); // 10 items per page
+                     ->paginate(10);
         return view('waka_humas.riset_inovasi_produk.index', compact('risets'));
     }
 
-    // Show create form
     public function create()
     {
         $users = User::whereHas('roles', function($q) {
@@ -29,7 +27,6 @@ class RisetController extends Controller
         return view('waka_humas.riset_inovasi_produk.create', compact('users'));
     }
 
-    // Store new riset
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -41,13 +38,9 @@ class RisetController extends Controller
             'dokumentasi' => 'required|image|max:2048' // max 2MB
         ]);
 
-        // Upload file proposal
         $proposalPath = $request->file('file_proposal')->store('public/riset/proposal');
-        
-        // Upload file dokumentasi
         $dokumentasiPath = $request->file('dokumentasi')->store('public/riset/dokumentasi');
 
-        // Buat data riset
         $riset = Riset::create([
             'topik' => $validated['topik'],
             'deskripsi' => $validated['deskripsi'],
@@ -56,7 +49,6 @@ class RisetController extends Controller
             'dokumentasi' => $dokumentasiPath,
         ]);
 
-        // Tambahkan anggota riset
         foreach ($validated['tim_riset'] as $userId) {
             Anggota_Riset::create([
                 'id_risets' => $riset->id,
@@ -64,18 +56,16 @@ class RisetController extends Controller
             ]);
         }
 
-        return redirect()->route('riset.index')
+        return redirect()->route('waka-humas-riset-index')
             ->with('success', 'Riset berhasil diajukan');
     }
 
-    // Show single riset
     public function show(Riset $riset)
     {
         $riset->load('anggota.user');
         return view('waka_humas.riset_inovasi_produk.show', compact('riset'));
     }
 
-    // Show edit form
     public function edit(Riset $riset)
     {
         $users = User::whereHas('roles', function($q) {
@@ -88,7 +78,6 @@ class RisetController extends Controller
                    compact('riset', 'users', 'selectedMembers'));
     }
 
-    // Update riset
     public function update(Request $request, Riset $riset)
     {
         $validated = $request->validate([
@@ -100,7 +89,6 @@ class RisetController extends Controller
             'dokumentasi' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Update file if new one is uploadedAdd commentMore actions
         if ($request->hasFile('file_proposal')) {
             Storage::delete($riset->file_proposal);
             $validated['file_proposal'] = $request->file('file_proposal')->store('public/riset/proposal');
@@ -111,10 +99,8 @@ class RisetController extends Controller
             $validated['dokumentasi'] = $request->file('dokumentasi')->store('public/riset/dokumentasi');
         }
 
-        // Update riset
         $riset->update($validated);
 
-        // Update team members
         $riset->anggota()->delete();
         foreach ($validated['tim_riset'] as $userId) {
             Anggota_Riset::create([
@@ -123,14 +109,15 @@ class RisetController extends Controller
             ]);
         }
 
-        return redirect()->route('riset.show', $riset)->with('success', 'Riset berhasil diperbarui');
+        return redirect()->route('waka-humas-riset-show', $riset)
+            ->with('success', 'Riset berhasil diperbarui');
     }
 
-    // Delete riset
     public function destroy(Riset $riset)
     {
         Storage::delete([$riset->file_proposal, $riset->dokumentasi]);
         $riset->delete();
-        return redirect()->route('riset.index')->with('success', 'Riset berhasil dihapus');
+        return redirect()->route('waka-humas-riset-index')
+            ->with('success', 'Riset berhasil dihapus');
     }
 }

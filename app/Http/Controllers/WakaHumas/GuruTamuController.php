@@ -8,74 +8,28 @@ use Illuminate\Http\Request;
 
 class GuruTamuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $guruTamus = GuruTamu::latest()->paginate(10);
         return view('waka_humas.guru_tamu.index', compact('guruTamus'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\GuruTamu  $guru_tamu
-     * @return \Illuminate\Http\Response
-     */
     public function show(GuruTamu $guru_tamu)
     {
         return view('waka_humas.guru_tamu.show', compact('guru_tamu'));
     }
 
-    /**
-     * Approve the specified guru tamu.
-     *
-     * @param  \App\Models\GuruTamu  $guru_tamu
-     * @return \Illuminate\Http\Response
-     */
     public function approve(GuruTamu $guru_tamu)
     {
         $guru_tamu->update(['status' => 'disetujui']);
-        return redirect()->route('waka-humas.guru-tamu.index')
+        return redirect()->route('waka-humas-guru-tamu-index')
             ->with('success', 'Guru tamu berhasil disetujui');
     }
 
-    /**
-     * Reject the specified guru tamu.
-     * Karena kolom status hanya menerima 'disetujui' atau 'proses',
-     * kita akan mengubah status menjadi 'proses' sebagai penanda ditolak
-     *
-     * @param  \App\Models\GuruTamu  $guru_tamu
-     * @return \Illuminate\Http\Response
-     */
     public function reject(GuruTamu $guru_tamu)
     {
         $guru_tamu->update(['status' => 'ditolak']);
-        return redirect()->route('waka-humas.guru-tamu.index')
+        return redirect()->route('waka-humas-guru-tamu-index')
             ->with('success', 'Guru tamu berhasil ditolak');
     }
 
