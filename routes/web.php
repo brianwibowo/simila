@@ -69,6 +69,8 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-guru-tamu-destroy',
     ])->except('show');
     Route::get('/guru-tamu/list', [PerusahaanGuruTamuController::class, 'list'])->name('perusahaan-guru-tamu-list');
+
+    
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {

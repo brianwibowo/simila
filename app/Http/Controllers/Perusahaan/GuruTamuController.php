@@ -43,7 +43,8 @@ class GuruTamuController extends Controller
             'keahlian' => $request->keahlian,
             'deskripsi' => $request->deskripsi,
             'jadwal' => $request->jadwal,
-            'file_materi' => $path
+            'file_materi' => $path,
+            'status' => 'proses'
         ]);
 
         if ($request->hasFile('file_cv')) {
