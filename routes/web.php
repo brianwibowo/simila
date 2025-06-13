@@ -87,15 +87,15 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
     // Project Routes
     Route::prefix('project')->group(function () {
         Route::get('/', [\App\Http\Controllers\Guru\ProjectController::class, 'index'])
-            ->name('guru/project/index');
+            ->name('guru-project-index');
         
         // Laporan routes
         Route::post('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'uploadLaporan'])
-            ->name('guru/project/laporan/upload');
+            ->name('guru-project-laporan-upload');
         Route::put('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'updateLaporan'])
-            ->name('guru/project/laporan/update');
+            ->name('guru-project-laporan-update');
         Route::delete('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'deleteLaporan'])
-            ->name('guru/project/laporan/delete');
+            ->name('guru-project-laporan-delete');
     });
 });
 

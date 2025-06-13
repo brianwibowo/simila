@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="logo">
+            <a href="{{ route('guru-dashboard') }}" class="logo">
                 <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="navbar brand"
                     class="navbar-brand" height="20" />
             </a>
@@ -50,16 +50,16 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item {{ request()->is('guru/project*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->is('guru-project*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#projectMitraMenu" class="{{ request()->is('guru/project*') ? '' : 'collapsed' }}" aria-expanded="{{ request()->is('guru/project*') ? 'true' : 'false' }}">
                         <i class="fas fa-th-list"></i>
                         <p>Project Mitra</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->is('guru/project*') ? 'show' : '' }}" id="projectMitraMenu">
+                    <div class="collapse {{ request()->is('guru-project*') ? 'show' : '' }}" id="projectMitraMenu">
                         <ul class="nav nav-collapse">
-                            <li class="{{ request()->routeIs('guru/project/index') ? 'active' : '' }}">
-                                <a href="{{ route('guru/project/index') }}">
+                            <li class="{{ request()->routeIs('guru-project-index') ? 'active' : '' }}">
+                                <a href="{{ route('guru-project-index') }}">
                                     <span class="sub-item">Daftar Project</span>
                                 </a>
                             </li>
