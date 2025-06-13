@@ -36,7 +36,7 @@ class ProjectController extends Controller
             'file_laporan' => $path
         ]);
 
-        return redirect()->route('guru-project-index')
+        return redirect()->route('guru.project.index')
             ->with('success', 'Laporan berhasil diupload');
     }
 
@@ -57,7 +57,7 @@ class ProjectController extends Controller
             'file_laporan' => $path
         ]);
 
-        return redirect()->route('guru-project-index')
+        return redirect()->route('guru.project.index')
             ->with('success', 'Laporan berhasil diperbarui');
     }
 
@@ -74,7 +74,7 @@ class ProjectController extends Controller
                 ->with('success', 'Laporan berhasil dihapus');
         }
         
-        return redirect()->route('guru-project-index')
+        return redirect()->route('guru.project.index')
             ->with('error', 'Tidak ada laporan yang bisa dihapus');
     }
 }
