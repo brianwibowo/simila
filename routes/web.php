@@ -79,10 +79,23 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     })->name('siswa-dashboard');
 });
 
-Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
+Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/', function () {
         return view('guru.dashboard');
-    })->name('guru-dashboard');
+    })->name('dashboard');
+
+    // Project Routes
+    Route::prefix('project')->name('project.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Guru\ProjectController::class, 'index'])->name('index');
+        
+        // Laporan routes
+        Route::post('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'uploadLaporan'])
+            ->name('laporan.upload');
+        Route::put('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'updateLaporan'])
+            ->name('laporan.update');
+        Route::delete('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'deleteLaporan'])
+            ->name('laporan.delete');
+    });
 });
 
 Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->group(function () {

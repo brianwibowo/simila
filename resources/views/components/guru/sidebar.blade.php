@@ -23,8 +23,8 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                <li class="nav-item {{ request()->routeIs('guru.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('guru.dashboard') }}">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
@@ -50,22 +50,17 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarLayouts">
+                <li class="nav-item {{ request()->routeIs('guru.project.*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#projectMitraMenu" class="{{ request()->routeIs('guru.project.*') ? '' : 'collapsed' }}" aria-expanded="{{ request()->routeIs('guru.project.*') ? 'true' : 'false' }}">
                         <i class="fas fa-th-list"></i>
                         <p>Project Mitra</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="sidebarLayouts">
+                    <div class="collapse {{ request()->routeIs('guru.project.*') ? 'show' : '' }}" id="projectMitraMenu">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="sidebar-style-2.html">
-                                    <span class="sub-item">List Projek</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Buat Projek Baru</span>
+                            <li class="{{ request()->routeIs('guru.project.index') ? 'active' : '' }}">
+                                <a href="{{ route('guru.project.index') }}">
+                                    <span class="sub-item">Daftar Project</span>
                                 </a>
                             </li>
                         </ul>

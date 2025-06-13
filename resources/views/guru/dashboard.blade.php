@@ -2,6 +2,6 @@
 
 @section('content')
   <div class="container">
-    <h1>Dashboard {{ Auth::user()->getRoleNames()->first() }}</h1>
+    <h1>Dashboard {{ ucwords(Auth::user()->getRoleNames()->first()) }}</h1>
   </div>
 @endsection

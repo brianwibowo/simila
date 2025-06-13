@@ -15,36 +15,29 @@ class PklSeeder extends Seeder
      */
     public function run()
     {
-        // Pastikan ada minimal 3 user dengan role yang sesuai
+        // Cek apakah user sudah ada
         $siswa = User::where('email', 'siswa@example.com')->first();
         $pembimbing = User::where('email', 'guru@example.com')->first();
         $perusahaan = User::where('email', 'perusahaan@example.com')->first();
 
+        // Jika ada user yang belum dibuat, lewati seeding data PKL
         if (!$siswa || !$pembimbing || !$perusahaan) {
-            // Jika user tidak ditemukan, buat user baru
-            $siswa = User::create([
-                'name' => 'Siswa Contoh',
-                'email' => 'siswa@example.com',
-                'password' => bcrypt('password'),
-            ]);
-            $siswa->assignRole('siswa');
-
-            $pembimbing = User::create([
-                'name' => 'Guru Pembimbing',
-                'email' => 'guru@example.com',
-                'password' => bcrypt('password'),
-            ]);
-            $pembimbing->assignRole('guru');
-
-            $perusahaan = User::create([
-                'name' => 'Perusahaan Contoh',
-                'email' => 'perusahaan@example.com',
-                'password' => bcrypt('password'),
-            ]);
-            $perusahaan->assignRole('perusahaan');
-
-            $this->command->info('Created sample users for PKL data');
+            $this->command->warn('Skipping PKL data seeding. Please run DatabaseSeeder first to create required users.');
+            return;
         }
+
+        // Pastikan role sudah di-assign
+        if (!$siswa->hasRole('siswa')) {
+            $siswa->assignRole('siswa');
+        }
+        if (!$pembimbing->hasRole('guru')) {
+            $pembimbing->assignRole('guru');
+        }
+        if (!$perusahaan->hasRole('perusahaan')) {
+            $perusahaan->assignRole('perusahaan');
+        }
+
+        $this->command->info('Using existing users from DatabaseSeeder for PKL data');
 
         $data = [
             [
