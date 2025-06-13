@@ -25,18 +25,14 @@ class ProjectController extends Controller
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240', // Maksimal 10MB
         ]);
 
-        // Hapus file laporan lama jika ada
         if ($project->file_laporan) {
             Storage::disk('public')->delete($project->file_laporan);
         }
 
         $path = $request->file('file_laporan')->store('project/laporan', 'public');
-        
-        $project->update([
-            'file_laporan' => $path
-        ]);
+        $project->update(['file_laporan' => $path]);
 
-        return redirect()->route('guru.project.index')
+        return redirect()->route('guru-project-index')
             ->with('success', 'Laporan berhasil diupload');
     }
 
@@ -46,35 +42,28 @@ class ProjectController extends Controller
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
-        // Hapus file laporan lama jika ada
         if ($project->file_laporan) {
             Storage::disk('public')->delete($project->file_laporan);
         }
 
         $path = $request->file('file_laporan')->store('project/laporan', 'public');
-        
-        $project->update([
-            'file_laporan' => $path
-        ]);
+        $project->update(['file_laporan' => $path]);
 
-        return redirect()->route('guru.project.index')
+        return redirect()->route('guru-project-index')
             ->with('success', 'Laporan berhasil diperbarui');
     }
 
     public function deleteLaporan(Request $request, Project $project)
     {
         if ($project->file_laporan) {
-            // Hapus file laporan dari storage
             Storage::disk('public')->delete($project->file_laporan);
-            
-            // Update kolom file_laporan menjadi null
             $project->update(['file_laporan' => null]);
             
-            return redirect()->route('guru.project.index')
+            return redirect()->route('guru-project-index')
                 ->with('success', 'Laporan berhasil dihapus');
         }
         
-        return redirect()->route('guru.project.index')
+        return redirect()->route('guru-project-index')
             ->with('error', 'Tidak ada laporan yang bisa dihapus');
     }
 }

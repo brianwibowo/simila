@@ -46,14 +46,14 @@
                     </dl>
 
                     <div class="mt-4">
+                        <a href="{{ route('waka-humas-guru-tamu-index') }}" class="btn btn-secondary">Kembali</a>
                         @if($guru_tamu->status === 'proses')
-                        <form action="{{ route('waka-humas.guru-tamu.approve', $guru_tamu) }}" method="POST" class="d-inline">
+                        <form action="{{ route('waka-humas-guru-tamu-approve', $guru_tamu) }}" method="POST" class="d-inline">
                             @csrf
                             @method('PUT')
                             <button type="submit" class="btn btn-success">Setujui</button>
                         </form>
                         @endif
-                        <a href="{{ route('waka-humas.guru-tamu.index') }}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
             </div>

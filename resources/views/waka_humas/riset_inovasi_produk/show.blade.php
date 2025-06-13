@@ -4,9 +4,9 @@
 <div class="container mt-4">
     <h1 class="mb-4 h4">Detail Riset/Inovasi Produk</h1>
     <div class="mb-3">
-        <a href="{{ route('riset.index') }}" class="btn btn-secondary btn-sm">Kembali ke Daftar</a>
-        <a href="{{ route('riset.edit', $riset) }}" class="btn btn-warning btn-sm">Edit</a>
-        <form action="{{ route('riset.destroy', $riset) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus riset ini?')">
+        <a href="{{ route('waka-humas-riset-index') }}" class="btn btn-secondary btn-sm">Kembali ke Daftar</a>
+        <a href="{{ route('waka-humas-riset-edit', $riset) }}" class="btn btn-warning btn-sm">Edit</a>
+        <form action="{{ route('waka-humas-riset-destroy', $riset) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus riset ini?')">
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger btn-sm">Hapus</button>

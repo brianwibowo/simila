@@ -42,11 +42,11 @@
                                     </td>
                                     <td>
                                         <div class="d-flex flex-wrap gap-1">
-                                            <a href="{{ route('waka-humas.guru-tamu.show', $guruTamu) }}" class="btn btn-sm btn-info">
+                                            <a href="{{ route('waka-humas-guru-tamu-show', $guruTamu) }}" class="btn btn-sm btn-info">
                                                 <i class="bi bi-eye"></i> Detail
                                             </a>
                                             @if($guruTamu->status === 'proses')
-                                                <form action="{{ route('waka-humas.guru-tamu.approve', $guruTamu) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('waka-humas-guru-tamu-approve', $guruTamu) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('PUT')
                                                     <button type="submit" class="btn btn-sm btn-success">

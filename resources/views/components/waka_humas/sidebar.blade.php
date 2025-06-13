@@ -30,159 +30,54 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#base">
-                        <i class="fas fa-layer-group"></i>
-                        <p>Kurikulum Bersama</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="base">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="components/avatars.html">
-                                    <span class="sub-item">Ajukan Kurikulum</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="components/buttons.html">
-                                    <span class="sub-item">List Kurikulum</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                        <i class="fas fa-th-list"></i>
-                        <p>Project Mitra</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="sidebarLayouts">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="sidebar-style-2.html">
-                                    <span class="sub-item">List Projek</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Buat Projek Baru</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item {{ str_contains(Route::currentRouteName(), 'waka-humas.guru-tamu') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#guruTamuMenu">
+                <li class="nav-item {{ request()->routeIs('waka-humas-guru-tamu-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#guruTamuMenu" aria-expanded="{{ request()->routeIs('waka-humas-guru-tamu-*') ? 'true' : 'false' }}">
                         <i class="fas fa-chalkboard-teacher"></i>
                         <p>Guru Tamu</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ str_contains(Route::currentRouteName(), 'waka-humas.guru-tamu') ? 'show' : '' }}" id="guruTamuMenu">
+                    <div class="collapse {{ request()->routeIs('waka-humas-guru-tamu-*') ? 'show' : '' }}" id="guruTamuMenu">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'waka-humas.guru-tamu.index' ? 'active' : '' }}">
-                                <a href="{{ route('waka-humas.guru-tamu.index') }}">
+                            <li class="{{ request()->routeIs('waka-humas-guru-tamu-index') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-guru-tamu-index') }}">
                                     <span class="sub-item">Daftar Guru Tamu</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item {{ str_contains(Route::currentRouteName(), 'waka-humas.pkl') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#pklMenu">
+                <li class="nav-item {{ request()->routeIs('waka-humas-pkl-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#pklMenu" aria-expanded="{{ request()->routeIs('waka-humas-pkl-*') ? 'true' : 'false' }}">
                         <i class="fas fa-briefcase"></i>
                         <p>PKL</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ str_contains(Route::currentRouteName(), 'waka-humas.pkl') ? 'show' : '' }}" id="pklMenu">
+                    <div class="collapse {{ request()->routeIs('waka-humas-pkl-*') ? 'show' : '' }}" id="pklMenu">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'waka-humas.pkl.index' ? 'active' : '' }}">
-                                <a href="{{ route('waka-humas.pkl.index') }}">
+                            <li class="{{ request()->routeIs('waka-humas-pkl-index') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-pkl-index') }}">
                                     <span class="sub-item">Daftar Laporan PKL</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#maps">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <p>Talent Scouting</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="maps">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="maps/googlemaps.html">
-                                    <span class="sub-item">List Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="maps/jsvectormap.html">
-                                    <span class="sub-item">Hasil Penerimaan</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#charts">
-                        <i class="far fa-chart-bar"></i>
-                        <p>MOOC</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="charts">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">Kelas</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Ujian</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item {{ request()->routeIs('riset.*') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#risetInovasi" class="{{ request()->routeIs('riset.*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('waka-humas-riset-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#risetInovasi" aria-expanded="{{ request()->routeIs('waka-humas-riset-*') ? 'true' : 'false' }}">
                         <i class="fas fa-flask"></i>
                         <p>Riset & Inovasi Produk</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->routeIs('riset.*') ? 'show' : '' }}" id="risetInovasi">
+                    <div class="collapse {{ request()->routeIs('waka-humas-riset-*') ? 'show' : '' }}" id="risetInovasi">
                         <ul class="nav nav-collapse">
-                            <li class="{{ request()->routeIs('riset.index') || request()->routeIs('riset.show') ? 'active' : '' }}">
-                                <a href="{{ route('riset.index') }}">
+                            <li class="{{ request()->routeIs('waka-humas-riset-index') || request()->routeIs('waka-humas-riset-show') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-riset-index') }}">
                                     <span class="sub-item">Daftar Riset</span>
                                 </a>
                             </li>
-                            <li class="{{ request()->routeIs('riset.create') ? 'active' : '' }}">
-                                <a href="{{ route('riset.create') }}">
+                            <li class="{{ request()->routeIs('waka-humas-riset-create') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-riset-create') }}">
                                     <span class="sub-item">Tambah Riset Baru</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#char">
-                        <i class="far fa-chart-bar"></i>
-                        <p>Beasiswa Talent Scout</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">Daftar Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Hasil Seleksi</span>
                                 </a>
                             </li>
                         </ul>

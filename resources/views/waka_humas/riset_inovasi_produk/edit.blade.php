@@ -12,7 +12,7 @@
             </ul>
         </div>
     @endif
-    <form action="{{ route('riset.update', $riset) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('waka-humas-riset-update', $riset) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="mb-3">
@@ -50,8 +50,8 @@
             @endif
             <input type="file" name="dokumentasi" id="dokumentasi" class="form-control" accept="image/*">
         </div>
-        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
-        <a href="{{ route('riset.index', $riset) }}" class="btn btn-secondary ms-2">Batal</a>
+        <a href="{{ route('waka-humas-riset-index', $riset) }}" class="btn btn-success">Simpan Perubahan</a>
+        <a href="{{ route('waka-humas-riset-index', $riset) }}" class="btn btn-secondary ms-2">Batal</a>
     </form>
 </div>
 @endsection

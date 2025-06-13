@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
-use App\Http\Controllers\WakaHumas\RisetController;
-use App\Http\Controllers\WakaHumas\GuruTamuController;
-use App\Http\Controllers\WakaHumas\PklController;
+use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
+use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
+use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
+use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
     Route::get('/', function () {
         return view('perusahaan.dashboard');
     })->name('perusahaan-dashboard');
+
     Route::resource('kurikulum', PerusahaanKurikulumController::class)->names([
         'index' => 'perusahaan-kurikulum-list-diajukan',
         'store' => 'perusahaan-kurikulum-store',
@@ -82,27 +84,23 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
     Route::get('/', function () {
         return view('guru.dashboard');
-    })->name('guru.dashboard');
+    })->name('guru-dashboard');
 
-    // Project Routes
-    Route::prefix('project')->name('guru.project.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Guru\ProjectController::class, 'index'])
-            ->name('index');
-        
-        // Laporan routes
-        Route::post('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'uploadLaporan'])
-            ->name('laporan.upload');
-        Route::put('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'updateLaporan'])
-            ->name('laporan.update');
-        Route::delete('/{project}/laporan', [\App\Http\Controllers\Guru\ProjectController::class, 'deleteLaporan'])
-            ->name('laporan.delete');
+    Route::prefix('project')->name('guru-project-')->group(function () {
+        Route::get('/', [GuruProjectController::class, 'index'])->name('index');
+        Route::post('/{project}/laporan', [GuruProjectController::class, 'uploadLaporan'])
+            ->name('laporan-upload');
+        Route::put('/{project}/laporan', [GuruProjectController::class, 'updateLaporan'])
+            ->name('laporan-update');
+        Route::delete('/{project}/laporan', [GuruProjectController::class, 'deleteLaporan'])
+            ->name('laporan-delete');
     });
 });
 
 Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->group(function () {
     Route::get('/', function () {
         return view('waka_kurikulum.dashboard');
-    })->name('waka.kurikulum.dashboard');
+    })->name('waka-kurikulum-dashboard');
 });
 
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {
@@ -110,35 +108,40 @@ Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(func
         return view('waka_humas.dashboard');
     })->name('waka-humas-dashboard');
 
-    Route::resource('guru-tamu', \App\Http\Controllers\WakaHumas\GuruTamuController::class)->names('waka-humas.guru-tamu');
-    Route::put('guru-tamu/{guru_tamu}/approve', [\App\Http\Controllers\WakaHumas\GuruTamuController::class, 'approve'])
+    Route::resource('guru-tamu', WakaHumasGuruTamuController::class)->names([
+        'index' => 'waka-humas-guru-tamu-index',
+        'create' => 'waka-humas-guru-tamu-create',
+        'store' => 'waka-humas-guru-tamu-store',
+        'show' => 'waka-humas-guru-tamu-show',
+        'edit' => 'waka-humas-guru-tamu-edit',
+        'update' => 'waka-humas-guru-tamu-update',
+        'destroy' => 'waka-humas-guru-tamu-destroy',
+    ]);
+    Route::put('guru-tamu/{guru_tamu}/approve', [WakaHumasGuruTamuController::class, 'approve'])
         ->where('guru_tamu', '[0-9]+')
-        ->name('waka-humas.guru-tamu.approve');
-    Route::put('guru-tamu/{guru_tamu}/reject', [\App\Http\Controllers\WakaHumas\GuruTamuController::class, 'reject'])
+        ->name('waka-humas-guru-tamu-approve'); 
+    Route::put('guru-tamu/{guru_tamu}/reject', [WakaHumasGuruTamuController::class, 'reject'])
         ->where('guru_tamu', '[0-9]+')
-        ->name('waka-humas.guru-tamu.reject');
+        ->name('waka-humas-guru-tamu-reject');
 
-    Route::resource('riset', RisetController::class)->names([
-        'index' => 'riset.index',
-        'create' => 'riset.create',
-        'store' => 'riset.store',
-        'show' => 'riset.show',
-        'edit' => 'riset.edit',
-        'update' => 'riset.update',
-        'destroy' => 'riset.destroy',
+    Route::resource('riset', WakaHumasRisetController::class)->names([
+        'index' => 'waka-humas-riset-index',
+        'create' => 'waka-humas-riset-create',
+        'store' => 'waka-humas-riset-store',
+        'show' => 'waka-humas-riset-show',
+        'edit' => 'waka-humas-riset-edit',
+        'update' => 'waka-humas-riset-update',
+        'destroy' => 'waka-humas-riset-destroy',
     ]);
 
-    // Routes for PKL Management
-    Route::resource('pkl', PklController::class)->names([
-        'index' => 'waka-humas.pkl.index',
-        'show' => 'waka-humas.pkl.show',
+    Route::resource('pkl', WakaHumasPklController::class)->only(['index', 'show'])->names([
+        'index' => 'waka-humas-pkl-index',
+        'show' => 'waka-humas-pkl-show',
     ]);
-    
-    Route::post('pkl/{pkl}/validate', [PklController::class, 'validateReport'])
-        ->name('waka-humas.pkl.validate');
-        
-    Route::get('pkl/{pkl}/download', [PklController::class, 'downloadReport'])
-        ->name('waka-humas.pkl.download');
+    Route::post('pkl/{pkl}/validate', [WakaHumasPklController::class, 'validateReport'])
+        ->name('waka-humas-pkl-validate');
+    Route::get('pkl/{pkl}/download', [WakaHumasPklController::class, 'downloadReport'])
+        ->name('waka-humas-pkl-download');
 });
 
 Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->group(function () {
