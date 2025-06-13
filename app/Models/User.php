@@ -52,4 +52,16 @@ class User extends Authenticatable
             }
         });
     }
+
+    public function pklSiswa(){
+        return $this->belongsTo(PKL::class);
+    }
+
+    public function pklPerusahaan(){
+        return $this->hasMany(PKL::class, 'perusahaan_id');
+    }
+
+    public function pklPembimbing(){
+        return $this->hasMany(PKL::class, 'pembimbing_id');
+    }
 }

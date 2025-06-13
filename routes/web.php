@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
+use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
+
 use App\Http\Controllers\WakaHumas\RisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController;
@@ -70,7 +72,15 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
     ])->except('show');
     Route::get('/guru-tamu/list', [PerusahaanGuruTamuController::class, 'list'])->name('perusahaan-guru-tamu-list');
 
-    
+    Route::resource('pkl', PerusahaanPklController::class)->names([
+        'index' => 'perusahaan-pkl-index',
+        'create' => 'perusahaan-pkl-create',
+        'store' => 'perusahaan-pkl-store',
+        'edit' => 'perusahaan-pkl-edit',
+        'update' => 'perusahaan-pkl-update',
+        'destroy' => 'perusahaan-pkl-destroy',
+        'show' => 'perusahaan-pkl-show',
+    ]);
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {

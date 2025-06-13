@@ -87,7 +87,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('perusahaan-pkl*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#tables">
                         <i class="fas fa-table"></i>
                         <p>PKL</p>
@@ -95,8 +95,8 @@
                     </a>
                     <div class="collapse" id="tables">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="tables/tables.html">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-pkl-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-pkl-index') }}">
                                     <span class="sub-item">Penilaian</span>
                                 </a>
                             </li>

@@ -21,17 +21,7 @@ class PKL extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'siswa_id',
-        'pembimbing_id',
-        'perusahaan_id',
-        'laporan_akhir',
-        'status_pembimbing',
-        'status_waka_humas',
-        'nilai',
-        'catatan_waka_humas',
-        'tanggal_validasi_waka_humas'
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast.
@@ -42,30 +32,6 @@ class PKL extends Model
         'nilai' => 'integer',
         'tanggal_validasi_waka_humas' => 'datetime',
     ];
-
-    /**
-     * Get the student that owns the PKL.
-     */
-    public function siswa()
-    {
-        return $this->belongsTo(User::class, 'siswa_id');
-    }
-
-    /**
-     * Get the pembimbing that owns the PKL.
-     */
-    public function pembimbing()
-    {
-        return $this->belongsTo(User::class, 'pembimbing_id');
-    }
-
-    /**
-     * Get the perusahaan that owns the PKL.
-     */
-    public function perusahaan()
-    {
-        return $this->belongsTo(User::class, 'perusahaan_id');
-    }
 
     /**
      * Get the status pembimbing options.
@@ -93,5 +59,20 @@ class PKL extends Model
             'ditolak' => 'Ditolak',
             'proses' => 'Proses',
         ];
+    }
+
+    public function siswas()
+    {
+        return $this->hasMany(User::class, 'id');
+    }
+
+    public function pembimbing()
+    {
+        return $this->belongsTo(User::class, 'pembimbing_id');
+    }
+
+    public function perusahaan()
+    {
+        return $this->belongsTo(User::class, 'perusahaan_id');
     }
 }

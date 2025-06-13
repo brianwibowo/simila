@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->string('jenis_guru')->nullable();
             $table->timestamps();
+
         });
     }
 
