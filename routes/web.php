@@ -6,10 +6,11 @@ use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumCo
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
-
-use App\Http\Controllers\WakaHumas\RisetController;
-use App\Http\Controllers\WakaHumas\GuruTamuController;
-use App\Http\Controllers\WakaHumas\PklController;
+use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
+use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
+use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin-dashboard');
+    Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
+    Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
 });
 
 Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {
