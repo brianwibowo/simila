@@ -38,11 +38,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     })->name('admin-dashboard');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
-    Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
-
-    // Kurikulum Routes
+    Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');    // Kurikulum Routes
     Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
+    Route::get('/kurikulum/monitor-waka', [AdminKurikulumController::class, 'monitorWakaKurikulum'])->name('admin-kurikulum-monitor-waka');
     Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
     Route::post('/kurikulum', [AdminKurikulumController::class, 'store'])->name('admin-kurikulum-store');
     Route::get('/kurikulum/{kurikulum}/edit', [AdminKurikulumController::class, 'edit'])->name('admin-kurikulum-edit');
@@ -126,6 +125,17 @@ Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->gr
     Route::get('/', function () {
         return view('waka_kurikulum.dashboard');
     })->name('waka-kurikulum-dashboard');
+    
+    // Kurikulum Routes
+    Route::get('/kurikulum', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'index'])->name('waka-kurikulum-list-diajukan');
+    Route::get('/kurikulum/validasi', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'validasi'])->name('waka-kurikulum-list-validasi');
+    Route::get('/kurikulum/create', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'create'])->name('waka-kurikulum-create');
+    Route::post('/kurikulum', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'store'])->name('waka-kurikulum-store');
+    Route::get('/kurikulum/{kurikulum}/edit', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'edit'])->name('waka-kurikulum-edit');
+    Route::put('/kurikulum/{kurikulum}', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'update'])->name('waka-kurikulum-update');
+    Route::delete('/kurikulum/{kurikulum}', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'destroy'])->name('waka-kurikulum-destroy');
+    Route::patch('/kurikulum/{kurikulum}/setuju', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
+    Route::patch('/kurikulum/{kurikulum}/tolak', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
 });
 
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {

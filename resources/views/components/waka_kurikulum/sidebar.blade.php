@@ -1,8 +1,7 @@
-<div class="sidebar" data-background-color="dark">
-    <div class="sidebar-logo">
+<div class="sidebar" data-background-color="dark">    <div class="sidebar-logo">
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="logo">
+            <a href="{{ route('waka-kurikulum-dashboard') }}" class="logo">
                 <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="navbar brand"
                     class="navbar-brand" height="20" />
             </a>
@@ -23,28 +22,28 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
-                    <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
+                <li class="nav-item {{ Route::currentRouteName() == 'waka-kurikulum-dashboard' ? 'active' : '' }}">
+                    <a href="{{ route('waka-kurikulum-dashboard') }}">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('waka-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="base">
+                    <div class="collapse {{ request()->routeIs('waka-kurikulum*') && !request()->routeIs('waka-kurikulum-dashboard') ? 'show' : '' }}" id="base">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="components/avatars.html">
-                                    <span class="sub-item">Ajukan Kurikulum</span>
+                            <li class="{{ Route::currentRouteName() == 'waka-kurikulum-list-diajukan' ? 'active' : '' }}">
+                                <a href="{{ route('waka-kurikulum-list-diajukan') }}">
+                                    <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="components/buttons.html">
-                                    <span class="sub-item">List Kurikulum</span>
+                            <li class="{{ Route::currentRouteName() == 'waka-kurikulum-list-validasi' ? 'active' : '' }}">
+                                <a href="{{ route('waka-kurikulum-list-validasi') }}">
+                                    <span class="sub-item">Validasi Kurikulum Perusahaan</span>
                                 </a>
                             </li>
                         </ul>

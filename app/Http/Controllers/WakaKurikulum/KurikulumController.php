@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\WakaKurikulum;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kurikulum;
@@ -10,43 +10,42 @@ use Illuminate\Support\Facades\Storage;
 
 class KurikulumController extends Controller
 {
+    /**
+     * Display a listing of kurikulums submitted by the waka kurikulum
+     */
     public function index()
     {
-        return view('admin.kurikulum.list-diajukan', [
+        return view('waka_kurikulum.kurikulum.list-diajukan', [
             'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)->get()
         ]);
-    }    
-
+    }
+    
+    /**
+     * Display a listing of kurikulums submitted by perusahaan for review
+     */
     public function validasi()
     {
-        return view('admin.kurikulum.list-validasi', [
+        // Get all kurikulums submitted by perusahaan users, regardless of validation status
+        return view('waka_kurikulum.kurikulum.list-validasi', [
             'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
                 $query->role('perusahaan');
-            })->orderBy('validasi_sekolah', 'asc')
+            })->orderBy('validasi_sekolah', 'asc') // Show 'proses' status first
               ->orderBy('created_at', 'desc')
               ->get()
         ]);
     }
 
     /**
-     * Display a listing of kurikulums submitted by waka kurikulum for monitoring
+     * Show the form for creating a new kurikulum
      */
-    public function monitorWakaKurikulum()
-    {
-        return view('admin.kurikulum.monitor-waka-kurikulum', [
-            'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
-                $query->role('waka_kurikulum');
-            })->orderBy('validasi_perusahaan', 'asc') // Show 'proses' status first
-              ->orderBy('created_at', 'desc')
-              ->get()
-        ]);
-    }
-
     public function create()
     {
-        return view('admin.kurikulum.create');
+        return view('waka_kurikulum.kurikulum.create');
     }
 
+    /**
+     * Store a newly created kurikulum
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -58,36 +57,45 @@ class KurikulumController extends Controller
 
         $path = $request->file('file')->store('kurikulum/', 'public');
 
+        // Create kurikulum that will be validated by perusahaan
         Kurikulum::create([
             'nama_kurikulum' => $request->nama,
             'pengirim_id' => auth()->user()->id,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
             'file_kurikulum' => $path,
-            'validasi_sekolah' => 'disetujui',
-            'validasi_perusahaan' => 'proses'
+            'validasi_sekolah' => 'disetujui', // Waka Kurikulum already approves from school side
+            'validasi_perusahaan' => 'proses'  // Needs perusahaan validation
         ]);
 
-        return redirect()->route('admin-kurikulum-list-diajukan')
+        return redirect()->route('waka-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil diajukan untuk validasi perusahaan');
-    }    
-
+    }
+    
+    /**
+     * Show the form for editing the specified kurikulum
+     */
     public function edit(Kurikulum $kurikulum)
     {
+        // Make sure the user is authorized to edit this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
+            return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Anda tidak diizinkan mengedit kurikulum ini');
         }
         
-        return view('admin.kurikulum.edit', [
+        return view('waka_kurikulum.kurikulum.edit', [
             'kurikulum' => $kurikulum
         ]);
     }
 
+    /**
+     * Update the specified kurikulum
+     */
     public function update(Request $request, Kurikulum $kurikulum)
     {
+        // Make sure the user is authorized to update this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
+            return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Anda tidak diizinkan mengedit kurikulum ini');
         }
 
@@ -98,6 +106,7 @@ class KurikulumController extends Controller
             'file' => 'nullable|mimes:pdf',
         ]);
 
+        // Update file if needed
         if ($request->hasFile('file')) {
             Storage::disk('public')->delete($kurikulum->file_kurikulum);
             $path = $request->file('file')->store('kurikulum/', 'public');
@@ -106,29 +115,42 @@ class KurikulumController extends Controller
             ]);
         }
 
+        // Update kurikulum data
         $kurikulum->update([
             'nama_kurikulum' => $request->nama,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
-            'validasi_perusahaan' => 'proses',
-        ]);        return redirect()->route('admin-kurikulum-list-diajukan')
-            ->with('success', 'Kurikulum berhasil diperbarui. Kurikulum akan kembali ke status Menunggu Validasi.');
-    }    
+            'validasi_perusahaan' => 'proses', // Reset validation status as it's been modified
+        ]);
 
+        return redirect()->route('waka-kurikulum-list-diajukan')
+            ->with('success', 'Kurikulum berhasil diperbarui. Kurikulum akan kembali ke status Menunggu Validasi.');
+    }
+    
+    /**
+     * Remove the specified kurikulum
+     */
     public function destroy(Kurikulum $kurikulum)
     {
+        // Make sure the user is authorized to delete this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
+            return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Anda tidak diizinkan menghapus kurikulum ini');
         }
 
         $kurikulum->delete();
-        return redirect()->route('admin-kurikulum-list-diajukan')
+        return redirect()->route('waka-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil dihapus');
-    }    public function setuju(Kurikulum $kurikulum)
+    }
+
+    /**
+     * Approve a kurikulum
+     */
+    public function setuju(Kurikulum $kurikulum)
     {
+        // Waka Kurikulum can only validate kurikulum from perusahaan
         if (!$kurikulum->pengirim->hasRole('perusahaan')) {
-            return redirect()->route('admin-kurikulum-list-validasi')
+            return redirect()->route('waka-kurikulum-list-validasi')
                 ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari perusahaan');
         }
         
@@ -136,12 +158,18 @@ class KurikulumController extends Controller
             'validasi_sekolah' => 'disetujui',
         ]);
         
-        return redirect()->route('admin-kurikulum-list-validasi')
+        return redirect()->route('waka-kurikulum-list-validasi')
             ->with('success', 'Kurikulum berhasil disetujui');
-    }    public function tolak(Request $request, Kurikulum $kurikulum)
+    }
+
+    /**
+     * Reject a kurikulum
+     */
+    public function tolak(Request $request, Kurikulum $kurikulum)
     {
+        // Waka Kurikulum can only validate kurikulum from perusahaan
         if (!$kurikulum->pengirim->hasRole('perusahaan')) {
-            return redirect()->route('admin-kurikulum-list-validasi')
+            return redirect()->route('waka-kurikulum-list-validasi')
                 ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari perusahaan');
         }
         
@@ -154,7 +182,7 @@ class KurikulumController extends Controller
             'komentar' => $request->komentar
         ]);
 
-        return redirect()->route('admin-kurikulum-list-validasi')
+        return redirect()->route('waka-kurikulum-list-validasi')
             ->with('success', 'Kurikulum berhasil ditolak');
     }
 }

@@ -34,8 +34,8 @@
                         <p>Kurikulum Bersama</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->routeIs('admin-kurikulum*') ? 'show' : '' }}" id="base">
-                        <ul class="nav nav-collapse">                            <li class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' ? 'active' : '' }}">
+                    <div class="collapse {{ request()->routeIs('admin-kurikulum*') ? 'show' : '' }}" id="base">                        <ul class="nav nav-collapse">
+                            <li class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
@@ -43,6 +43,11 @@
                             <li class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi' ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-validasi') }}">
                                     <span class="sub-item">Validasi Kurikulum Perusahaan</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-kurikulum-monitor-waka' ? 'active' : '' }}">
+                                <a href="{{ route('admin-kurikulum-monitor-waka') }}">
+                                    <span class="sub-item">Monitor Kurikulum Waka</span>
                                 </a>
                             </li>
                         </ul>
