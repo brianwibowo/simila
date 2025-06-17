@@ -2,36 +2,36 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-circle me-2"></i>
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
     <div class="row">
         <div class="col-12">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
-                            <h1 class="h4 mb-1">Validasi Kurikulum dari Sekolah</h1>
-                            <p class="text-muted mb-0">Kelola dan validasi kurikulum yang diajukan oleh sekolah</p>
+                            <h1 class="h4 mb-1">Validasi Kurikulum dari Perusahaan</h1>
+                            <p class="text-muted mb-0">Kelola dan validasi kurikulum yang diajukan oleh perusahaan</p>
                         </div>
                     </div>
                     
                     <div class="alert alert-info d-flex align-items-center mb-4">
                         <i class="bi bi-info-circle-fill me-2 fs-4"></i>
-                        <div>Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Sekolah dan melihat riwayat validasi.</div>
+                        <div>Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Perusahaan dan melihat riwayat validasi.</div>
                     </div>
                     
                     <div class="row mb-4">
@@ -85,21 +85,14 @@
                                     <tbody>
                                         @php $hasWaiting = false; @endphp
                                         @foreach ($kurikulums as $kurikulum)
-                                            @if($kurikulum->validasi_perusahaan == 'proses')
+                                            @if($kurikulum->validasi_sekolah == 'proses')
                                                 @php $hasWaiting = true; @endphp
                                                 <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                                <span class="text-primary fw-medium">{{ substr($kurikulum->pengirim->name, 0, 1) }}</span>
-                                                            </div>
-                                                            {{ $kurikulum->pengirim->name }}
-                                                        </div>
-                                                    </td>
+                                                    <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
-                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum)}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                             <i class="bi bi-download me-1"></i> Unduh
                                                         </a>
                                                     </td>
@@ -107,21 +100,61 @@
                                                     <td><span class="badge bg-warning">Menunggu</span></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <form action="{{ route('perusahaan-kurikulum-setuju', ['kurikulum' => $kurikulum->id]) }}" method="post" class="d-inline">
+                                                            <form action="{{ route('admin-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline">
                                                                 @csrf
-                                                                @method('PUT')
-                                                                <button type="submit" class="btn btn-sm btn-outline-success me-1" data-bs-toggle="tooltip" title="Setuju">
+                                                                @method('PATCH')
+                                                                <button type="submit" 
+                                                                        class="btn btn-sm btn-outline-success me-1" 
+                                                                        data-bs-toggle="tooltip" 
+                                                                        title="Setuju">
                                                                     <i class="bi bi-check-lg"></i>
                                                                 </button>
                                                             </form>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#tolakModal" 
-                                                                data-kurikulum-id="{{ $kurikulum->id }}"
-                                                                data-bs-toggle="tooltip"
-                                                                title="Tolak">
+                                                            
+                                                            <button type="button" 
+                                                                    class="btn btn-sm btn-outline-danger" 
+                                                                    data-bs-toggle="modal" 
+                                                                    data-bs-target="#tolakModal{{ $kurikulum->id }}"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Tolak">
                                                                 <i class="bi bi-x-lg"></i>
                                                             </button>
+                                                        </div>
+                                                        
+                                                        <!-- Modal Tolak Kurikulum -->
+                                                        <div class="modal fade" id="tolakModal{{ $kurikulum->id }}" tabindex="-1" aria-labelledby="tolakModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="tolakModalLabel">
+                                                                            <i class="bi bi-x-circle text-danger me-2"></i>
+                                                                            Tolak Kurikulum
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <form action="{{ route('admin-kurikulum-tolak', $kurikulum) }}" method="POST">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <div class="modal-body">
+                                                                            <div class="mb-3">
+                                                                                <label for="komentar" class="form-label">Komentar Penolakan</label>
+                                                                                <textarea name="komentar" 
+                                                                                          id="komentar" 
+                                                                                          rows="4" 
+                                                                                          class="form-control" 
+                                                                                          required
+                                                                                          placeholder="Masukkan alasan penolakan kurikulum..."></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                                            <button type="submit" class="btn btn-danger">
+                                                                                <i class="bi bi-x-circle me-1"></i> Tolak Kurikulum
+                                                                            </button>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -160,14 +193,14 @@
                                     <tbody>
                                         @php $hasApproved = false; @endphp
                                         @foreach ($kurikulums as $kurikulum)
-                                            @if($kurikulum->validasi_perusahaan == 'disetujui')
+                                            @if($kurikulum->validasi_sekolah == 'disetujui')
                                                 @php $hasApproved = true; @endphp
                                                 <tr>
                                                     <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
-                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum)}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                             <i class="bi bi-download me-1"></i> Unduh
                                                         </a>
                                                     </td>
@@ -209,21 +242,14 @@
                                     <tbody>
                                         @php $hasRejected = false; @endphp
                                         @foreach ($kurikulums as $kurikulum)
-                                            @if($kurikulum->validasi_perusahaan == 'tidak_disetujui')
+                                            @if($kurikulum->validasi_sekolah == 'tidak_disetujui')
                                                 @php $hasRejected = true; @endphp
                                                 <tr>
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="avatar-sm bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                                <span class="text-primary fw-medium">{{ substr($kurikulum->pengirim->name, 0, 1) }}</span>
-                                                            </div>
-                                                            {{ $kurikulum->pengirim->name }}
-                                                        </div>
-                                                    </td>
+                                                    <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
-                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum)}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                        <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                             <i class="bi bi-download me-1"></i> Unduh
                                                         </a>
                                                     </td>
@@ -260,46 +286,7 @@
     </div>
 </div>
 
-<!-- Modal Tolak -->
-<div class="modal fade" id="tolakModal" tabindex="-1" aria-labelledby="tolakModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="tolakForm" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tolakModalLabel">
-                        <i class="bi bi-x-circle text-danger me-2"></i>
-                        Komentar Penolakan
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="komentar" class="form-label">Berikan alasan penolakan</label>
-                        <textarea class="form-control" name="komentar" id="komentar" rows="4" required 
-                                  placeholder="Masukkan alasan penolakan kurikulum..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-x-circle me-1"></i> Tolak
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
 <style>
-.avatar-sm {
-    width: 32px;
-    height: 32px;
-}
-.bg-primary-subtle {
-    background-color: rgba(13, 110, 253, 0.1);
-}
 .table > :not(caption) > * > * {
     padding: 1rem;
 }
@@ -345,16 +332,6 @@ document.addEventListener('DOMContentLoaded', function() {
         tab.addEventListener('click', function() {
             window.location.hash = this.getAttribute('href');
         });
-    });
-    
-    // Handle tolak modal setup
-    const tolakModal = document.getElementById('tolakModal');
-    const tolakForm = document.getElementById('tolakForm');
-
-    tolakModal.addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const kurikulumId = button.getAttribute('data-kurikulum-id');
-        tolakForm.action = `/perusahaan/kurikulum/${kurikulumId}/tolak`;
     });
 
     // Date filter functionality

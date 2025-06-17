@@ -28,6 +28,7 @@
           </div>
 
         <button type="submit" class="btn btn-primary w-10">Ajukan</button>
+        <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}" class="btn btn-secondary w-10">Batal</a>
     </form>
 </div>
 @endsection

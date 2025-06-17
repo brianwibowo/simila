@@ -46,12 +46,15 @@ class KurikulumController extends Controller
         return view('perusahaan.kurikulum.list-diajukan', [
             'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)->get()
         ]);
-    }
-
-    public function validasi()
+    }    public function validasi()
     {
+        // Get all kurikulums submitted by admin users, regardless of validation status
         return view('perusahaan.kurikulum.list-validasi', [
-            'kurikulums' => Kurikulum::where('pengirim_id','!==', auth()->user()->id)->get()
+            'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
+                $query->role('admin');
+            })->orderBy('validasi_perusahaan', 'asc') // Show 'proses' status first
+              ->orderBy('created_at', 'desc')
+              ->get()
         ]);
     }
 
@@ -84,32 +87,46 @@ class KurikulumController extends Controller
             $path = $request->file('file')->store('kurikulum/', 'public');
             $kurikulum->file_kurikulum = $path;
             $kurikulum->save();
-        }
-
-
-        $kurikulum->update([
+        }        $kurikulum->update([
             'nama_kurikulum' => $request->nama,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
+            'validasi_sekolah' => 'proses', // Reset validation status as it's been modified
         ]);
 
-        return redirect()->route('perusahaan-kurikulum-list-diajukan');
-    }
-    public function setuju(Kurikulum $kurikulum)
+        return redirect()->route('perusahaan-kurikulum-list-diajukan')
+            ->with('success', 'Kurikulum berhasil diperbarui. Kurikulum akan kembali ke status Menunggu Validasi.');
+    }    public function setuju(Kurikulum $kurikulum)
     {
+        // Perusahaan can only validate kurikulum from admin
+        if (!$kurikulum->pengirim->hasRole('admin')) {
+            return redirect()->route('perusahaan-kurikulum-list-validasi')
+                ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari admin sekolah');
+        }
+        
         $kurikulum->update([
             'validasi_perusahaan' => 'disetujui'
         ]);
-        return redirect()->route('perusahaan-kurikulum-list-validasi');
-    }
-
-    public function tolak(Kurikulum $kurikulum, Request $request)
+        return redirect()->route('perusahaan-kurikulum-list-validasi')
+            ->with('success', 'Kurikulum berhasil disetujui');
+    }public function tolak(Kurikulum $kurikulum, Request $request)
     {
+        // Perusahaan can only validate kurikulum from admin
+        if (!$kurikulum->pengirim->hasRole('admin')) {
+            return redirect()->route('perusahaan-kurikulum-list-validasi')
+                ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari admin sekolah');
+        }
+        
+        $request->validate([
+            'komentar' => 'required|string',
+        ]);
+        
         $kurikulum->update([
             'validasi_perusahaan' => 'tidak_disetujui',
             'komentar' => $request->komentar
         ]);
 
-        return redirect()->route('perusahaan-kurikulum-list-validasi');
+        return redirect()->route('perusahaan-kurikulum-list-validasi')
+            ->with('success', 'Kurikulum berhasil ditolak');
     }
 }

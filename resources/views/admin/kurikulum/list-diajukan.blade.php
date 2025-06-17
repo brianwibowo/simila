@@ -6,12 +6,28 @@
         <div class="col-12">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle me-2"></i>
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
                             <h1 class="h4 mb-1">Daftar Kurikulum Diajukan</h1>
                             <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan</p>
                         </div>
-                        <a href="{{ route('perusahaan-kurikulum-create') }}" class="btn btn-primary d-flex align-items-center">
+                        <a href="{{ route('admin-kurikulum-create') }}" class="btn btn-primary d-flex align-items-center">
                             <i class="bi bi-plus-circle me-2"></i> Ajukan Kurikulum
                         </a>
                     </div>
@@ -22,7 +38,7 @@
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-calendar3"></i>
                                 </span>
-                                <input type="date" id="filter-date" class="form-control border-start-0">
+                                <input type="date" id="filter-date" class="form-control border-start-0" placeholder="Filter berdasarkan tanggal">
                                 <button class="btn btn-outline-secondary" type="button" id="clear-date">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
@@ -44,20 +60,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($kurikulums as $kurikulum)
+                                @forelse ($kurikulums as $kurikulum)
                                     <tr>
                                         <td>{{ $kurikulum->nama_kurikulum }}</td>
                                         <td>{{ $kurikulum->tahun_ajaran }}</td>
                                         <td>
-                                            <a href="{{ asset('storage/'.$kurikulum->file_kurikulum)}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-download me-1"></i> Unduh
                                             </a>
                                         </td>
-                                        <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td>
+                                        <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
                                         <td>
-                                            @if($kurikulum->validasi_sekolah == 'disetujui')
+                                            @if($kurikulum->validasi_perusahaan == 'disetujui')
                                                 <span class="badge bg-success">Disetujui</span>
-                                            @elseif($kurikulum->validasi_sekolah == 'tidak_disetujui')
+                                            @elseif($kurikulum->validasi_perusahaan == 'tidak_disetujui')
                                                 <span class="badge bg-danger">Ditolak</span>
                                             @else
                                                 <span class="badge bg-warning">Menunggu</span>
@@ -65,13 +81,13 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}" 
+                                                <a href="{{ route('admin-kurikulum-edit', $kurikulum) }}" 
                                                    class="btn btn-sm btn-outline-warning" 
                                                    data-bs-toggle="tooltip" 
                                                    title="Edit">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}" 
+                                                <form action="{{ route('admin-kurikulum-destroy', $kurikulum) }}" 
                                                       method="POST" 
                                                       onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
                                                       class="d-inline">
@@ -94,7 +110,16 @@
                                             @endif
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                Belum ada kurikulum yang diajukan
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -105,13 +130,6 @@
 </div>
 
 <style>
-.avatar-sm {
-    width: 32px;
-    height: 32px;
-}
-.bg-primary-subtle {
-    background-color: rgba(13, 110, 253, 0.1);
-}
 .table > :not(caption) > * > * {
     padding: 1rem;
 }

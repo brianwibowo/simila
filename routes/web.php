@@ -2,6 +2,8 @@
 
 use App\Models\Project;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
@@ -9,7 +11,6 @@ use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 
 /*
@@ -35,8 +36,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/', function () {
         return view('admin.dashboard');
     })->name('admin-dashboard');
+
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
     Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
+
+    // Kurikulum Routes
+    Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
+    Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
+    Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
+    Route::post('/kurikulum', [AdminKurikulumController::class, 'store'])->name('admin-kurikulum-store');
+    Route::get('/kurikulum/{kurikulum}/edit', [AdminKurikulumController::class, 'edit'])->name('admin-kurikulum-edit');
+    Route::put('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'update'])->name('admin-kurikulum-update');
+    Route::delete('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'destroy'])->name('admin-kurikulum-destroy');
+    Route::patch('/kurikulum/{kurikulum}/setuju', [AdminKurikulumController::class, 'setuju'])->name('admin-kurikulum-setuju');
+    Route::patch('/kurikulum/{kurikulum}/tolak', [AdminKurikulumController::class, 'tolak'])->name('admin-kurikulum-tolak');
 });
 
 Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {

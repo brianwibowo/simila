@@ -28,23 +28,21 @@
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>
-                <li class="nav-item">
+                </li>                <li class="nav-item {{ request()->routeIs('admin-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="base">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="components/avatars.html">
-                                    <span class="sub-item">Ajukan Kurikulum</span>
+                    <div class="collapse {{ request()->routeIs('admin-kurikulum*') ? 'show' : '' }}" id="base">
+                        <ul class="nav nav-collapse">                            <li class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' ? 'active' : '' }}">
+                                <a href="{{ route('admin-kurikulum-list-diajukan') }}">
+                                    <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="components/buttons.html">
-                                    <span class="sub-item">List Kurikulum</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi' ? 'active' : '' }}">
+                                <a href="{{ route('admin-kurikulum-list-validasi') }}">
+                                    <span class="sub-item">Validasi Kurikulum Perusahaan</span>
                                 </a>
                             </li>
                         </ul>
