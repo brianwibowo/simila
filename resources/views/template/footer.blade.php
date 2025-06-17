@@ -3,14 +3,10 @@
         <ul class="nav">
             <li class="nav-item">
                 Developed by 
-                <a target="_blank" href="http://www.themekita.com">
-                    Sultan Studio
+                <a target="_blank" href="https://instagram.com/vuriko_studio">
+                    Vuriko Studio
                 </a>
             </li>
         </ul>
     </nav>
-    <div>
-        Theme by
-        <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-    </div>
 </div>
