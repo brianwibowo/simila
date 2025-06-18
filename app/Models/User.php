@@ -64,4 +64,8 @@ class User extends Authenticatable
     public function pklPembimbing(){
         return $this->hasMany(PKL::class, 'pembimbing_id');
     }
+
+    public function moocs(){
+        return $this->hasMany(Mooc::class, 'perusahaan_id');
+    }
 }

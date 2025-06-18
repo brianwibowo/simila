@@ -103,7 +103,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item ">
                     <a data-bs-toggle="collapse" href="#maps">
                         <i class="fas fa-map-marker-alt"></i>
                         <p>Talent Scouting</p>
@@ -124,7 +124,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('perusahaan-mooc*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#charts">
                         <i class="far fa-chart-bar"></i>
                         <p>MOOC</p>
@@ -132,8 +132,8 @@
                     </a>
                     <div class="collapse" id="charts">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-mooc-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-mooc-index') }}">
                                     <span class="sub-item">Kelas</span>
                                 </a>
                             </li>

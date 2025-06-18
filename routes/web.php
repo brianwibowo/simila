@@ -4,10 +4,13 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
+
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
+use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
+
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
@@ -96,6 +99,16 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'update' => 'perusahaan-pkl-update',
         'destroy' => 'perusahaan-pkl-destroy',
         'show' => 'perusahaan-pkl-show',
+    ]);
+
+    Route::resource('mooc', PerusahaanMoocController::class)->names([
+        'index' => 'perusahaan-mooc-index',
+        'create' => 'perusahaan-mooc-create',
+        'store' => 'perusahaan-mooc-store',
+        'edit' => 'perusahaan-mooc-edit',
+        'update' => 'perusahaan-mooc-update',
+        'destroy' => 'perusahaan-mooc-destroy',
+        'show' => 'perusahaan-mooc-show',
     ]);
 });
 
