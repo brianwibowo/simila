@@ -158,8 +158,8 @@
 
                 rows.forEach(row => {
                     const createdDate = row.querySelector('.created-date').textContent.trim().toLowerCase();
-                    const statusText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase(); // kolom Status Validasi
-                    const titleText = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase(); // kolom Nama Kurikulum
+                    const statusText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+                    const titleText = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
 
                     const matchDate = !selectedDate || createdDate.startsWith(selectedDate);
                     const matchStatus = !selectedStatus || statusText.includes(selectedStatus);
