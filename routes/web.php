@@ -11,6 +11,8 @@ use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuCont
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
 
+use App\Http\Controllers\Siswa\PklController as SiswaPklController;
+
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
@@ -116,6 +118,10 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     Route::get('/', function () {
         return view('siswa.dashboard');
     })->name('siswa-dashboard');
+
+    Route::get('/pkl', [SiswaPklController::class, 'index'])->name('siswa-pkl-index');
+    Route::post('/pkl/{pkl}/register', [SiswaPklController::class, 'register'])->name('siswa-pkl-register');
+    Route::get('/pkl/show', [SiswaPklController::class, 'show'])->name('siswa-pkl-show');
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {

@@ -131,17 +131,20 @@
                     <h5 class="mb-0"><i class="bi bi-people-fill text-primary"></i> Anggota Kelompok ({{ $pkl->siswas()->count() }})</h5>
                 </div>
                 <div class="card-body p-0">
-                    @if($pkl->anggota && $pkl->anggota->count() > 0)
+                    @if($pkl->siswas && $pkl->siswas->count() > 0)
                     <ul class="list-group list-group-flush">
-                        @foreach($pkl->anggota as $index => $anggota)
+                        @foreach($pkl->siswas as $index => $anggota)
                         <li class="list-group-item d-flex justify-content-between align-items-start px-3 py-2">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">{{ $anggota->nama }}</div>
-                                <small class="text-muted">{{ $anggota->nim ?? 'NIM tidak tersedia' }}</small>
+                            <div class="ms-2 me-auto d-flex gap-2">
+                                <div class="fw-bold">{{ $anggota->name }}</div>
+                                @if($anggota->pkl_status === 'disetujui')
+                                    <span class="badge bg-success rounded-pill">diterima</span>
+                                @elseif($anggota->pkl_status === 'ditolak')
+                                    <span class="badge bg-danger rounded-pill">ditolak</span>
+                                @else
+                                    <span class="badge bg-warning rounded-pill">menunggu validasi</span>
+                                @endif
                             </div>
-                            @if($index === 0)
-                                <span class="badge bg-primary rounded-pill">Ketua</span>
-                            @endif
                         </li>
                         @endforeach
                     </ul>

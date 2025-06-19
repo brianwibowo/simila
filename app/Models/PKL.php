@@ -63,7 +63,7 @@ class PKL extends Model
 
     public function siswas()
     {
-        return $this->hasMany(User::class, 'id');
+        return $this->hasMany(User::class, 'pkl_id');
     }
 
     public function pembimbing()
