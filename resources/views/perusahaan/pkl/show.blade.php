@@ -100,27 +100,7 @@
                         
                         <dt class="col-sm-4">Status Waka Humas</dt>
                         <dd class="col-sm-8">{!! getStatusBadge($pkl->status_waka_humas) !!}</dd>
-
-                        <dt class="col-sm-4">Nilai Akhir</dt>
-                        <dd class="col-sm-8 d-flex align-items-center" style="gap: 10px;">
-                            <span class="badge bg-info fs-6">{{ $pkl->nilai > 0 ? $pkl->nilai : 'Belum Dinilai' }}</span>
-                            
-                            @if ($pkl->status_pembimbing == 'disetujui' && $pkl->status_waka_humas == 'disetujui')
-                            <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#nilaiModal">
-                                <i class="bi bi-plus-circle"></i> {{ $pkl->nilai > 0 ? 'Ubah Nilai' : 'Input Nilai' }}
-                            </button>
-                            @endif
-                        </dd>
                     </dl>
-
-                    <h6 class="text-muted">LAPORAN AKHIR</h6>
-                    <div class="p-3 bg-light rounded">
-                        @if($pkl->laporan_akhir)
-                            <p class="mb-0">{{ $pkl->laporan_akhir }}</p>
-                        @else
-                            <p class="text-muted mb-0">Siswa belum mengunggah laporan akhir.</p>
-                        @endif
-                    </div>
                 </div>
             </div>
         </div>
@@ -134,18 +114,19 @@
                     @if($pkl->siswas && $pkl->siswas->count() > 0)
                     <ul class="list-group list-group-flush">
                         @foreach($pkl->siswas as $index => $anggota)
-                        <li class="list-group-item d-flex justify-content-between align-items-start px-3 py-2">
-                            <div class="ms-2 me-auto d-flex gap-2">
-                                <div class="fw-bold">{{ $anggota->name }}</div>
-                                @if($anggota->pkl_status === 'disetujui')
-                                    <span class="badge bg-success rounded-pill">diterima</span>
-                                @elseif($anggota->pkl_status === 'ditolak')
-                                    <span class="badge bg-danger rounded-pill">ditolak</span>
-                                @else
-                                    <span class="badge bg-warning rounded-pill">menunggu validasi</span>
-                                @endif
-                            </div>
-                        </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-start px-3 py-2">
+                                <div class="ms-2 me-auto d-flex gap-2">
+                                    <div class="fw-bold">{{ $anggota->name }}</div>
+                                    @if($anggota->pkl_status === 'disetujui')
+                                        <span class="badge bg-success rounded-pill">diterima</span>
+                                    @elseif($anggota->pkl_status === 'ditolak')
+                                        <span class="badge bg-danger rounded-pill">ditolak</span>
+                                    @else
+                                        <span class="badge bg-warning rounded-pill">menunggu validasi</span>
+                                    @endif
+                                </div>
+                                <a href="{{ route('perusahaan-pkl-siswa', ['user' => $anggota->id]) }}" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
+                            </li>
                         @endforeach
                     </ul>
                     @else

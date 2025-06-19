@@ -24,7 +24,6 @@ class CreatePKLSTable extends Migration
             $table->enum('status_pembimbing', ['disetujui', 'revisi', 'proses']);
             $table->enum('status_waka_humas', ['disetujui', 'proses']);
             $table->enum('status', ['proses', 'berjalan', 'selesai']);
-            $table->bigInteger('nilai')->default(0);
             $table->timestamps();
 
             $table->foreign('perusahaan_id')->references('id')->on('users')->onDelete('cascade');

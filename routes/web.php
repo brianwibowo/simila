@@ -114,9 +114,11 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-pkl-destroy',
         'show' => 'perusahaan-pkl-show',
     ]);
+    Route::get('/pkl/siswa/{user}', [PerusahaanPklController::class, 'siswa'])->name('perusahaan-pkl-siswa');
     Route::get('/list-pendaftar', [PerusahaanPklController::class, 'list'])->name('perusahaan-pkl-list');
     Route::post('/pkl/{user}/terima', [PerusahaanPklController::class, 'terima'])->name('perusahaan-pkl-terima');
     Route::post('/pkl/{user}/tolak', [PerusahaanPklController::class, 'tolak'])->name('perusahaan-pkl-tolak');
+    Route::post('/pkl/{user}/nilai', [PerusahaanPklController::class, 'nilai'])->name('perusahaan-pkl-nilai');
 
     Route::resource('mooc', PerusahaanMoocController::class)->names([
         'index' => 'perusahaan-mooc-index',

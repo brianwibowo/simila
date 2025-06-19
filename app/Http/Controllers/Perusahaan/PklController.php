@@ -109,4 +109,25 @@ class PklController extends Controller
         $user->save();
         return redirect()->route('perusahaan-pkl-list');
     }
+
+    public function siswa(User $user){
+        $logbooks = $user->logbook->logbookContents()->paginate(10);
+        return view('perusahaan.pkl.siswa', [
+            'user' => $user,
+            'logbooks' => $logbooks
+        ]);
+    }
+
+    public function nilai(User $user, Request $request){
+        $request->validate([
+            'nilai' => 'required'
+        ]);
+        
+        $user->update([
+            'pkl_status' => 'selesai',
+            'nilai_pkl' => $request->nilai
+        ]);
+
+        return redirect()->route('perusahaan-pkl-siswa', $user->id);
+    }
 }
