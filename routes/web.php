@@ -38,7 +38,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     })->name('admin-dashboard');
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
-    Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');    // Kurikulum Routes
+    Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
+    
+    // Project Routes for Admin
+    Route::prefix('project')->name('admin-project-')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\ProjectController::class, 'index'])->name('index');
+        Route::post('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'uploadLaporan'])
+            ->name('laporan-upload');
+        Route::put('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'updateLaporan'])
+            ->name('laporan-update');
+        Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
+            ->name('laporan-delete');
+    });// Kurikulum Routes
     Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
     Route::get('/kurikulum/monitor-waka', [AdminKurikulumController::class, 'monitorWakaKurikulum'])->name('admin-kurikulum-monitor-waka');

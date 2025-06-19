@@ -1,31 +1,63 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container mt-4">
+    <div class="container mt-4">    
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h4 mb-0">Daftar Project</h1>
+            <a href="{{ route('perusahaan-project-create') }}" class="btn btn-success">
+                + Ajukan Project
+            </a>
+        </div>
+    
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif    
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">Daftar Project</h1>
-        <a href="{{ route('perusahaan-project-create') }}" class="btn btn-success">
-            + Ajukan Project
-        </a>
-    </div>
+        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+            <i class="bi bi-info-circle-fill"></i> Anda dapat menambahkan project yang sudah berjalan atau selesai dari tahun kapanpun. Gunakan tanggal yang sesuai dengan timeline project sebenarnya, termasuk untuk project-project lama atau terdahulu.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <input type="date" id="filter-date" class="form-control" placeholder="Filter berdasarkan tanggal mulai">
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-calendar3"></i>
+                    </span>
+                    <input type="date" id="filter-date" class="form-control" placeholder="Filter berdasarkan tanggal mulai">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-tag"></i>
+                    </span>
+                    <select id="filter-status" class="form-control">
+                        <option value="">Semua Status</option>
+                        <option value="tertunda">Tertunda</option>
+                        <option value="berlangsung">Berlangsung</option>
+                        <option value="selesai">Selesai</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan judul project...">
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <select id="filter-status" class="form-control">
-                <option value="">Semua Status</option>
-                <option value="tertunda">Tertunda</option>
-                <option value="berlangsung">Berlangsung</option>
-                <option value="selesai">Selesai</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan judul project...">
-        </div>
-    </div>
 
         <div class="row" id="project-cards">
             @foreach ($projects as $project)
@@ -99,6 +131,7 @@
                                     <strong>{{ $endDate->format('d M Y') }}</strong>
                                 </div>
                             </div>
+
                             <div class="row mb-3">
                                 <div class="col-6">
                                     <a href="{{ asset('storage/'.$project->file_brief)}}" target="_blank" class="btn btn-outline-info btn-sm w-100">
@@ -147,7 +180,6 @@
                     </div>
                 </div>
 
-                <!-- Modal Detail Project -->
                 <div class="modal fade" id="detailModal{{ $project->id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $project->id }}" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -229,112 +261,115 @@
             @endforeach
         </div>
 
-    <!-- Empty state -->
-    <div id="empty-state" class="text-center py-5" style="display: none;">
-        <div class="mb-3">
-            <i class="bi bi-folder-x" style="font-size: 4rem; color: #6c757d;"></i>
+        <div id="empty-state" class="text-center py-5" style="display: none;">
+            <div class="mb-3">
+                <i class="bi bi-folder-x" style="font-size: 4rem; color: #6c757d;"></i>
+            </div>
+            <h5 class="text-muted">Tidak ada project yang ditemukan</h5>
+            <p class="text-muted">Coba ubah filter atau tambahkan project baru</p>
         </div>
-        <h5 class="text-muted">Tidak ada project yang ditemukan</h5>
-        <p class="text-muted">Coba ubah filter atau tambahkan project baru</p>
     </div>
-</div>
 
-<script>
-    // Filter functions
-    function filterProjects() {
-        const selectedDate = document.getElementById('filter-date').value;
-        const selectedStatus = document.getElementById('filter-status').value;
-        const searchTitle = document.getElementById('search-title').value.toLowerCase();
-        const cards = document.querySelectorAll('.project-card');
-        let visibleCount = 0;
+    <script>
+        function filterProjects() {
+            const selectedDate = document.getElementById('filter-date').value;
+            const selectedStatus = document.getElementById('filter-status').value;
+            const searchTitle = document.getElementById('search-title').value.toLowerCase();
+            const cards = document.querySelectorAll('.project-card');
+            let visibleCount = 0;
 
-        cards.forEach(card => {
-            const startDate = card.getAttribute('data-start-date');
-            const status = card.getAttribute('data-status');
-            const title = card.getAttribute('data-title');
+            cards.forEach(card => {
+                const startDate = card.getAttribute('data-start-date');
+                const status = card.getAttribute('data-status');
+                const title = card.getAttribute('data-title');
+                
+                let showCard = true;
+                
+                // Filter by date - improved logic
+                if (selectedDate && selectedDate !== '') {
+                    // Convert both dates to Date objects for proper comparison
+                    const filterDate = new Date(selectedDate);
+                    const cardDate = new Date(startDate);
+                    
+                    // Compare dates ignoring the time part
+                    if (filterDate.toISOString().split('T')[0] !== cardDate.toISOString().split('T')[0]) {
+                        showCard = false;
+                    }
+                }
+                
+                // Filter by status
+                if (selectedStatus && status !== selectedStatus) {
+                    showCard = false;
+                }
+                
+                // Filter by title
+                if (searchTitle && !title.includes(searchTitle)) {
+                    showCard = false;
+                }
+                
+                // Update visibility
+                if (showCard) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
             
-            let showCard = true;
-            
-            // Filter by date
-            if (selectedDate && !startDate.startsWith(selectedDate)) {
-                showCard = false;
-            }
-            
-            // Filter by status
-            if (selectedStatus && status !== selectedStatus) {
-                showCard = false;
-            }
-            
-            // Filter by title
-            if (searchTitle && !title.includes(searchTitle)) {
-                showCard = false;
-            }
-            
-            if (showCard) {
-                card.style.display = '';
-                visibleCount++;
-            } else {
-                card.style.display = 'none';
-            }
-        });
-        
-        // Show/hide empty state
-        const emptyState = document.getElementById('empty-state');
-        if (visibleCount === 0) {
-            emptyState.style.display = 'block';
-        } else {
-            emptyState.style.display = 'none';
+            document.getElementById('empty-state').style.display = visibleCount === 0 ? 'block' : 'none';
         }
-    }
+        const filterDateInput = document.getElementById('filter-date');
+        const filterStatusSelect = document.getElementById('filter-status');
+        const searchTitleInput = document.getElementById('search-title');
 
-    // Event listeners
-    document.getElementById('filter-date').addEventListener('input', filterProjects);
-    document.getElementById('filter-status').addEventListener('change', filterProjects);
-    document.getElementById('search-title').addEventListener('input', filterProjects);
+        filterDateInput.addEventListener('change', filterProjects);
+        filterDateInput.addEventListener('input', filterProjects);
+        filterStatusSelect.addEventListener('change', filterProjects);
+        searchTitleInput.addEventListener('input', filterProjects);
 
-    // Delete confirmation
-    function confirmDelete(projectId) {
-        if (confirm('Yakin ingin menghapus project ini? Tindakan ini tidak dapat dibatalkan.')) {
-            document.getElementById('deleteForm' + projectId).submit();
+        filterProjects();
+
+        function confirmDelete(projectId) {
+            if (confirm('Yakin ingin menghapus project ini? Semua file yang terkait (brief dan laporan) juga akan dihapus. Tindakan ini tidak dapat dibatalkan.')) {
+                document.getElementById('deleteForm' + projectId).submit();
+            }
         }
-    }
 
-    // Card hover effects
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.transition = 'transform 0.3s ease';
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
         });
+    </script>
+
+    <style>
+        .card {
+            transition: all 0.3s ease;
+        }
         
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-</script>
-
-<style>
-    .card {
-        transition: all 0.3s ease;
-    }
-    
-    .card:hover {
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
-    }
-    
-    .progress {
-        background-color: #e9ecef;
-    }
-    
-    .badge {
-        font-size: 0.75rem;
-    }
-    
-    .btn-group .btn {
-        flex: 1;
-    }
-    
-    .card-footer {
-        border-top: 1px solid #dee2e6;
-    }
-</style>
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .progress {
+            background-color: #e9ecef;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        .card-footer {
+            border-top: 1px solid #dee2e6;
+        }
+    </style>
 @endsection

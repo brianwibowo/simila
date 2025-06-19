@@ -21,6 +21,15 @@ class ProjectController extends Controller
 
     public function uploadLaporan(Request $request, Project $project)
     {
+        // Check if project timeline has passed
+        $today = now();
+        $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
+        
+        if ($today > $endDate) {
+            return redirect()->route('guru-project-index')
+                ->with('error', 'Tidak dapat mengupload laporan karena timeline project telah berakhir');
+        }
+        
         $request->validate([
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240', // Maksimal 10MB
         ]);
@@ -38,6 +47,15 @@ class ProjectController extends Controller
 
     public function updateLaporan(Request $request, Project $project)
     {
+        // Check if project timeline has passed
+        $today = now();
+        $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
+        
+        if ($today > $endDate) {
+            return redirect()->route('guru-project-index')
+                ->with('error', 'Tidak dapat memperbarui laporan karena timeline project telah berakhir');
+        }
+        
         $request->validate([
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240',
         ]);
@@ -55,6 +73,21 @@ class ProjectController extends Controller
 
     public function deleteLaporan(Request $request, Project $project)
     {
+        // Check if project timeline has passed
+        $today = now();
+        $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
+        
+        if ($today > $endDate) {
+            return redirect()->route('guru-project-index')
+                ->with('error', 'Tidak dapat menghapus laporan karena timeline project telah berakhir');
+        }
+        
+        // Check if report was uploaded by admin
+        if ($project->is_manual_upload) {
+            return redirect()->route('guru-project-index')
+                ->with('error', 'Tidak dapat menghapus laporan yang diupload oleh admin');
+        }
+        
         if ($project->file_laporan) {
             Storage::disk('public')->delete($project->file_laporan);
             $project->update(['file_laporan' => null]);

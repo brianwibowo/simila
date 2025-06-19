@@ -4,6 +4,20 @@
 <div class="container mt-4">
     <h1 class="mb-4 h4">Ajukan Project</h1>
 
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <form action="{{ route('perusahaan-project-store') }}" method="POST" enctype="multipart/form-data" id="projectForm">
         @csrf
 
@@ -25,16 +39,16 @@
                       class="form-control @error('deskripsi') is-invalid @enderror"
                       placeholder="Masukkan detail project"
                       required></textarea>
-        </div>
-
-        <div class="mb-3">
+        </div>        <div class="mb-3">
             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
             <input type="date"
                    name="tanggal_mulai"
                    id="tanggal_mulai"
                    class="form-control @error('tanggal_mulai') is-invalid @enderror"
-                   min="{{ date('Y-m-d') }}"
                    required>
+            <div class="form-text">
+                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, termasuk project lama atau terdahulu.</small>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -43,8 +57,10 @@
                    name="tanggal_selesai"
                    id="tanggal_selesai"
                    class="form-control @error('tanggal_selesai') is-invalid @enderror"
-                   min="{{ date('Y-m-d') }}"
                    required>
+            <div class="form-text">
+                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, pastikan tanggal selesai setelah tanggal mulai.</small>
+            </div>
         </div>
 
         {{-- Elemen ini dikontrol oleh JavaScript dan akan muncul jika tanggal valid --}}
@@ -81,9 +97,7 @@
      const durationInfo = document.getElementById('duration-info');
      const durationText = document.getElementById('duration-text');
      const form = document.getElementById('projectForm');
-     const submitBtn = document.getElementById('submitBtn');
-
-     function calculateDuration() {
+     const submitBtn = document.getElementById('submitBtn');     function calculateDuration() {
          const startDate = new Date(startDateInput.value);
          const endDate = new Date(endDateInput.value);
          
@@ -94,8 +108,8 @@
              durationText.textContent = `${diffDays} hari`;
              durationInfo.classList.remove('d-none');
              
-             // Update end date minimum
-             endDateInput.min = startDateInput.value;
+             // We won't update end date minimum anymore to allow any date in current year
+             // endDateInput.min = startDateInput.value;
          } else {
              durationInfo.classList.add('d-none');
          }

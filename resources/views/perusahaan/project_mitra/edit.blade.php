@@ -5,6 +5,20 @@
     {{-- Judul diubah untuk menandakan halaman edit --}}
     <h1 class="mb-4 h4">Edit Project</h1>
 
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     {{-- Form action dan method disesuaikan untuk update --}}
     <form action="{{ route('perusahaan-project-update', $project->id) }}" method="POST" enctype="multipart/form-data" id="projectForm">
         @csrf
@@ -34,9 +48,7 @@
             @error('deskripsi')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
-
-        <div class="mb-3">
+        </div>        <div class="mb-3">
             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
             <input type="date"
                    name="tanggal_mulai"
@@ -47,6 +59,9 @@
             @error('tanggal_mulai')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
+            <div class="form-text">
+                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, termasuk project lama atau terdahulu.</small>
+            </div>
         </div>
 
         <div class="mb-3">
@@ -60,6 +75,9 @@
             @error('tanggal_selesai')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
+            <div class="form-text">
+                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, pastikan tanggal selesai setelah tanggal mulai.</small>
+            </div>
         </div>
 
         <div class="alert alert-info d-none mb-3" id="duration-info">
@@ -106,9 +124,7 @@
      const durationInfo = document.getElementById('duration-info');
      const durationText = document.getElementById('duration-text');
      const form = document.getElementById('projectForm');
-     const submitBtn = document.getElementById('submitBtn');
-
-     function calculateDuration() {
+     const submitBtn = document.getElementById('submitBtn');     function calculateDuration() {
          const startDate = new Date(startDateInput.value);
          const endDate = new Date(endDateInput.value);
          
@@ -119,7 +135,8 @@
              durationText.textContent = `${diffDays} hari`;
              durationInfo.classList.remove('d-none');
              
-             endDateInput.min = startDateInput.value;
+             // We won't update end date minimum anymore to allow any date in current year
+             // endDateInput.min = startDateInput.value;
          } else {
              durationInfo.classList.add('d-none');
          }

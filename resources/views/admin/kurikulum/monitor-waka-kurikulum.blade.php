@@ -87,7 +87,7 @@
                                             @if($kurikulum->validasi_perusahaan == 'proses')
                                                 @php $hasWaiting = true; @endphp
                                                 <tr>
-                                                    <td>{{ $kurikulum->pengirim->name }} (Waka Kurikulum)</td>
+                                                    <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
@@ -136,7 +136,7 @@
                                             @if($kurikulum->validasi_perusahaan == 'disetujui')
                                                 @php $hasApproved = true; @endphp
                                                 <tr>
-                                                    <td>{{ $kurikulum->pengirim->name }} (Waka Kurikulum)</td>
+                                                    <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
@@ -185,7 +185,7 @@
                                             @if($kurikulum->validasi_perusahaan == 'tidak_disetujui')
                                                 @php $hasRejected = true; @endphp
                                                 <tr>
-                                                    <td>{{ $kurikulum->pengirim->name }} (Waka Kurikulum)</td>
+                                                    <td>{{ $kurikulum->pengirim->name }}</td>
                                                     <td>{{ $kurikulum->nama_kurikulum }}</td>
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>

@@ -52,23 +52,17 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                <li class="nav-item">
+                </li>                <li class="nav-item {{ request()->routeIs('admin-project*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="fas fa-th-list"></i>
                         <p>Project Mitra</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="sidebarLayouts">
+                    <div class="collapse {{ request()->routeIs('admin-project*') ? 'show' : '' }}" id="sidebarLayouts">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="sidebar-style-2.html">
-                                    <span class="sub-item">List Projek</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Buat Projek Baru</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-project-index' ? 'active' : '' }}">
+                                <a href="{{ route('admin-project-index') }}">
+                                    <span class="sub-item">Manajemen Project</span>
                                 </a>
                             </li>
                         </ul>
