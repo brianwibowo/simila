@@ -1,4 +1,5 @@
-<div class="sidebar" data-background-color="dark">    <div class="sidebar-logo">
+<div class="sidebar" data-background-color="dark">    
+    <div class="sidebar-logo">
         <!-- Logo Header -->
         <div class="logo-header" data-background-color="dark">
             <a href="{{ route('waka-kurikulum-dashboard') }}" class="logo">
@@ -23,18 +24,18 @@
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item {{ Route::currentRouteName() == 'waka-kurikulum-dashboard' ? 'active' : '' }}">
-                    <a href="{{ route('waka-kurikulum-dashboard') }}">
+                    <a href="{{ route('waka-kurikulum-dashboard') }}" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>
-                <li class="nav-item {{ request()->routeIs('waka-kurikulum*') ? 'active' : '' }}">
+                </li>                
+                <li class="nav-item {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->routeIs('waka-kurikulum*') && !request()->routeIs('waka-kurikulum-dashboard') ? 'show' : '' }}" id="base">
+                    <div class="collapse {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') ? 'show' : '' }}" id="base">
                         <ul class="nav nav-collapse">
                             <li class="{{ Route::currentRouteName() == 'waka-kurikulum-list-diajukan' ? 'active' : '' }}">
                                 <a href="{{ route('waka-kurikulum-list-diajukan') }}">

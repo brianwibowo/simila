@@ -12,10 +12,13 @@ class Kernel extends ConsoleKernel
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
-     */
-    protected function schedule(Schedule $schedule)
+     */    protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        
+        // Run project file cleanup weekly
+        $schedule->command('project:cleanup-files')->weekly()->sundays()->at('01:00')
+            ->appendOutputTo(storage_path('logs/project-cleanup.log'));
     }
 
     /**

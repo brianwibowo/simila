@@ -46,6 +46,22 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" id="search-input" class="form-control border-start-0" placeholder="Cari kurikulum...">
+                                <button class="btn btn-outline-secondary" type="button" id="clear-search">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button id="reset-all-filters" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset Semua Filter
+                            </button>
+                        </div>
                     </div>
 
                     <ul class="nav nav-tabs nav-tabs-custom mb-4" role="tablist">
@@ -100,14 +116,10 @@
                                                     <td><span class="badge bg-warning">Menunggu</span></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <form action="{{ route('admin-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline">
+                                                            <form action="{{ route('admin-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline" id="approveForm{{ $kurikulum->id }}">
                                                                 @csrf
-                                                                @method('PATCH')
-                                                                <button type="submit" 
-                                                                        class="btn btn-sm btn-outline-success me-1" 
-                                                                        data-bs-toggle="tooltip" 
-                                                                        title="Setuju">
-                                                                    <i class="bi bi-check-lg"></i>
+                                                                <button type="button" onclick="confirmApprove({{ $kurikulum->id }})" class="btn btn-success btn-sm">
+                                                                    <i class="bi bi-check-lg me-1"></i> Setujui
                                                                 </button>
                                                             </form>
                                                             
@@ -132,24 +144,16 @@
                                                                         </h5>
                                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                     </div>
-                                                                    <form action="{{ route('admin-kurikulum-tolak', $kurikulum) }}" method="POST">
+                                                                    <form action="{{ route('admin-kurikulum-tolak', $kurikulum) }}" method="POST" id="rejectForm{{ $kurikulum->id }}">
                                                                         @csrf
-                                                                        @method('PATCH')
-                                                                        <div class="modal-body">
-                                                                            <div class="mb-3">
-                                                                                <label for="komentar" class="form-label">Komentar Penolakan</label>
-                                                                                <textarea name="komentar" 
-                                                                                          id="komentar" 
-                                                                                          rows="4" 
-                                                                                          class="form-control" 
-                                                                                          required
-                                                                                          placeholder="Masukkan alasan penolakan kurikulum..."></textarea>
-                                                                            </div>
+                                                                        <div class="mb-3">
+                                                                            <label for="catatan{{ $kurikulum->id }}" class="form-label">Catatan Penolakan</label>
+                                                                            <textarea class="form-control" id="catatan{{ $kurikulum->id }}" name="catatan" rows="3" required></textarea>
                                                                         </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                                                            <button type="submit" class="btn btn-danger">
-                                                                                <i class="bi bi-x-circle me-1"></i> Tolak Kurikulum
+                                                                        <div class="text-end">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                                            <button type="button" onclick="confirmReject({{ $kurikulum->id }})" class="btn btn-danger">
+                                                                                <i class="bi bi-x-lg me-1"></i> Tolak Kurikulum
                                                                             </button>
                                                                         </div>
                                                                     </form>
@@ -164,9 +168,9 @@
                                         @if(!$hasWaiting)
                                             <tr>
                                                 <td colspan="7" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                                        Tidak ada kurikulum yang menunggu validasi
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                                                        <p class="mt-3 mb-0">Tidak ada kurikulum yang sedang menunggu validasi</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -212,10 +216,10 @@
                                         
                                         @if(!$hasApproved)
                                             <tr>
-                                                <td colspan="6" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
-                                                        Belum ada kurikulum yang disetujui
+                                                <td colspan="7" class="text-center py-4">
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-clipboard-check fs-1 text-muted"></i>
+                                                        <p class="mt-3 mb-0">Tidak ada kurikulum yang sudah disetujui</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -267,10 +271,10 @@
                                         
                                         @if(!$hasRejected)
                                             <tr>
-                                                <td colspan="6" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="bi bi-x-circle fs-1 d-block mb-2"></i>
-                                                        Belum ada kurikulum yang ditolak
+                                                <td colspan="7" class="text-center py-4">
+                                                    <div class="empty-state">
+                                                        <i class="bi bi-x-octagon fs-1 text-muted"></i>
+                                                        <p class="mt-3 mb-0">Tidak ada kurikulum yang ditolak</p>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -337,41 +341,117 @@ document.addEventListener('DOMContentLoaded', function() {
     // Date filter functionality
     const dateFilter = document.getElementById('filter-date');
     const clearDateBtn = document.getElementById('clear-date');
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const resetAllBtn = document.getElementById('reset-all-filters');
     
-    function filterTablesByDate() {
+    function filterTables() {
         const selectedDate = dateFilter.value;
+        const searchQuery = searchInput.value.toLowerCase();
         const activeTabId = document.querySelector('.tab-pane.active').id;
         const tables = document.querySelectorAll('.kurikulum-table');
         
         tables.forEach(table => {
             const rows = table.querySelectorAll('tbody tr');
+            let visibleCount = 0;
             
             rows.forEach(row => {
                 if (row.cells.length <= 1) return; // Skip empty message rows
                 
-                const dateCell = row.querySelector('td:nth-child(5)').textContent.trim();
+                const dateCell = row.querySelector('td.created-date')?.textContent.trim() || '';
+                const nameCell = row.cells[1]?.textContent.toLowerCase() || '';
+                const senderCell = row.cells[0]?.textContent.toLowerCase() || '';
+                const yearCell = row.cells[2]?.textContent.toLowerCase() || '';
                 
-                if (!selectedDate || dateCell.startsWith(selectedDate)) {
+                // Improved date comparison logic
+                let showRow = true;
+                if (selectedDate && selectedDate !== '') {
+                    // Convert both dates to Date objects for proper comparison
+                    const filterDate = new Date(selectedDate);
+                    const rowDate = new Date(dateCell);
+                    
+                    // Compare dates ignoring the time part
+                    if (filterDate.toISOString().split('T')[0] !== rowDate.toISOString().split('T')[0]) {
+                        showRow = false;
+                    }
+                }
+                
+                // Apply search filter
+                if (searchQuery && !(
+                    nameCell.includes(searchQuery) || 
+                    senderCell.includes(searchQuery) || 
+                    yearCell.includes(searchQuery)
+                )) {
+                    showRow = false;
+                }
+                
+                if (showRow) {
                     row.style.display = '';
+                    visibleCount++;
                 } else {
                     row.style.display = 'none';
                 }
             });
+            
+            // Show/hide empty state message for the current tab
+            const emptyMessage = table.closest('.tab-pane').querySelector('.empty-state');
+            if (emptyMessage) {
+                emptyMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+            }
         });
     }
     
-    dateFilter.addEventListener('input', filterTablesByDate);
+    dateFilter.addEventListener('change', filterTables);
+    dateFilter.addEventListener('input', filterTables);  // Handle both change and input events
+    searchInput.addEventListener('input', filterTables);
     
     // Clear date filter button
     clearDateBtn.addEventListener('click', function() {
         dateFilter.value = '';
-        filterTablesByDate();
+        filterTables();
+    });
+    
+    // Clear search filter button
+    clearSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        filterTables();
+    });
+    
+    // Reset all filters button
+    resetAllBtn.addEventListener('click', function() {
+        dateFilter.value = '';
+        searchInput.value = '';
+        filterTables();
     });
     
     // Re-apply filter when changing tabs
     document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', filterTablesByDate);
+        tab.addEventListener('shown.bs.tab', filterTables);
     });
+    
+    // Confirmation functions for approve and reject
+    function confirmApprove(kurikulumId) {
+        if (confirm('Apakah Anda yakin ingin menyetujui kurikulum ini?')) {
+            document.getElementById('approveForm' + kurikulumId).submit();
+        }
+    }
+    
+    function confirmReject(kurikulumId) {
+        const form = document.getElementById('rejectForm' + kurikulumId);
+        const catatan = document.getElementById('catatan' + kurikulumId).value.trim();
+        
+        if (!catatan) {
+            alert('Catatan penolakan harus diisi!');
+            return;
+        }
+        
+        if (confirm('Apakah Anda yakin ingin menolak kurikulum ini?')) {
+            form.submit();
+        }
+    }
+    
+    // Initial filter call
+    filterTables();
 });
 </script>
 @endsection

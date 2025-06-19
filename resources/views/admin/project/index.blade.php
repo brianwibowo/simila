@@ -1,14 +1,51 @@
 @extends('layouts.layout')
 
 @section('content')
-    <div class="container mt-4">
+    <div class="container mt-4">    
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h4 mb-0">Daftar Project</h1>
+            <h1 class="h4 mb-0">Manajemen Project Mitra</h1>
+            <div>
+                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#adminInfoModal">
+                    <i class="bi bi-info-circle"></i> Info Admin
+                </button>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="adminInfoModal" tabindex="-1" aria-labelledby="adminInfoModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="adminInfoModalLabel">Informasi Penggunaan Halaman Admin</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle-fill"></i> Hak Istimewa Admin:</h6>
+                            <ul class="mb-0">
+                                <li>Admin dapat mengupload, memperbarui, dan menghapus laporan project kapan saja, termasuk setelah timeline project berakhir.</li>
+                                <li>Jika project timeline telah berakhir, sistem akan meminta admin untuk memberikan catatan saat mengupload/memperbarui laporan.</li>
+                                <li>Catatan admin akan ditampilkan di halaman Guru dan Perusahaan untuk transparansi.</li>
+                                <li>Jika admin mengupload laporan setelah timeline project berakhir, Guru tidak akan dapat mengedit/menghapus laporan tersebut.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif    
@@ -72,9 +109,9 @@
                         $progressPercentage = 100;
                     }
                 @endphp
-                
+
                 <div class="col-lg-4 col-md-6 mb-4 project-card" data-status="{{ $status }}" data-start-date="{{ $startDate->format('Y-m-d') }}" data-title="{{ strtolower($project->judul) }}">
-                    <div class="card h-100 {{ $cardBorder }} shadow-sm">
+                    <div class="card h-100 {{ $cardBorder }} shadow-sm {{ $today > $endDate ? 'border-2' : '' }}">
                         <div class="card-header d-flex justify-content-between align-items-center bg-light">
                             <h6 class="card-title mb-0 text-truncate" style="max-width: 70%;" title="{{ $project->judul }}">
                                 {{ $project->judul }}
@@ -107,6 +144,7 @@
                                     <strong>{{ $endDate->format('d M Y') }}</strong>
                                 </div>
                             </div>
+                            
                             <div class="row mb-3">
                                 <div class="col-6">
                                     @if($project->file_brief)
@@ -131,53 +169,35 @@
                                     @endif
                                 </div>
                             </div>
-                            
+
                             @if($project->is_manual_upload && $project->upload_notes)
                                 <div class="alert alert-info py-1 px-2 mb-0 small">
                                     <i class="bi bi-info-circle"></i> <strong>Catatan Admin:</strong> {{ $project->upload_notes }}
+                                    @if($today > $endDate)
+                                        <div class="mt-1 text-danger small">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> Upload setelah timeline berakhir
+                                        </div>
+                                    @endif
                                 </div>
                             @endif
                         </div>
-
+                        
                         <div class="card-footer bg-white">
                             <div class="btn-group w-100" role="group">
                                 <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal{{ $project->id }}">
                                     <i class="bi bi-eye"></i> Detail
                                 </button>
                                 @if($project->file_laporan)
-                                    @if($project->is_manual_upload)
-                                        <!-- If admin uploaded the report, show disabled buttons -->
-                                        <button type="button" class="btn btn-outline-warning btn-sm" disabled title="Laporan ini diupload oleh admin. Anda tidak dapat memperbarui atau menghapusnya.">
-                                            <i class="bi bi-pencil"></i> Update Laporan
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" disabled title="Laporan ini diupload oleh admin. Anda tidak dapat memperbarui atau menghapusnya.">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    @elseif($today <= $endDate)
-                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateLaporanModal{{ $project->id }}">
-                                            <i class="bi bi-pencil"></i> Update Laporan
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeleteLaporan({{ $project->id }})">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-outline-warning btn-sm" disabled title="Tidak dapat mengupdate laporan karena timeline telah berakhir">
-                                            <i class="bi bi-pencil"></i> Update Laporan
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" disabled title="Tidak dapat menghapus laporan karena timeline telah berakhir">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
-                                    @endif
+                                    <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateLaporanModal{{ $project->id }}">
+                                        <i class="bi bi-pencil"></i> Update Laporan
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeleteLaporan({{ $project->id }})">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
                                 @else
-                                    @if($today <= $endDate)
-                                        <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadLaporanModal{{ $project->id }}">
-                                            <i class="bi bi-upload"></i> Upload Laporan
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-outline-success btn-sm" disabled title="Tidak dapat mengupload laporan karena timeline telah berakhir">
-                                            <i class="bi bi-upload"></i> Upload Laporan
-                                        </button>
-                                    @endif
+                                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadLaporanModal{{ $project->id }}">
+                                        <i class="bi bi-upload"></i> Upload Laporan
+                                    </button>
                                 @endif
                             </div>
                         </div>
@@ -227,19 +247,33 @@
                                             @else
                                                 <span class="text-muted"><i class="bi bi-exclamation-circle"></i> Brief tidak tersedia</span>
                                             @endif
-                                        </p>                                    <p>                                        @if($project->file_laporan)
+                                        </p>
+                                        <p>
+                                            @if($project->file_laporan)
                                                 <a href="{{ Storage::url($project->file_laporan) }}" target="_blank" class="btn btn-success btn-sm">
                                                     <i class="bi bi-download"></i> Download Laporan
-                                                </a>
-                                                @if($project->is_manual_upload && $project->upload_notes)
-                                                    <div class="alert alert-info py-1 px-2 mt-2 small">
-                                                        <i class="bi bi-info-circle"></i> <strong>Catatan Admin:</strong> {{ $project->upload_notes }}
+                                                </a>                                            @if($project->is_manual_upload && $project->upload_notes)
+                                                    <div class="alert alert-info py-2 px-3 mt-2 mb-0">
+                                                        <div class="d-flex align-items-center">
+                                                            <i class="bi bi-info-circle-fill me-2"></i>
+                                                            <div>
+                                                                <strong>Catatan Admin:</strong><br>
+                                                                {{ $project->upload_notes }}
+                                                                @if($today > $endDate)
+                                                                    <div class="mt-1 text-danger small">
+                                                                        <i class="bi bi-exclamation-triangle-fill"></i> Upload setelah timeline berakhir
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 @endif
                                             @else
                                                 <span class="text-muted"><i class="bi bi-exclamation-circle"></i> Laporan belum tersedia</span>
                                                 @if($today > $endDate)
-                                                    <br><span class="text-danger small mt-1"><i class="bi bi-exclamation-triangle"></i> Timeline project telah berakhir, tidak dapat mengupload laporan</span>
+                                                    <div class="alert alert-warning py-1 px-2 mt-2 small">
+                                                        <i class="bi bi-exclamation-triangle"></i> Timeline project telah berakhir. Guru tidak dapat mengupload laporan, tetapi Admin masih dapat mengunggah laporan.
+                                                    </div>
                                                 @endif
                                             @endif
                                         </p>
@@ -253,8 +287,7 @@
                         </div>
                     </div>
                 </div>
-                
-                @if($today <= $endDate)
+
                 <div class="modal fade" id="uploadLaporanModal{{ $project->id }}" tabindex="-1" aria-labelledby="uploadLaporanModalLabel{{ $project->id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -262,14 +295,34 @@
                                 <h5 class="modal-title" id="uploadLaporanModalLabel{{ $project->id }}">Upload Laporan Project</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('guru-project-laporan-upload', $project->id) }}" method="POST" enctype="multipart/form-data">
+
+                            <form action="{{ route('admin-project-laporan-upload', $project->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
+
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label for="file_laporan" class="form-label">File Laporan</label>
                                         <input type="file" class="form-control" id="file_laporan" name="file_laporan" required>
                                         <small class="text-muted">Format yang didukung: PDF, DOC, DOCX</small>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Catatan Upload</label>
+                                        @if($today > $endDate)
+                                            <textarea class="form-control" id="notes" name="notes" rows="3">Laporan diupload oleh admin setelah timeline project berakhir. {{ $endDate->format('d M Y') }}</textarea>
+                                            <small class="text-danger">Catatan ini akan ditampilkan bersama dengan laporan di halaman Guru dan Perusahaan</small>
+                                        @else
+                                            <textarea class="form-control" id="notes" name="notes" rows="2">Diupload oleh admin</textarea>
+                                            <small class="text-muted">Catatan ini akan ditampilkan bersama dengan laporan</small>
+                                        @endif
+                                    </div>
+                                    
+                                    @if($today > $endDate)
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Timeline project telah berakhir!</strong> Anda melakukan upload laporan setelah batas waktu.
+                                            <hr>
+                                            <small>Setelah laporan diupload oleh admin, Guru <strong>tidak akan dapat</strong> memperbarui atau menghapus laporan tersebut.</small>
+                                        </div>
+                                    @endif
                                 </div>
 
                                 <div class="modal-footer">
@@ -280,9 +333,7 @@
                         </div>
                     </div>
                 </div>
-                @endif
 
-                @if($today <= $endDate)
                 <div class="modal fade" id="updateLaporanModal{{ $project->id }}" tabindex="-1" aria-labelledby="updateLaporanModalLabel{{ $project->id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -290,16 +341,37 @@
                                 <h5 class="modal-title" id="updateLaporanModalLabel{{ $project->id }}">Update Laporan Project</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ route('guru-project-laporan-update', $project->id) }}" method="POST" enctype="multipart/form-data">
+
+                            <form action="{{ route('admin-project-laporan-update', $project->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
+
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label for="file_laporan" class="form-label">File Laporan Baru</label>
                                         <input type="file" class="form-control" id="file_laporan" name="file_laporan" required>
                                         <small class="text-muted">Format yang didukung: PDF, DOC, DOCX</small>
                                     </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Catatan Update</label>
+                                        @if($today > $endDate)
+                                            <textarea class="form-control" id="notes" name="notes" rows="3">Laporan diperbarui oleh admin setelah timeline project berakhir. {{ $endDate->format('d M Y') }}</textarea>
+                                            <small class="text-danger">Catatan ini akan ditampilkan bersama dengan laporan di halaman Guru dan Perusahaan</small>
+                                        @else
+                                            <textarea class="form-control" id="notes" name="notes" rows="2">Diperbarui oleh admin</textarea>
+                                            <small class="text-muted">Catatan ini akan ditampilkan bersama dengan laporan</small>
+                                        @endif
+                                    </div>
+                                    
+                                    @if($today > $endDate)
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-exclamation-triangle-fill"></i> <strong>Timeline project telah berakhir!</strong> Anda melakukan update laporan setelah batas waktu.
+                                            <hr>
+                                            <small>Setelah laporan diupdate oleh admin, Guru <strong>tidak akan dapat</strong> memperbarui atau menghapus laporan tersebut.</small>
+                                        </div>
+                                    @endif
                                 </div>
+
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                     <button type="submit" class="btn btn-warning">Update</button>
@@ -308,9 +380,8 @@
                         </div>
                     </div>
                 </div>
-                @endif
 
-                <form id="deleteLaporanForm{{ $project->id }}" action="{{ route('guru-project-laporan-delete', $project->id) }}" method="POST" style="display: none;">
+                <form id="deleteLaporanForm{{ $project->id }}" action="{{ route('admin-project-laporan-delete', $project->id) }}" method="POST" style="display: none;">
                     @csrf
                     @method('DELETE')
                 </form>
@@ -340,6 +411,7 @@
                 const title = card.getAttribute('data-title');
                 
                 let showCard = true;
+
                 if (selectedDate && selectedDate !== '') {
                     const filterDate = new Date(selectedDate);
                     const cardDate = new Date(startDate);
@@ -348,7 +420,7 @@
                         showCard = false;
                     }
                 }
-
+                
                 if (selectedStatus && status !== selectedStatus) {
                     showCard = false;
                 }
