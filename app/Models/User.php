@@ -24,6 +24,9 @@ class User extends Authenticatable
         'password',
         'role',
         'jenis_guru',
+        'pkl_status',
+        'laporan_pkl',
+        'nilai_pkl'
     ];
 
     /**

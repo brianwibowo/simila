@@ -116,7 +116,6 @@
                         @foreach($pkl->siswas as $index => $anggota)
                             <li class="list-group-item d-flex justify-content-between align-items-start px-3 py-2">
                                 <div class="ms-2 me-auto d-flex gap-2">
-                                    <div class="fw-bold">{{ $anggota->name }}</div>
                                     @if($anggota->pkl_status === 'disetujui')
                                         <span class="badge bg-success rounded-pill">diterima</span>
                                     @elseif($anggota->pkl_status === 'ditolak')
@@ -124,6 +123,7 @@
                                     @else
                                         <span class="badge bg-warning rounded-pill">menunggu validasi</span>
                                     @endif
+                                    <div class="fw-bold">{{ $anggota->name }}</div>
                                 </div>
                                 <a href="{{ route('perusahaan-pkl-siswa', ['user' => $anggota->id]) }}" class="btn btn-sm btn-outline-primary">Lihat Detail</a>
                             </li>

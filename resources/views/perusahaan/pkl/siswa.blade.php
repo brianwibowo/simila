@@ -5,8 +5,8 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h4 mb-0">Detail Siswa PKL: {{ $user->name ?? 'Siswa Tidak Ditemukan' }}</h1>
         {{-- Pastikan rute ini mengarah ke daftar pelamar yang benar untuk perusahaan --}}
-        <a href="{{ route('perusahaan-pkl-list') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali ke Daftar Pelamar
+        <a href="{{ route('perusahaan-pkl-show', $user->pkl_id) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Kembali 
         </a>
     </div>
 
@@ -79,8 +79,8 @@
                     Input Nilai Siswa
                 </div>
                 <div class="card-body">
-                    @if ($user->nilai !== null) {{-- Menggunakan strict comparison untuk nilai 0 --}}
-                        <p class="mb-0"><strong>Nilai Akhir PKL:</strong> <span class="fs-4 text-primary">{{ $user->nilai }}</span></p>
+                    @if ($user->nilai_pkl !== null) 
+                        <p class="mb-0"><strong>Nilai Akhir PKL:</strong> <span class="fs-4 text-primary">{{ $user->nilai_pkl }}</span></p>
                     @else
                         <form action="{{ route('perusahaan-pkl-nilai', $user->id) }}" method="POST">
                             @csrf

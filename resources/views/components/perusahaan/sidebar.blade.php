@@ -95,14 +95,14 @@
                     </a>
                     <div class="collapse" id="tables">
                         <ul class="nav nav-collapse">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-pkl-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-pkl-index') }}">
+                                    <span class="sub-item">PKL</span>
+                                </a>
+                            </li>
                             <li class="{{ Route::currentRouteName() == 'perusahaan-pkl-list' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-pkl-list') }}">
                                     <span class="sub-item">Pelamar</span>
-                                </a>
-                            </li>
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-pkl-index' ? 'active' : '' }}">
-                                <a href="{{ route('perusahaan-pkl-index') }}">
-                                    <span class="sub-item">Penilaian</span>
                                 </a>
                             </li>
                         </ul>

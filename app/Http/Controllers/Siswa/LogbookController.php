@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 namespace App\Http\Controllers\Siswa;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\Logbook;
 use App\Models\LogbookContent;
+use App\Models\PKL;
 
 class LogbookController extends Controller
 {
@@ -53,35 +55,44 @@ class LogbookController extends Controller
         return redirect()->route('siswa-logbook-index');
     }
 
-    public function edit()
+    public function edit(LogbookContent $logbook)
     {
-        $pkl_id = auth()->user()->pkl_id;
-        return view('siswa.logbook.edit', [
-            'pkl' => PKL::with('perusahaan')->find($pkl_id)
+        return view('siswa.pkl.logbook.edit', [
+            'logbook' => $logbook
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, LogbookContent $logbook)
     {
         $request->validate([
-            'logbook' => 'required|mimes:pdf'
+            'tanggal' => 'required',
+            'nama' => 'required',
+            'detail' => 'required',
+            'dokumentasi' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $user = auth()->user();
+        if ($request->hasFile('dokumentasi')) {
+            Storage::delete($logbook->dokumentasi);
+            $dokumentasiPath = $request->file('dokumentasi')->store('public/logbook');
+            $dokumentasiPath = str_replace('public/', '', $dokumentasiPath);
+            $logbook->update([
+                'dokumentasi' => $dokumentasiPath
+            ]);
+        }
 
-        $user->update([
-            'logbook' => $request->file('logbook')->store('logbook/', 'public')
+        $logbook->update([
+            'tanggal' => $request->tanggal,
+            'nama' => $request->nama,
+            'detail' => $request->detail
         ]);
 
         return redirect()->route('siswa-logbook-index');
     }
 
-    public function destroy()
+    public function destroy(LogbookContent $logbook)
     {
-        $user = auth()->user();
-        $user->update([
-            'logbook' => null
-        ]);
+        Storage::delete($logbook->dokumentasi);
+        $logbook->delete();
         return redirect()->route('siswa-logbook-index');
     }
 }

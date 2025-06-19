@@ -122,9 +122,8 @@ class PklController extends Controller
         $request->validate([
             'nilai' => 'required'
         ]);
-        
+
         $user->update([
-            'pkl_status' => 'selesai',
             'nilai_pkl' => $request->nilai
         ]);
 
