@@ -75,4 +75,9 @@ class PKL extends Model
     {
         return $this->belongsTo(User::class, 'perusahaan_id');
     }
+
+    public function logbooks()
+    {
+        return $this->hasMany(Logbook::class);
+    }
 }

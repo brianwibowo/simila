@@ -26,7 +26,6 @@
     @endphp
 
     @if ($pkl && !$isPklValidated)
-        {{-- Tampilan saat PKL menunggu validasi atau ditolak --}}
         <div class="card shadow-sm mb-4 border-{{ $validationBadgeClass === 'bg-warning text-dark' ? 'warning' : 'danger' }}">
             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                 Status Pendaftaran PKL
@@ -66,13 +65,7 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <h5>Judul PKL</h5>
-                        <p class="text-muted">{{ $pkl->judul ?? '-' }}</p>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <h5>Deskripsi</h5>
-                        <div class="p-3 bg-light rounded border">
-                            <p class="mb-0">{{ $pkl->deskripsi ?? 'Tidak ada deskripsi.' }}</p>
-                        </div>
+                        <p class="text-muted">{{ $pkl->nama ?? '-' }}</p>
                     </div>
                 </div>
 
@@ -81,35 +74,46 @@
                         <h5>Perusahaan</h5>
                         <p class="text-muted">{{ $pkl->perusahaan->name ?? 'Perusahaan tidak ditemukan' }}</p>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <h5>Lokasi</h5>
-                        <p class="text-muted">{{ $pkl->lokasi ?? 'Tidak ada informasi lokasi' }}</p>
-                    </div>
                 </div>
-
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <h5>Kuota Tersedia</h5>
-                        <p class="text-muted">{{ $pkl->kuota ?? 'N/A' }} peserta</p>
-                    </div>
-                    <div class="col-md-6 mb-3">
                         <h5>Status Pendaftaran PKL (Umum)</h5>
-                        <span class="badge {{ $pklRegistrationStatusBadgeClass }}">{{ $pklRegistrationStatusText }}</span>
+                        <span class="badge bg-{{ auth()->user()->pkl_status === 'proses' ? 'warning' : 'success' }}">{{ auth()->user()->pkl_status }}</span>
                     </div>
                 </div>
-
-                <div class="row mt-3">
-                    <div class="col-md-12 mb-3">
-                        <h5>Periode Pendaftaran</h5>
-                        <p class="text-muted">
-                            {{ \Carbon\Carbon::parse($pkl->tanggal_mulai)->format('d F Y') }}
-                            sampai
-                            {{ \Carbon\Carbon::parse($pkl->tanggal_selesai)->format('d F Y') }}
-                        </p>
+                @if (auth()->user()->logbook->logbookContents()->count() < 50)
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <h5>Upload Laporan Akhir</h5>
+                            <p>Logbook Anda belum lengkap. Silakan upload logbook Anda sebelum melanjutkan. {{ auth()->user()->logbook->logbookContents()->count() }}/50</p>
+                            <a href="{{ route('siswa-logbook-index', $pkl->id) }}" class="btn btn-primary">Upload Logbook</a>
+                        </div>
                     </div>
-                </div>
+                @else
+                    @if(auth()->user()->laporan_pkl === null)
+                        <form action="{{ route('siswa-pkl-uploadLaporan', $pkl->id) }}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h5>Upload Laporan Akhir</h5>
+                                    <div class="d-flex gap-2">
+                                        <input class="form-control" type="file" name="laporan_akhir" id="laporan_akhir">
+                                        <button type="submit" class="btn btn-primary">Upload</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    @else
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <h5>Upload Laporan Akhir</h5>
+                                <p class="text-muted">Laporan akhir telah diupload.</p>
+                                <a href="{{ asset('storage/' . auth()->user()->laporan_pkl) }}" class="btn btn-primary" target="_blank">Lihat Laporan</a>
+                            </div>
+                        </div>
+                    @endif
+                @endif
                 
-                {{-- Detail Tambahan Setelah Tervalidasi --}}
                 <h5 class="mt-4">Informasi Validasi & Penempatan</h5>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center">

@@ -12,6 +12,7 @@ use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
 
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
+use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
 
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
@@ -113,6 +114,9 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-pkl-destroy',
         'show' => 'perusahaan-pkl-show',
     ]);
+    Route::get('/list-pendaftar', [PerusahaanPklController::class, 'list'])->name('perusahaan-pkl-list');
+    Route::post('/pkl/{user}/terima', [PerusahaanPklController::class, 'terima'])->name('perusahaan-pkl-terima');
+    Route::post('/pkl/{user}/tolak', [PerusahaanPklController::class, 'tolak'])->name('perusahaan-pkl-tolak');
 
     Route::resource('mooc', PerusahaanMoocController::class)->names([
         'index' => 'perusahaan-mooc-index',
@@ -133,6 +137,17 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     Route::get('/pkl', [SiswaPklController::class, 'index'])->name('siswa-pkl-index');
     Route::post('/pkl/{pkl}/register', [SiswaPklController::class, 'register'])->name('siswa-pkl-register');
     Route::get('/pkl/show', [SiswaPklController::class, 'show'])->name('siswa-pkl-show');
+    Route::delete('/pkl/batal', [SiswaPklController::class, 'batal'])->name('siswa-pkl-batal');
+    Route::post('/pkl/{pkl}/upload', [SiswaPklController::class, 'uploadLaporan'])->name('siswa-pkl-uploadLaporan');
+    
+    Route::resource('pkl/logbook', SiswaLogbookController::class)->names([
+        'index' => 'siswa-logbook-index',
+        'create' => 'siswa-logbook-create',
+        'store' => 'siswa-logbook-store',
+        'edit' => 'siswa-logbook-edit',
+        'update' => 'siswa-logbook-update',
+        'destroy' => 'siswa-logbook-destroy',
+    ])->except('show');
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {

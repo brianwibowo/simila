@@ -32,4 +32,25 @@ class PklController extends Controller
         auth()->user()->save();
         return redirect()->route('siswa-pkl-index');
     }  
+
+    public function batal(){
+        auth()->user()->pkl_id = null;
+        auth()->user()->pkl_status = null;
+        auth()->user()->save();
+        return redirect()->route('siswa-pkl-index');
+    }
+
+    public function uploadLaporan(Request $request){
+        $request->validate([
+            'laporan_akhir' => 'required|mimes:pdf'
+        ]);
+
+        $user = auth()->user();
+
+        $user->update([
+            'laporan_pkl' => $request->file('laporan')->store('laporan_pkl/', 'public')
+        ]);
+
+        return redirect()->route('siswa-pkl-show');
+    }
 }

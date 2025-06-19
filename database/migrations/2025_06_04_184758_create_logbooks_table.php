@@ -15,13 +15,15 @@ class CreateLogbooksTable extends Migration
     {
         Schema::create('logbooks', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->string('detail');
-            $table->text('dokumentasi');
-            $table->text('catatan_siswa');
-            $table->enum('status', ['disetujui', 'revisi']);
-            $table->text('komentar_pembimbing');
-            $table->timestamps();        });
+            $table->unsignedBigInteger('siswa_id');
+            $table->unsignedBigInteger('pkl_id');
+            $table->enum('status', ['proses','disetujui', 'revisi']);
+            $table->text('komentar_pembimbing')->nullable();
+            $table->timestamps();
+            
+            $table->foreign('siswa_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('pkl_id')->references('id')->on('pkls')->onDelete('cascade');
+        });
     }
 
     /**

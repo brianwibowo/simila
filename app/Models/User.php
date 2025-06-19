@@ -51,10 +51,18 @@ class User extends Authenticatable
                 $user->assignRole('user');
             }
         });
+
+        parent::boot();
+
+        static::deleting(function ($user) {
+            if ($user->laporan_pkl) {
+                Storage::disk('public')->delete($user->laporan_pkl);
+            }
+        });
     }
 
     public function pklSiswa(){
-        return $this->belongsTo(PKL::class);
+        return $this->belongsTo(PKL::class, 'pkl_id');
     }
 
     public function pklPerusahaan(){
@@ -67,5 +75,9 @@ class User extends Authenticatable
 
     public function moocs(){
         return $this->hasMany(Mooc::class, 'perusahaan_id');
+    }
+
+    public function logbook(){
+        return $this->hasOne(Logbook::class, 'siswa_id');
     }
 }

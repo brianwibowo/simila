@@ -12,10 +12,11 @@
         <div class="col-md-4 mb-2">
             <select id="filter-status" class="form-control">
                 <option value="">Semua Status</option>
-                <option value="dibuka">Dibuka</option>
-                <option value="ditutup">Ditutup</option>
-                <option value="penuh">Penuh</option>
-                <option value="belum_dibuka">Belum Dibuka</option>
+                <option value="proses">Proses (Pendaftaran Dibuka)</option>
+                <option value="berjalan">Berjalan</option>
+                <option value="selesai">Selesai</option>
+                <option value="kuota_penuh">Kuota Penuh</option>
+                <option value="pendaftaran_belum_dibuka">Pendaftaran Belum Dibuka</option>
                 <option value="pendaftaran_berakhir">Pendaftaran Berakhir</option>
             </select>
         </div>
@@ -29,100 +30,122 @@
         @forelse ($pkls as $pkl)
             @php
                 $today = \Carbon\Carbon::now();
-                $regStartDate = \Carbon\Carbon::parse($pkl->tanggal_mulai);
+                // Assuming these are the PKL activity dates, not registration dates
+                $pklActivityStartDate = \Carbon\Carbon::parse($pkl->tanggal_mulai);
+                $pklActivityEndDate = \Carbon\Carbon::parse($pkl->tanggal_selesai);
 
-                $pklStatusText = '';
+                // Assuming PKL registration dates are separate columns
+                $regStartDate = \Carbon\Carbon::parse($pkl->tanggal_mulai_pendaftaran);
+                $regEndDate = \Carbon\Carbon::parse($pkl->tanggal_selesai_pendaftaran);
+
+                $pklDisplayStatus = '';
                 $statusBadgeClass = '';
                 $cardBorder = '';
+                
                 $actionButtonText = '';
                 $actionButtonClass = '';
                 $actionButtonDisabled = false;
-                $actionButtonRoute = route('siswa-pkl-register', $pkl->id);
+                $buttonActionType = null; // 'register', 'cancel', or null for disabled
 
-                // Menentukan status berdasarkan data PKL dan tanggal
+                // --- PKL Activity Status for Display Badge ---
                 if ($pkl->status === 'selesai') {
-                    $pklStatusText = 'Selesai';
+                    $pklDisplayStatus = 'Selesai';
                     $statusBadgeClass = 'bg-danger';
                     $cardBorder = 'border-danger';
                 } elseif ($pkl->status === 'berjalan') {
-                    $pklStatusText = 'Berjalan';
+                    $pklDisplayStatus = 'Berjalan';
+                    $statusBadgeClass = 'bg-primary'; // Changed to primary for 'Berjalan'
+                    $cardBorder = 'border-primary';
+                } elseif ($pkl->status === 'proses') {
+                    $pklDisplayStatus = 'Proses'; // This is the state where registration might be open
                     $statusBadgeClass = 'bg-warning text-dark';
                     $cardBorder = 'border-warning';
-                } elseif ($today < $regStartDate) {
-                    $pklStatusText = 'Belum Dibuka';
+                } else {
+                    $pklDisplayStatus = 'Tidak Diketahui';
                     $statusBadgeClass = 'bg-secondary';
                     $cardBorder = 'border-secondary';
-                } else {
-                    $pklStatusText = 'Dibuka';
-                    $statusBadgeClass = 'bg-success';
-                    $cardBorder = 'border-success';
                 }
 
-                // Menentukan teks dan status tombol "Daftar Sekarang"
-                if ($pklStatusText === 'proses') {
-                    $actionButtonText = $pklStatusText;
-                    $actionButtonClass = 'btn-secondary';
+                // --- Button Logic for Registration/Cancellation ---
+                $isRegisteredForThisPkl = (isset($currentStudentPklId) && $currentStudentPklId == $pkl->id);
+                $isRegisteredForOtherPkl = (isset($currentStudentPklId) && $currentStudentPklId !== null && $currentStudentPklId != $pkl->id);
+                $isRegistrationPeriodOpen = ($today >= $regStartDate && $today <= $regEndDate);
+                $isPklFull = ($pkl->kuota <= 0); // Assuming 'kuota' is remaining slots
+
+                if ($isRegisteredForThisPkl && auth()->user()->pkl_status === 'proses') {
+                    $actionButtonText = 'Batal Daftar';
+                    $actionButtonClass = 'btn-danger';
+                    $actionButtonDisabled = false; // Enable cancellation
+                    $buttonActionType = 'cancel';
+                } elseif ($isRegisteredForOtherPkl) {
+                    $actionButtonText = 'Sudah Terdaftar di PKL Lain';
+                    $actionButtonClass = 'btn-info';
                     $actionButtonDisabled = true;
-                } else {
+                    $buttonActionType = 'disabled';
+                } elseif (auth()->user()->pkl_status === 'disetujui') {
+                    $actionButtonText = 'Sudah Terdaftar';
+                    $actionButtonClass = 'btn-info';
+                    $actionButtonDisabled = true;
+                    $buttonActionType = 'disabled';
+                } else { 
                     $actionButtonText = 'Daftar Sekarang';
                     $actionButtonClass = 'btn-primary';
+                    $actionButtonDisabled = false;
+                    $buttonActionType = 'register';
                 }
 
-                // Cek apakah siswa sudah terdaftar di PKL ini atau PKL lain
-                // $currentStudentPklId harus dilewatkan dari controller
-                if (isset($currentStudentPklId)) {
-                    if ($currentStudentPklId == $pkl->id) {
-                        $actionButtonText = 'Sudah Terdaftar di PKL Ini';
-                        $actionButtonClass = 'btn-info';
-                        $actionButtonDisabled = true;
-                    } elseif ($currentStudentPklId !== null && $currentStudentPklId != $pkl->id) {
-                        $actionButtonText = 'Sudah Terdaftar di PKL Lain';
-                        $actionButtonClass = 'btn-info';
-                        $actionButtonDisabled = true;
-                    }
-                }
-
-                // Untuk kebutuhan filter JS
-                $dataStatusForFilter = strtolower(str_replace(' ', '_', $pklStatusText));
+                // For JS filter (use the derived PKL activity status)
+                $dataStatusForFilter = strtolower(str_replace(' ', '_', $pklDisplayStatus));
             @endphp
 
             <div class="col-lg-4 col-md-6 mb-4 pkl-card"
-                data-title="{{ strtolower($pkl->nama) }}"
+                data-title="{{ strtolower($pkl->nama ?? '') }}"
                 data-company="{{ strtolower($pkl->perusahaan->name ?? '') }}"
                 data-status="{{ $dataStatusForFilter }}"
-                data-end-date="{{ $pkl->tanggal_selesai_pendaftaran }}">
+                data-end-date="{{ $regEndDate->format('Y-m-d') }}"> {{-- Use registration end date for filter --}}
                 <div class="card h-100 {{ $cardBorder }} shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center bg-light">
-                        <h6 class="card-title mb-0 text-truncate" style="max-width: 70%;" title="{{ $pkl->judul }}">
-                            {{ $pkl->nama }}
+                        <h6 class="card-title mb-0 text-truncate" style="max-width: 70%;" title="{{ $pkl->nama ?? $pkl->judul ?? 'N/A' }}">
+                            {{ $pkl->nama ?? $pkl->judul ?? 'N/A' }}
                         </h6>
-                        <span class="badge {{ $statusBadgeClass }}">{{ $pklStatusText }}</span>
+                        <span class="badge {{ $statusBadgeClass }}">{{ $pklDisplayStatus }}</span>
                     </div>
                     
                     <div class="card-body">
                         <p class="card-text text-muted mb-3" style="min-height: 60px;">
-                            {{ Str::limit($pkl->nama ?? '', 100) }}
+                            {{ Str::limit($pkl->deskripsi ?? '', 100) }}
                         </p>
 
                         <ul class="list-unstyled small mb-3">
                             <li><i class="bi bi-building me-1"></i> Perusahaan: <strong>{{ $pkl->perusahaan->name ?? 'N/A' }}</strong></li>
-                            <li><i class="bi bi-person-fill-add me-1"></i> Pendaftar: <strong>{{ $pkl->siswas->count() ?? 'N/A' }} peserta</strong></li>
-                            <li><i class="bi bi-calendar-event me-1"></i> Pendaftaran: {{ \Carbon\Carbon::parse($pkl->tanggal_mulai_pendaftaran)->format('d M Y') }} - {{ \Carbon\Carbon::parse($pkl->tanggal_selesai_pendaftaran)->format('d M Y') }}</li>
+                            <li><i class="bi bi-person-fill-add me-1"></i> Pendaftar: <strong>{{ $pkl->siswas->count() ?? '0' }} peserta</strong></li>
+                            <li><i class="bi bi-calendar-event me-1"></i> Periode PKL: {{ $regStartDate->format('d M Y') }} - {{ $regEndDate->format('d M Y') }}</li>
                         </ul>
                     </div>
                     
                     <div class="card-footer bg-white text-center">
-                        @if(!$actionButtonDisabled)
-                            <form action="{{ $actionButtonRoute }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn {{ $actionButtonClass }} w-100 rounded-pill shadow-sm">
-                                    {{ $actionButtonText }}
-                                </button>
-                            </form>
-                        @else
+                        @if ($actionButtonDisabled)
+                            {{-- This button is disabled and will not submit any form --}}
                             <button type="button" class="btn {{ $actionButtonClass }} w-100 rounded-pill shadow-sm" disabled>
                                 {{ $actionButtonText }}
                             </button>
+                        @else
+                            @if ($buttonActionType === 'register')
+                                <form action="{{ route('siswa-pkl-register', $pkl->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn {{ $actionButtonClass }} w-100 rounded-pill shadow-sm">
+                                        {{ $actionButtonText }}
+                                    </button>
+                                </form>
+                            @elseif ($buttonActionType === 'cancel')
+                                <form action="{{ route('siswa-pkl-batal') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pendaftaran PKL ini?');">
+                                    @csrf
+                                    @method('DELETE') {{-- Use DELETE method for cancellation --}}
+                                    <button type="submit" class="btn {{ $actionButtonClass }} w-100 rounded-pill shadow-sm">
+                                        {{ $actionButtonText }}
+                                    </button>
+                                </form>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -195,18 +218,18 @@
                 }
             });
             
-            // Logika untuk menampilkan/menyembunyikan empty state
+            // Logic to show/hide empty state
             if (pklCardsContainer.children.length === 0 && emptyStateInitial) {
-                // Tidak ada PKL sama sekali dari backend
+                // No PKL from backend at all
                 emptyStateInitial.style.display = 'block';
                 emptyStateFiltered.style.display = 'none';
             } else if (visibleCount === 0) {
-                // Ada PKL dari backend, tapi tidak ada yang cocok dengan filter
-                emptyStateInitial.style.display = 'none'; // Pastikan yang awal tersembunyi
+                // PKLs exist from backend, but none match the filter
+                if (emptyStateInitial) emptyStateInitial.style.display = 'none'; // Ensure initial is hidden
                 emptyStateFiltered.style.display = 'block';
             } else {
-                // Ada PKL yang cocok dengan filter
-                emptyStateInitial.style.display = 'none';
+                // PKLs match the filter
+                if (emptyStateInitial) emptyStateInitial.style.display = 'none';
                 emptyStateFiltered.style.display = 'none';
             }
         }
@@ -216,7 +239,7 @@
         filterDate.addEventListener('input', filterPkls);
         searchTitle.addEventListener('input', filterPkls);
 
-        // Panggil filter sekali saat DOM siap untuk mengatur state awal
+        // Call filter once when DOM is ready to set initial state
         filterPkls();
 
         // Card hover effects

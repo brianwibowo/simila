@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('jenis_guru')->nullable();
             $table->timestamps();
             $table->enum('pkl_status',['disetujui', 'proses', 'tidak_disetujui'])->nullable();
+            $table->string('laporan_pkl')->nullable();
         });
     }
 

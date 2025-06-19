@@ -23,13 +23,13 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
+                <li class="nav-item {{ Route::is('siswa-dashboard') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ Route::is('siswa-pkl*') || Route::is('siswa-logbook*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>PKL</p>
@@ -45,6 +45,11 @@
                             <li class="{{ Route::is('siswa-pkl-show') ? 'active' : '' }}">
                                 <a href="{{ route('siswa-pkl-show') }}">
                                     <span class="sub-item">Berjalan</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::is('siswa-logbook*') ? 'active' : '' }}">
+                                <a href="{{ route('siswa-logbook-index') }}">
+                                    <span class="sub-item">LogBook</span>
                                 </a>
                             </li>
                         </ul>
