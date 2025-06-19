@@ -19,8 +19,10 @@ class CreateMOOCSTable extends Migration
             $table->text('deskripsi');
             $table->string('link_materi');
             $table->string('dokumen_materi');
-            $table->string('sertifikat');
+            $table->unsignedBigInteger('perusahaan_id');
             $table->timestamps();
+
+            $table->foreign('perusahaan_id')->references('id')->on('users')->onDelete('cascade');
         }); 
     }
 
