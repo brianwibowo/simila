@@ -28,22 +28,26 @@
                             <p class="text-muted mb-0">Kelola dan validasi kurikulum yang diajukan oleh perusahaan</p>
                         </div>
                     </div>
-                    
-                    <div class="alert alert-info d-flex align-items-center mb-4">
-                        <i class="bi bi-info-circle-fill me-2 fs-4"></i>
-                        <div>Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Perusahaan dan melihat riwayat validasi.</div>
+                      <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Perusahaan dan melihat riwayat validasi.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    
-                    <div class="row mb-4">
+                      <div class="row mb-4">
                         <div class="col-md-4">
                             <div class="input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="bi bi-calendar3"></i>
                                 </span>
                                 <input type="date" id="filter-date" class="form-control border-start-0" placeholder="Filter berdasarkan tanggal">
-                                <button class="btn btn-outline-secondary" type="button" id="clear-date">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" id="search-input" class="form-control border-start-0" placeholder="Cari kurikulum...">
                             </div>
                         </div>
                     </div>
@@ -97,47 +101,24 @@
                                                         </a>
                                                     </td>
                                                     <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
-                                                    <td><span class="badge bg-warning">Menunggu</span></td>
-                                                    <td>
-                                                        <div class="d-flex gap-2">
-                                                            <form action="{{ route('waka-kurikulum-setuju', $kurikulum) }}" method="POST">
+                                                    <td><span class="badge bg-warning">Menunggu</span></td>                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <form action="{{ route('waka-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline">
                                                                 @csrf
                                                                 @method('PATCH')
-                                                                <button type="submit" class="btn btn-sm btn-success">
-                                                                    <i class="bi bi-check-lg me-1"></i> Setuju
+                                                                <button type="submit" class="btn btn-sm btn-outline-success me-1" data-bs-toggle="tooltip" title="Setuju">
+                                                                    <i class="bi bi-check-lg"></i>
                                                                 </button>
                                                             </form>
-                                                            
-                                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#tolakModal{{ $kurikulum->id }}">
-                                                                <i class="bi bi-x-lg me-1"></i> Tolak
+                                                            <button type="button" 
+                                                                class="btn btn-sm btn-outline-danger" 
+                                                                data-bs-toggle="modal" 
+                                                                data-bs-target="#tolakModal" 
+                                                                data-kurikulum-id="{{ $kurikulum->id }}"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Tolak">
+                                                                <i class="bi bi-x-lg"></i>
                                                             </button>
-                                                        </div>
-                                                        
-                                                        <!-- Modal Tolak Kurikulum -->
-                                                        <div class="modal fade" id="tolakModal{{ $kurikulum->id }}" tabindex="-1" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title">Tolak Kurikulum</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <form action="{{ route('waka-kurikulum-tolak', $kurikulum) }}" method="POST">
-                                                                        @csrf
-                                                                        @method('PATCH')
-                                                                        <div class="modal-body">
-                                                                            <div class="mb-3">
-                                                                                <label for="komentar" class="form-label">Komentar Penolakan</label>
-                                                                                <textarea name="komentar" id="komentar" rows="4" class="form-control" required></textarea>
-                                                                                <small class="text-muted">Jelaskan alasan penolakan kurikulum ini</small>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
-                                                                            <button type="submit" class="btn btn-danger">Tolak Kurikulum</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div>
-                                                            </div>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -184,10 +165,9 @@
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
                                                         <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-download me-1"></i> Unduh
-                                                        </a>
+                                                            <i class="bi bi-download me-1"></i> Unduh                                                        </a>
                                                     </td>
-                                                    <td>{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
+                                                    <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td>
                                                 </tr>
                                             @endif
@@ -233,10 +213,9 @@
                                                     <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                     <td>
                                                         <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                            <i class="bi bi-download me-1"></i> Unduh
-                                                        </a>
+                                                            <i class="bi bi-download me-1"></i> Unduh                                                        </a>
                                                     </td>
-                                                    <td>{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
+                                                    <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
                                                     <td>{{ $kurikulum->komentar ?? '-' }}</td>
                                                 </tr>
                                             @endif
@@ -263,25 +242,78 @@
     </div>
 </div>
 
+<!-- Modal Tolak -->
+<div class="modal fade" id="tolakModal" tabindex="-1" aria-labelledby="tolakModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="tolakForm" method="POST">
+            @csrf
+            @method('PATCH')
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tolakModalLabel">
+                        <i class="bi bi-x-circle text-danger me-2"></i>
+                        Komentar Penolakan
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="komentar" class="form-label">Berikan alasan penolakan</label>
+                        <textarea class="form-control" name="komentar" id="komentar" rows="4" required placeholder="Masukkan alasan penolakan kurikulum..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle me-1"></i> Tolak
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <style>
-.nav-tabs-custom .nav-link {
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #6c757d;
-    padding: 0.75rem 1rem;
-}
-.nav-tabs-custom .nav-link.active {
-    color: #2196f3;
-    border-bottom: 2px solid #2196f3;
-    background: transparent;
-}
-.table > :not(caption) > * > * {
-    padding: 1rem;
-}
+    .nav-tabs-custom .nav-link {
+        color: #6c757d;
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-weight: 500;
+    }
+    .nav-tabs-custom .nav-link.active {
+        color: #0d6efd;
+        background: none;
+        border-bottom: 2px solid #0d6efd;
+    }
+    .nav-tabs-custom .nav-link:hover {
+        color: #0d6efd;
+        border-color: transparent;
+    }
+    .table > :not(caption) > * > * {
+        padding: 1rem;
+    }
+    .btn-group .btn {
+        padding: 0.375rem 0.75rem;
+    }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+    
+    // Configure the reject modal
+    const tolakModal = document.getElementById('tolakModal');
+    const tolakForm = document.getElementById('tolakForm');
+
+    tolakModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const kurikulumId = button.getAttribute('data-kurikulum-id');
+        tolakForm.action = `/waka-kurikulum/kurikulum/${kurikulumId}/tolak`;
+    });
     // Handle tab switching with URL hash
     const tabHash = window.location.hash;
     if (tabHash) {
@@ -298,45 +330,71 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.hash = event.target.getAttribute('data-bs-target');
         });
     });
-    
-    // Date filter functionality
+      // Filtering functionality
     const dateFilter = document.getElementById('filter-date');
-    const clearDateBtn = document.getElementById('clear-date');
+    const searchInput = document.getElementById('search-input');
     
-    function filterTablesByDate() {
+    function filterTables() {
         const selectedDate = dateFilter.value;
+        const searchQuery = searchInput.value.toLowerCase();
+        const activeTabId = document.querySelector('.tab-pane.active').id;
         const tables = document.querySelectorAll('.kurikulum-table');
         
         tables.forEach(table => {
             const rows = table.querySelectorAll('tbody tr');
+            let visibleCount = 0;
             
             rows.forEach(row => {
-                if (row.cells.length <= 1) return; // Skip empty message rows
+                if (row.cells.length <= 1) return;
                 
-                const dateCell = row.querySelector('td:nth-child(5)');
-                if (!dateCell) return;
+                const dateCell = row.querySelector('td.created-date')?.textContent.trim() || '';
+                const nameCell = row.cells[1]?.textContent.toLowerCase() || '';
+                const senderCell = row.cells[0]?.textContent.toLowerCase() || '';
+                const yearCell = row.cells[2]?.textContent.toLowerCase() || '';
+
+                let showRow = true;
+                if (selectedDate && selectedDate !== '') {
+                    const filterDate = new Date(selectedDate);
+                    const rowDate = new Date(dateCell);
+                    
+                    if (filterDate.toISOString().split('T')[0] !== rowDate.toISOString().split('T')[0]) {
+                        showRow = false;
+                    }
+                }
                 
-                const dateText = dateCell.textContent.trim();
+                if (searchQuery && !(
+                    nameCell.includes(searchQuery) || 
+                    senderCell.includes(searchQuery) || 
+                    yearCell.includes(searchQuery)
+                )) {
+                    showRow = false;
+                }
                 
-                if (!selectedDate || dateText.startsWith(selectedDate)) {
+                if (showRow) {
                     row.style.display = '';
+                    visibleCount++;
                 } else {
                     row.style.display = 'none';
                 }
             });
+            
+            const emptyMessage = table.closest('.tab-pane').querySelector('.text-muted');
+            if (emptyMessage) {
+                if (emptyMessage.closest('tr').cells.length > 1) return;
+                emptyMessage.closest('tr').style.display = visibleCount === 0 ? '' : 'none';
+            }
         });
     }
     
-    dateFilter.addEventListener('input', filterTablesByDate);
-    clearDateBtn.addEventListener('click', function() {
-        dateFilter.value = '';
-        filterTablesByDate();
+    dateFilter.addEventListener('change', filterTables);
+    dateFilter.addEventListener('input', filterTables);
+    searchInput.addEventListener('input', filterTables);
+    
+    document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', filterTables);
     });
     
-    // Re-apply filter when changing tabs
-    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', filterTablesByDate);
-    });
+    filterTables();
 });
 </script>
 @endsection
