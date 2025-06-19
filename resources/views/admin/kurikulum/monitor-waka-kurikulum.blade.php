@@ -29,9 +29,10 @@
                         </div>
                     </div>
                     
-                    <div class="alert alert-info d-flex align-items-center mb-4">
-                        <i class="bi bi-info-circle-fill me-2 fs-4"></i>
-                        <div>Pada halaman ini, Anda dapat memantau kurikulum yang diajukan oleh Waka Kurikulum dan status validasinya oleh Perusahaan.</div>
+                    <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-info-circle-fill"></i>
+                        Anda dapat memantau kurikulum yang diajukan oleh Waka Kurikulum dan status validasinya oleh Perusahaan.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     
                     <div class="row mb-4">
@@ -41,9 +42,14 @@
                                     <i class="bi bi-calendar3"></i>
                                 </span>
                                 <input type="date" id="filter-date" class="form-control border-start-0" placeholder="Filter berdasarkan tanggal">
-                                <button class="btn btn-outline-secondary" type="button" id="clear-date">
-                                    <i class="bi bi-x-lg"></i>
-                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text bg-light">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                                <input type="text" id="search-input" class="form-control border-start-0" placeholder="Cari kurikulum...">
                             </div>
                         </div>
                     </div>
@@ -67,7 +73,6 @@
                     </ul>
                     
                     <div class="tab-content">
-                        <!-- Tab Menunggu Validasi -->
                         <div class="tab-pane fade show active" id="waiting-validation" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle kurikulum-table">
@@ -116,7 +121,6 @@
                             </div>
                         </div>
                         
-                        <!-- Tab Disetujui -->
                         <div class="tab-pane fade" id="approved" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle kurikulum-table">
@@ -165,7 +169,6 @@
                             </div>
                         </div>
                         
-                        <!-- Tab Ditolak -->
                         <div class="tab-pane fade" id="rejected" role="tabpanel">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle kurikulum-table">
@@ -238,62 +241,86 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle tab switching with URL hash
-    const tabHash = window.location.hash;
-    if (tabHash) {
-        const tab = document.querySelector(`[data-bs-target="${tabHash}"]`);
-        if (tab) {
-            const tabInstance = new bootstrap.Tab(tab);
-            tabInstance.show();
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabHash = window.location.hash;
+        if (tabHash) {
+            const tab = document.querySelector(`[data-bs-target="${tabHash}"]`);
+            if (tab) {
+                const tabInstance = new bootstrap.Tab(tab);
+                tabInstance.show();
+            }
         }
-    }
 
-    // Set hash on tab click
-    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', function(event) {
-            window.location.hash = event.target.getAttribute('data-bs-target');
-        });
-    });
-    
-    // Date filter functionality
-    const dateFilter = document.getElementById('filter-date');
-    const clearDateBtn = document.getElementById('clear-date');
-    
-    function filterTablesByDate() {
-        const selectedDate = dateFilter.value;
-        const tables = document.querySelectorAll('.kurikulum-table');
-        
-        tables.forEach(table => {
-            const rows = table.querySelectorAll('tbody tr');
-            
-            rows.forEach(row => {
-                if (row.cells.length <= 1) return; // Skip empty message rows
-                
-                const dateCell = row.querySelector('td:nth-child(5)');
-                if (!dateCell) return;
-                
-                const dateText = dateCell.textContent.trim();
-                
-                if (!selectedDate || dateText.startsWith(selectedDate)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+            tab.addEventListener('click', function() {
+                window.location.hash = this.getAttribute('href');
             });
         });
-    }
     
-    dateFilter.addEventListener('input', filterTablesByDate);
-    clearDateBtn.addEventListener('click', function() {
-        dateFilter.value = '';
-        filterTablesByDate();
-    });
+        const dateFilter = document.getElementById('filter-date');
+        const searchInput = document.getElementById('search-input');
     
-    // Re-apply filter when changing tabs
-    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
-        tab.addEventListener('shown.bs.tab', filterTablesByDate);
+        function filterTables() {
+            const selectedDate = dateFilter.value;
+            const searchQuery = searchInput.value.toLowerCase();
+            const activeTabId = document.querySelector('.tab-pane.active').id;
+            const tables = document.querySelectorAll('.kurikulum-table');
+            
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    if (row.cells.length <= 1) return;
+                    
+                    const dateCell = row.querySelector('td.created-date')?.textContent.trim() || '';
+                    const nameCell = row.cells[1]?.textContent.toLowerCase() || '';
+                    const senderCell = row.cells[0]?.textContent.toLowerCase() || '';
+                    const yearCell = row.cells[2]?.textContent.toLowerCase() || '';
+
+                    let showRow = true;
+                    if (selectedDate && selectedDate !== '') {
+                        const filterDate = new Date(selectedDate);
+                        const rowDate = new Date(dateCell);
+                        
+                        if (filterDate.toISOString().split('T')[0] !== rowDate.toISOString().split('T')[0]) {
+                            showRow = false;
+                        }
+                    }
+                    
+                    if (searchQuery && !(
+                        nameCell.includes(searchQuery) || 
+                        senderCell.includes(searchQuery) || 
+                        yearCell.includes(searchQuery)
+                    )) {
+                        showRow = false;
+                    }
+                    
+                    if (showRow) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                const emptyMessage = table.closest('.tab-pane').querySelector('.text-muted');
+                if (emptyMessage) {
+                    if (emptyMessage.closest('tr').cells.length > 1) return;
+                    emptyMessage.closest('tr').style.display = visibleCount === 0 ? '' : 'none';
+                }
+            });
+        }
+    
+        dateFilter.addEventListener('change', filterTables);
+        dateFilter.addEventListener('input', filterTables);
+        searchInput.addEventListener('input', filterTables);
+    
+        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
+            tab.addEventListener('shown.bs.tab', filterTables);
+        });
+
+        filterTables();
     });
-});
 </script>
 @endsection

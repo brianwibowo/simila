@@ -314,7 +314,8 @@
 
         const dateFilter = document.getElementById('filter-date');
         const searchInput = document.getElementById('search-input');
-          function filterTables() {
+
+        function filterTables() {
             const selectedDate = dateFilter.value;
             const searchQuery = searchInput.value.toLowerCase();
             const activeTabId = document.querySelector('.tab-pane.active').id;
@@ -373,8 +374,7 @@
         document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
             tab.addEventListener('shown.bs.tab', filterTables);
         });
-          // Removed confirmApprove function as we're now using direct submit
-          const tolakModal = document.getElementById('tolakModal');
+        const tolakModal = document.getElementById('tolakModal');
         const tolakForm = document.getElementById('tolakForm');
 
         tolakModal.addEventListener('show.bs.modal', function (event) {
