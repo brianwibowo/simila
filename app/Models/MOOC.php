@@ -13,19 +13,13 @@ class MOOC extends Model
     protected $guarded = ['id'];
     protected $table = 'moocs';
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function ($materi) {
-            if ($materi->dokumen_materi) {
-                Storage::disk('public')->delete($materi->dokumen_materi);
-            }
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class, 'perusahaan_id');
+    }
+
+    public function modules()
+    {
+        return $this->hasMany(MoocModule::class, 'mooc_id');
     }
 }

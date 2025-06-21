@@ -33,31 +33,6 @@
                         <p class="card-text text-muted mb-3" style="min-height: 60px;">
                             {{ Str::limit($mooc->deskripsi, 120) }}
                         </p>
-                        
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                @if($mooc->dokumen_materi)
-                                    <a href="{{ asset('storage/'.$mooc->dokumen_materi)}}" target="_blank" class="btn btn-outline-info btn-sm w-100">
-                                        <i class="bi bi-file-earmark-text"></i> Dokumen
-                                    </a>
-                                @else
-                                    <button class="btn btn-outline-secondary btn-sm w-100" disabled>
-                                        <i class="bi bi-file-earmark-x"></i> Tidak Ada Dokumen
-                                    </button>
-                                @endif
-                            </div>
-                            <div class="col-6">
-                                @if($mooc->link_materi)
-                                    <a href="{{ $mooc->link_materi }}" target="_blank" class="btn btn-outline-primary btn-sm w-100">
-                                        <i class="bi bi-link-45deg"></i> Link Materi
-                                    </a>
-                                @else
-                                    <button class="btn btn-outline-secondary btn-sm w-100" disabled>
-                                        <i class="bi bi-link-45deg"></i> Tidak Ada Link
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
                     </div>
                     
                     <div class="card-footer bg-white">

@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
+    {{-- Existing Training Detail Section --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h4 mb-0">Detail Pelatihan MOOC: {{ $mooc->judul_pelatihan }}</h1>
         <div>
@@ -28,34 +29,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="row mt-4">
-                <div class="col-md-6 mb-3">
-                    <h5>Link Materi</h5>
-                    @if($mooc->link_materi)
-                        <p><a href="{{ $mooc->link_materi }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-box-arrow-up-right"></i> Buka Link Materi
-                        </a></p>
-                        <small class="text-muted">{{ $mooc->link_materi }}</small>
-                    @else
-                        <p class="text-muted">Tidak ada link materi.</p>
-                    @endif
-                </div>
-                <div class="col-md-6 mb-3">
-                    <h5>Dokumen Materi</h5>
-                    @if($mooc->dokumen_materi)
-                        <p><a href="{{ asset('storage/'.$mooc->dokumen_materi)}}" target="_blank" class="btn btn-info btn-sm">
-                            <i class="bi bi-download"></i> Download Dokumen
-                        </a></p>
-                        <small class="text-muted">{{ basename($mooc->dokumen_materi) }}</small>
-                    @else
-                        <p class="text-muted">Tidak ada dokumen materi.</p>
-                    @endif
-                </div>
-            </div>
-
             <hr class="my-4">
-
             <div class="row text-muted small">
                 <div class="col-md-6">
                     <p class="mb-1">Dibuat pada: {{ $mooc->created_at->format('d F Y, H:i') }}</p>
@@ -64,6 +38,44 @@
                     <p class="mb-1">Terakhir diperbarui: {{ $mooc->updated_at->format('d F Y, H:i') }}</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    {{-- New Module List Section --}}
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Daftar Modul</h5>
+                {{-- Make sure you have a route named 'perusahaan-mooc-module-create' --}}
+                <a href="{{ route('perusahaan-module-create', $mooc->id) }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Tambah Modul Baru
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if($modules && $modules->count() > 0)
+                <div class="list-group">
+                    @foreach($modules as $module)
+                        <a href="{{ route('perusahaan-module-show', ['mooc' => $mooc->id, 'module' => $module->id]) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ $module->module_name }}</h6>
+                            </div>
+                            <form action="{{ route('perusahaan-module-destroy', ['module' => $module->id]) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center p-4">
+                    <p class="text-muted">Belum ada modul untuk pelatihan ini.</p>
+                    <p>Silakan tambahkan modul baru untuk memulai.</p>
+                </div>
+            @endif
         </div>
     </div>
 </div>

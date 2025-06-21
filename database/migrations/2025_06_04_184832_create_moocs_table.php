@@ -17,8 +17,6 @@ class CreateMOOCSTable extends Migration
             $table->id();
             $table->string('judul_pelatihan');
             $table->text('deskripsi');
-            $table->string('link_materi');
-            $table->string('dokumen_materi');
             $table->unsignedBigInteger('perusahaan_id');
             $table->timestamps();
 
