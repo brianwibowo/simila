@@ -1,10 +1,26 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container mt-4">
-    <h1 class="mb-4 h4">Ajukan Guru Tamu</h1>
-
-    <form action="{{ route('perusahaan-guru-tamu-store') }}" method="POST" enctype="multipart/form-data">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Ajukan Guru Tamu Baru</h4>
+                </div>
+                
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
+                    <form action="{{ route('perusahaan-guru-tamu-store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-3">
@@ -40,9 +56,14 @@
         <div class="mb-4">
             <label for="file_materi" class="form-label">File Materi (pdf) </label>
             <input type="file" name="file_materi" id="file_materi" class="form-control">
+        </div>                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="{{ route('perusahaan-guru-tamu-index') }}" class="btn btn-secondary me-2">Kembali</a>
+                            <button type="submit" class="btn btn-primary">Ajukan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <button type="submit" class="btn btn-primary">Ajukan</button>
-    </form>
+    </div>
 </div>
 @endsection

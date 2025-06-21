@@ -1,19 +1,34 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">Guru Tamu</h1>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="date" id="filter-date" class="form-control" placeholder="Filter tanggal jadwal">
-        </div>
-    </div>
-
-    <table class="table table-bordered table-striped" id="gurutamu-table">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Daftar Guru Tamu yang Disetujui</h4>
+                </div>
+                
+                <div class="card-body">                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="date" id="filter-date" class="form-control" placeholder="Filter tanggal jadwal">
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="gurutamu-table">
         <thead class="table-light">
             <tr>
                 <th>Nama</th>
@@ -43,12 +58,27 @@
                     </td>
                     <td>
                         <a href="{{ asset('storage/' . $gurutamu->file_materi) }}" target="_blank">Unduh materi</a>
+                    </td>                    <td>
+                        <span class="badge bg-success">
+                            Disetujui
+                        </span>
                     </td>
-                    <td>{{ $gurutamu->status }}</td>
                 </tr>
             @endforeach
         </tbody>
-    </table>
+                    </table>
+                </div>
+                
+                @if(count($gurutamus) == 0)
+                    <div class="text-center py-4 text-muted">
+                        <i class="fa fa-folder-open fa-3x mb-3"></i>
+                        <h5>Belum ada guru tamu yang disetujui</h5>
+                        <p>Guru tamu yang disetujui akan muncul di sini</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

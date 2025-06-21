@@ -11,18 +11,8 @@ class GuruTamu extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'guru_tamus';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'nama_karyawan',
         'jabatan',
@@ -32,29 +22,16 @@ class GuruTamu extends Model
         'file_cv',
         'file_materi',
         'status',
+        'submitted_by',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'jadwal' => 'datetime',
-    ];
-
-    /**
-     * Get the status options for the guru tamu.
-     *
-     * @return array
-     */
-    public static function getStatusOptions()
+    ];    public static function getStatusOptions()
     {
         return [
-            'pending' => 'Menunggu Konfirmasi',
+            'proses' => 'Menunggu Konfirmasi',
             'disetujui' => 'Disetujui',
-            'ditolak' => 'Ditolak',
-            'selesai' => 'Selesai',
         ];
     }
 
@@ -72,13 +49,13 @@ class GuruTamu extends Model
         });
     }
 
-    /**
-     * Get the jadwal in a formatted way.
-     *
-     * @return string
-     */
     public function getFormattedJadwalAttribute()
     {
         return $this->jadwal ? $this->jadwal->format('d F Y H:i') : '-';
+    }
+
+    public function submitter()
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
     }
 }

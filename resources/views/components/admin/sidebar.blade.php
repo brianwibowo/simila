@@ -28,7 +28,8 @@
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>                <li class="nav-item {{ request()->routeIs('admin-kurikulum*') ? 'active' : '' }}">
+                </li>                
+                <li class="nav-item {{ request()->routeIs('admin-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
@@ -52,7 +53,8 @@
                             </li>
                         </ul>
                     </div>
-                </li>                <li class="nav-item {{ request()->routeIs('admin-project*') ? 'active' : '' }}">
+                </li>                
+                <li class="nav-item {{ request()->routeIs('admin-project*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="fas fa-th-list"></i>
                         <p>Project Mitra</p>
@@ -67,18 +69,18 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
-                        <i class="fas fa-pen-square"></i>
+                </li>                
+                <li class="nav-item {{ request()->routeIs('admin-guru-tamu*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#forms" aria-expanded="{{ request()->routeIs('admin-guru-tamu*') ? 'true' : 'false' }}">
+                        <i class="fas fa-chalkboard-teacher"></i>
                         <p>Guru Tamu</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="forms">
+                    <div class="collapse {{ request()->routeIs('admin-guru-tamu*') ? 'show' : '' }}" id="forms">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Ajukan Guru Tamu</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-guru-tamu-index' ? 'active' : '' }}">
+                                <a href="{{ route('admin-guru-tamu-index') }}">
+                                    <span class="sub-item">Manajemen Guru Tamu</span>
                                 </a>
                             </li>
                         </ul>

@@ -28,9 +28,6 @@ class KurikulumController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of kurikulums submitted by waka kurikulum for monitoring
-     */
     public function monitorWakaKurikulum()
     {
         return view('admin.kurikulum.monitor-waka-kurikulum', [

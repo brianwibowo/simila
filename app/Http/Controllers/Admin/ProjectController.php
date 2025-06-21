@@ -23,7 +23,6 @@ class ProjectController extends Controller
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240', // Maksimal 10MB
         ]);
 
-        // Check if timeline has passed
         $today = now();
         $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
         $isAfterTimeline = $today > $endDate;
@@ -34,8 +33,6 @@ class ProjectController extends Controller
 
         $path = $request->file('file_laporan')->store('project/laporan', 'public');
         
-        // Always set is_manual_upload to true for admin uploads
-        // For uploads after timeline, ensure notes are provided
         $notes = $request->notes;
         if (empty($notes)) {
             $notes = $isAfterTimeline 
@@ -61,7 +58,6 @@ class ProjectController extends Controller
             'file_laporan' => 'required|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
-        // Check if timeline has passed
         $today = now();
         $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
         $isAfterTimeline = $today > $endDate;
@@ -72,8 +68,6 @@ class ProjectController extends Controller
 
         $path = $request->file('file_laporan')->store('project/laporan', 'public');
         
-        // Always set is_manual_upload to true for admin updates
-        // For updates after timeline, ensure notes are provided
         $notes = $request->notes;
         if (empty($notes)) {
             $notes = $isAfterTimeline 

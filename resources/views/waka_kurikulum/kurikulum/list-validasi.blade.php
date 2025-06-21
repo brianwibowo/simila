@@ -177,7 +177,7 @@
                                             <tr>
                                                 <td colspan="6" class="text-center py-4">
                                                     <div class="text-muted">
-                                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                        <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
                                                         Belum ada kurikulum yang disetujui
                                                     </div>
                                                 </td>
@@ -225,7 +225,7 @@
                                             <tr>
                                                 <td colspan="6" class="text-center py-4">
                                                     <div class="text-muted">
-                                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                        <i class="bi bi-x-circle fs-1 d-block mb-2"></i>
                                                         Belum ada kurikulum yang ditolak
                                                     </div>
                                                 </td>
