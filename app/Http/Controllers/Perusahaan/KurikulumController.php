@@ -46,7 +46,6 @@ class KurikulumController extends Controller
         ]);
     }    public function validasi()
     {
-        // Get all kurikulums submitted by admin or waka_kurikulum users, regardless of validation status
         return view('perusahaan.kurikulum.list-validasi', [
             'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
                 $query->whereHas('roles', function($q) {
@@ -91,14 +90,13 @@ class KurikulumController extends Controller
             'nama_kurikulum' => $request->nama,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
-            'validasi_sekolah' => 'proses', // Reset validation status as it's been modified
+            'validasi_sekolah' => 'proses',
         ]);
 
         return redirect()->route('perusahaan-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil diperbarui. Kurikulum akan kembali ke status Menunggu Validasi.');
     }    public function setuju(Kurikulum $kurikulum)
     {
-        // Perusahaan can only validate kurikulum from admin or waka_kurikulum
         if (!$kurikulum->pengirim->hasAnyRole(['admin', 'waka_kurikulum'])) {
             return redirect()->route('perusahaan-kurikulum-list-validasi')
                 ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari admin atau waka kurikulum');
@@ -111,7 +109,6 @@ class KurikulumController extends Controller
             ->with('success', 'Kurikulum berhasil disetujui');
     }    public function tolak(Kurikulum $kurikulum, Request $request)
     {
-        // Perusahaan can only validate kurikulum from admin or waka_kurikulum
         if (!$kurikulum->pengirim->hasAnyRole(['admin', 'waka_kurikulum'])) {
             return redirect()->route('perusahaan-kurikulum-list-validasi')
                 ->with('error', 'Anda hanya dapat memvalidasi kurikulum dari admin sekolah atau waka kurikulum');

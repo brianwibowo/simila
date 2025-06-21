@@ -15,9 +15,10 @@
                         <span class="badge bg-{{ $guru_tamu->status === 'disetujui' ? 'success' : ($guru_tamu->status === 'ditolak' ? 'danger' : 'warning') }}">
                             {{ $guru_tamu->status }}
                         </span>
-                    </div>
+                    </div>                    <dl class="row">
+                        <dt class="col-sm-3">Diajukan Oleh</dt>
+                        <dd class="col-sm-9">{{ $guru_tamu->submitter ? $guru_tamu->submitter->name : 'Tidak diketahui' }}</dd>
 
-                    <dl class="row">
                         <dt class="col-sm-3">Jabatan</dt>
                         <dd class="col-sm-9">{{ $guru_tamu->jabatan }}</dd>
 

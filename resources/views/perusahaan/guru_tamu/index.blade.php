@@ -1,29 +1,39 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h4 mb-0">Daftar Pengajuan Guru Tamu</h1>
-        <a href="{{ route('perusahaan-guru-tamu-create') }}" class="btn btn-success">
-            + Ajukan Guru Tamu
-        </a>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <input type="date" id="filter-date" class="form-control" placeholder="Filter tanggal jadwal">
-        </div>
-    </div>
-
-    <table class="table table-bordered table-striped" id="gurutamu-table">
-        <thead class="table-light">
-            <tr>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Daftar Pengajuan Guru Tamu Saya</h4>
+                    <a href="{{ route('perusahaan-guru-tamu-create') }}" class="btn btn-success">
+                        <i class="fa fa-plus"></i> Ajukan Guru Tamu
+                    </a>
+                </div>
+                
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input type="date" id="filter-date" class="form-control" placeholder="Filter tanggal jadwal">
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="gurutamu-table">
+        <thead class="table-light">            <tr>
                 <th>Nama</th>
                 <th>Jabatan</th>
                 <th>Keahlian</th>
                 <th>Deskripsi</th>
                 <th>Jadwal</th>
+                <th>Status</th>
                 <th>File CV</th>
                 <th>File Materi</th>
                 <th>Aksi</th>
@@ -31,12 +41,30 @@
         </thead>
         <tbody>
             @foreach ($gurutamus as $gurutamu )
-                <tr>
-                    <td>{{ $gurutamu->nama_karyawan }}</td>
+                <tr>                    <td>{{ $gurutamu->nama_karyawan }}</td>
                     <td>{{ $gurutamu->jabatan }}</td>
                     <td>{{ $gurutamu->keahlian }}</td>
                     <td>{{ $gurutamu->deskripsi }}</td>
                     <td class="jadwal-date">{{ \Carbon\Carbon::parse($gurutamu->jadwal)->format('Y-m-d') }}</td>
+                    <td>
+                        @php
+                        $statusClasses = [
+                            'proses' => 'badge bg-warning text-dark',
+                            'disetujui' => 'badge bg-success',
+                            'ditolak' => 'badge bg-danger',
+                            'selesai' => 'badge bg-info'
+                        ];
+                        $statusLabels = [
+                            'proses' => 'Menunggu Konfirmasi',
+                            'disetujui' => 'Disetujui',
+                            'ditolak' => 'Ditolak',
+                            'selesai' => 'Selesai'
+                        ];
+                        @endphp
+                        <span class="{{ $statusClasses[$gurutamu->status] }}">
+                            {{ $statusLabels[$gurutamu->status] }}
+                        </span>
+                    </td>
                     <td>
                         @if ($gurutamu->file_cv == null)
                             <span class="text-danger">Tidak ada CV</span>
@@ -62,9 +90,22 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            @endforeach                    </tbody>
+                </table>
+            </div>
+            
+            @if(count($gurutamus) == 0)
+                <div class="text-center py-4 text-muted">
+                    <i class="fa fa-folder-open fa-3x mb-3"></i>
+                    <h5>Belum ada pengajuan guru tamu</h5>
+                    <p>Silakan klik tombol "Ajukan Guru Tamu" untuk membuat pengajuan baru</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
 </div>
 
 <script>

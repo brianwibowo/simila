@@ -4,6 +4,7 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
+use App\Http\Controllers\Admin\GuruTamuController as AdminGuruTamuController;
 
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
 use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectController;
@@ -66,6 +67,21 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::delete('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'destroy'])->name('admin-kurikulum-destroy');
     Route::patch('/kurikulum/{kurikulum}/setuju', [AdminKurikulumController::class, 'setuju'])->name('admin-kurikulum-setuju');
     Route::patch('/kurikulum/{kurikulum}/tolak', [AdminKurikulumController::class, 'tolak'])->name('admin-kurikulum-tolak');
+
+    // Rute untuk manajemen guru tamu oleh admin
+    Route::resource('guru-tamu', AdminGuruTamuController::class)->names([
+        'index' => 'admin-guru-tamu-index',
+        'create' => 'admin-guru-tamu-create',
+        'store' => 'admin-guru-tamu-store',
+        'show' => 'admin-guru-tamu-show',
+        'edit' => 'admin-guru-tamu-edit',
+        'update' => 'admin-guru-tamu-update',
+        'destroy' => 'admin-guru-tamu-destroy',
+    ]);
+    Route::put('guru-tamu/{guruTamu}/approve', [AdminGuruTamuController::class, 'approve'])
+        ->name('admin-guru-tamu-approve');
+    Route::put('guru-tamu/{guruTamu}/reject', [AdminGuruTamuController::class, 'reject'])
+        ->name('admin-guru-tamu-reject');
 });
 
 Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(function () {

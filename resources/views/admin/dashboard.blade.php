@@ -15,13 +15,12 @@
                     @endif
 
                     <p>Selamat datang di dashboard admin!</p>
-                    
-                    <div class="mt-4">
+                      <div class="mt-4">
                         <h5>Manajemen User</h5>
                         <a href="{{ route('admin-users-index') }}" class="btn btn-primary">
                             Kelola User Baru
                         </a>
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </div>

@@ -21,7 +21,6 @@ class ProjectController extends Controller
 
     public function uploadLaporan(Request $request, Project $project)
     {
-        // Check if project timeline has passed
         $today = now();
         $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
         
@@ -47,7 +46,6 @@ class ProjectController extends Controller
 
     public function updateLaporan(Request $request, Project $project)
     {
-        // Check if project timeline has passed
         $today = now();
         $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
         
@@ -73,7 +71,6 @@ class ProjectController extends Controller
 
     public function deleteLaporan(Request $request, Project $project)
     {
-        // Check if project timeline has passed
         $today = now();
         $endDate = \Carbon\Carbon::parse($project->tanggal_selesai);
         
@@ -82,7 +79,6 @@ class ProjectController extends Controller
                 ->with('error', 'Tidak dapat menghapus laporan karena timeline project telah berakhir');
         }
         
-        // Check if report was uploaded by admin
         if ($project->is_manual_upload) {
             return redirect()->route('guru-project-index')
                 ->with('error', 'Tidak dapat menghapus laporan yang diupload oleh admin');

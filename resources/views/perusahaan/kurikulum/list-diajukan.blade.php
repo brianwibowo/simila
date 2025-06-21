@@ -62,7 +62,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($kurikulums as $kurikulum)
+                                    @forelse ($kurikulums as $kurikulum)
                                         <tr>
                                             <td>{{ $kurikulum->nama_kurikulum }}</td>
                                             <td>{{ $kurikulum->tahun_ajaran }}</td>
@@ -112,7 +112,16 @@
                                                 @endif
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="8" class="text-center py-4">
+                                                <div class="text-muted">
+                                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                    Belum ada kurikulum yang diajukan
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>

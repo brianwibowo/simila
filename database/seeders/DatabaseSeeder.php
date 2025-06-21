@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Spatie\Permission\Models\Role; // Ini tidak diperlukan di DatabaseSeeder, tapi tidak masalah
-use Illuminate\Support\Facades\Hash; // Penting untuk Hash::make()
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,12 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // 1. Panggil RoleSeeder terlebih dahulu. Pastikan RoleSeeder sudah memiliki pengecekan "exists".
         $this->call(RoleSeeder::class);
-        $this->call(GuruTamuSeeder::class);
-        $this->call(PklSeeder::class);
 
-        // Daftar pengguna yang ingin Anda buat beserta peran mereka
         $usersToCreate = [
             [
                 'name' => 'admin',
@@ -71,10 +67,21 @@ class DatabaseSeeder extends Seeder
                 'password' => 'lsp',
                 'role' => 'lsp',
             ],
+            [
+                'name' => 'alifian',
+                'email' => 'alifian@example.com',
+                'password' => 'alifian',
+                'role' => 'perusahaan',
+            ],
+            [
+                'name' => 'viantech',
+                'email' => 'viantech@example.com',
+                'password' => 'viantech',
+                'role' => 'perusahaan',
+            ],
         ];
 
         foreach ($usersToCreate as $userData) {
-            // Periksa apakah pengguna dengan email ini sudah ada
             if (! User::where('email', $userData['email'])->exists()) {
                 $user = User::create([
                     'name' => $userData['name'],
@@ -82,14 +89,12 @@ class DatabaseSeeder extends Seeder
                     'password' => Hash::make($userData['password']), // Gunakan Hash::make() untuk password
                 ]);
 
-                // Tetapkan peran kepada pengguna yang baru dibuat
                 $user->assignRole($userData['role']);
 
                 $this->command->info("User '{$userData['email']}' created and assigned role '{$userData['role']}'.");
             } else {
                 $this->command->warn("User '{$userData['email']}' already exists. Skipping creation.");
 
-                // Opsional: Jika user sudah ada, tapi mungkin perannya belum terassign, Anda bisa tambahkan ini
                 $existingUser = User::where('email', $userData['email'])->first();
                 if ($existingUser && ! $existingUser->hasRole($userData['role'])) {
                     $existingUser->assignRole($userData['role']);
