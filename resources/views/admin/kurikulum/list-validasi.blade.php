@@ -105,6 +105,7 @@
                                                         <td>                                                            <div class="btn-group" role="group">
                                                                 <form action="{{ route('admin-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline" id="approveForm{{ $kurikulum->id }}">
                                                                     @csrf
+                                                                    @method('PATCH')
                                                                     <button type="submit" class="btn btn-sm btn-outline-success me-1" data-bs-toggle="tooltip" title="Setuju">
                                                                         <i class="bi bi-check-lg"></i>
                                                                     </button>

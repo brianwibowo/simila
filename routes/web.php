@@ -11,6 +11,7 @@ use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectContro
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
+use App\Http\Controllers\Perusahaan\MoocModuleController as PerusahaanMoocModuleController;
 use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
 use App\Http\Controllers\Perusahaan\BeasiswaScoutingController as PerusahaanBeasiswaScoutingController;
 use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScoutingController;
@@ -152,6 +153,16 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-mooc-destroy',
         'show' => 'perusahaan-mooc-show',
     ]);
+
+    Route::resource('module' , PerusahaanMoocModuleController::class)->names([
+        'store' => 'perusahaan-module-store',
+        'update' => 'perusahaan-module-update',
+        'destroy' => 'perusahaan-module-destroy',
+        'show' => 'perusahaan-module-show',
+    ])->except(['create', 'index', 'edit']);
+
+    Route::get('/module/{mooc}/create' , [PerusahaanMoocModuleController::class, 'create'])->name('perusahaan-module-create');
+    Route::get('/module/{mooc}/{module}/edit' , [PerusahaanMoocModuleController::class, 'edit'])->name('perusahaan-module-edit');
 
     Route::resource('beasiswa', PerusahaanBeasiswaScoutingController::class)->names([
         'index'   => 'perusahaan-beasiswa-index',

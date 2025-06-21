@@ -28,27 +28,6 @@
             @enderror
         </div>
 
-        <div class="mb-3">
-            <label for="link_materi" class="form-label">Link Materi (Opsional)</label>
-            <input type="url" name="link_materi" id="link_materi" class="form-control @error('link_materi') is-invalid @enderror" value="{{ old('link_materi') }}" placeholder="Contoh: https://youtube.com/link-video">
-            @error('link_materi')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-
-        <div class="mb-4">
-            <label for="dokumen_materi" class="form-label">Dokumen Materi (PDF)</label>
-            <input type="file" name="dokumen_materi" id="dokumen_materi" class="form-control @error('dokumen_materi') is-invalid @enderror" required>
-            <div class="form-text">Maksimal ukuran file: 2MB</div>
-            @error('dokumen_materi')
-                <div class="invalid-feedback">
-                    {{ $message }}
-                </div>
-            @enderror
-        </div>
-
         <div class="d-flex gap-3">
             <button type="submit" class="btn btn-primary">Simpan Pelatihan</button>
             <a href="{{ route('perusahaan-mooc-index') }}" class="btn btn-secondary">Batal</a>
