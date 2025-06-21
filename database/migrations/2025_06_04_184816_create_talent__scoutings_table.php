@@ -18,7 +18,7 @@ class CreateTalentScoutingsTable extends Migration
             $table->string('file_cv');
             $table->string('file_ijazah');
             $table->string('file_pernyataan');
-            $table->enum('status_seleksi', ['lolos', 'tidak lolos']);
+            $table->enum('status_seleksi', ['lolos', 'proses', 'tidak lolos']);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('batch_id');
             $table->timestamps();

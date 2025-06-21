@@ -16,9 +16,12 @@ use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingCont
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
 
+use App\Http\Controllers\Alumni\ScoutingController as AlumniScoutingController;
+
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
+
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 
 /*
@@ -156,6 +159,8 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-scouting-destroy',
         'show' => 'perusahaan-scouting-show',
     ]);
+    Route::get('/detail-talents/{user}/{scouting}', [PerusahaanScoutingController::class, 'siswa'])->name('perusahaan-scouting-siswa');
+    Route::post('/scouting/seleksi/{user}', [PerusahaanScoutingController::class, 'seleksi'])->name('perusahaan-scouting-seleksi');
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
@@ -257,6 +262,10 @@ Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->group(function () 
     Route::get('/', function () {
         return view('alumni.dashboard');
     })->name('alumni-dashboard');
+
+    Route::get('scouting/', [AlumniScoutingController::class, 'index'])->name('alumni-scouting-index');
+    Route::get('scouting/{scouting}', [AlumniScoutingController::class, 'registration'])->name('alumni-scouting-register');
+    Route::post('scouting/{scouting}/apply', [AlumniScoutingController::class, 'apply'])->name('alumni-scouting-apply');
 });
 
 Route::middleware(['auth', 'role:lsp'])->prefix('lsp')->group(function () {

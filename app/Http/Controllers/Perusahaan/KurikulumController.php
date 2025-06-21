@@ -44,7 +44,9 @@ class KurikulumController extends Controller
         return view('perusahaan.kurikulum.list-diajukan', [
             'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)->get()
         ]);
-    }    public function validasi()
+    }    
+    
+    public function validasi()
     {
         return view('perusahaan.kurikulum.list-validasi', [
             'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
@@ -95,7 +97,9 @@ class KurikulumController extends Controller
 
         return redirect()->route('perusahaan-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil diperbarui. Kurikulum akan kembali ke status Menunggu Validasi.');
-    }    public function setuju(Kurikulum $kurikulum)
+    }    
+    
+    public function setuju(Kurikulum $kurikulum)
     {
         if (!$kurikulum->pengirim->hasAnyRole(['admin', 'waka_kurikulum'])) {
             return redirect()->route('perusahaan-kurikulum-list-validasi')
@@ -107,7 +111,9 @@ class KurikulumController extends Controller
         ]);
         return redirect()->route('perusahaan-kurikulum-list-validasi')
             ->with('success', 'Kurikulum berhasil disetujui');
-    }    public function tolak(Kurikulum $kurikulum, Request $request)
+    }    
+    
+    public function tolak(Kurikulum $kurikulum, Request $request)
     {
         if (!$kurikulum->pengirim->hasAnyRole(['admin', 'waka_kurikulum'])) {
             return redirect()->route('perusahaan-kurikulum-list-validasi')

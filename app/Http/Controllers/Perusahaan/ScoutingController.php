@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\ScoutingBatch;
+use App\Models\Talent_Scouting;
+use App\Models\User;
 
 class ScoutingController extends Controller
 {
@@ -26,7 +28,8 @@ class ScoutingController extends Controller
     public function show(ScoutingBatch $scouting)
     {
         return view('perusahaan.scoutings.show', [
-            'scouting' => $scouting
+            'scouting' => $scouting,
+            'talents' => Talent_Scouting::where('batch_id', $scouting->id)->get()
         ]);
     }
 
@@ -75,5 +78,17 @@ class ScoutingController extends Controller
     {
         $scouting->delete();
         return redirect()->route('perusahaan-scouting-index')->with('success', 'Batch berhasil dihapus');
+    }
+
+    public function siswa(User $user, ScoutingBatch $scouting){
+
+        return view('perusahaan.scoutings.siswa', [
+            'pelamar' => Talent_Scouting::where('user_id', $user->id)->where('batch_id', $scouting->id)->first()
+        ]);
+    }
+
+    public function seleksi(User $user){
+        Talent_Scouting::where('user_id', $user->id)->update(['status_seleksi' => request()->status]);
+        return redirect()->route('perusahaan-scouting-siswa', [$user, request()->scouting]);
     }
 }

@@ -73,7 +73,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($scouting->talents() as $index => $pelamar)
+                        @forelse ($talents as $index => $pelamar)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 {{-- Asumsi ada relasi ke model User --}}
@@ -93,12 +93,8 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    {{-- Contoh Tombol Aksi untuk setiap pelamar --}}
-                                    <a href="{{-- route('pelamar.profile', $pelamar->id) --}}" class="btn btn-primary btn-sm" title="Lihat Detail Pelamar">
+                                    <a href={{ route('perusahaan-scouting-siswa', ['scouting' => $scouting->id, 'user' => $pelamar->user_id]) }} class="btn btn-primary btn-sm" title="Lihat Detail Pelamar">
                                         <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{{-- route('pelamar.download.cv', $pelamar->id) --}}" class="btn btn-secondary btn-sm" title="Unduh CV">
-                                        <i class="fas fa-download"></i>
                                     </a>
                                 </td>
                             </tr>

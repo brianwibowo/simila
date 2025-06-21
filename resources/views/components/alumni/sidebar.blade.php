@@ -23,13 +23,13 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item active">
+                <li class="nav-item {{ Route::currentRouteName() == 'perusahaan-dashboard' ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item {{ Route::currentRouteName() == 'alumni-scouting-index' ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('alumni-scouting*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="fas fa-th-list"></i>
                         <p>Talent Scouting</p>
@@ -38,7 +38,7 @@
                     <div class="collapse" id="sidebarLayouts">
                         <ul class="nav nav-collapse">
                             <li class="{{ Route::currentRouteName() == 'alumni-scouting-index' ? 'active' : '' }}">
-                                <a href="sidebar-style-2.html">
+                                <a href="{{ route('alumni-scouting-index') }}">
                                     <span class="sub-item">Beasiswa</span>
                                 </a>
                             </li>
