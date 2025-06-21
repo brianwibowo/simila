@@ -50,4 +50,14 @@ class Talent_Scouting extends Model
             'tidak lolos' => 'Tidak Lolos',
         ];
     }
+
+    public function batch()
+    {
+        return $this->belongsTo(ScoutingBatch::class, 'batch_id');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'user_id');
+    }
 }

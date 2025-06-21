@@ -29,159 +29,17 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#base">
-                        <i class="fas fa-layer-group"></i>
-                        <p>Kurikulum Bersama</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="base">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="components/avatars.html">
-                                    <span class="sub-item">Ajukan Kurikulum</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="components/buttons.html">
-                                    <span class="sub-item">List Kurikulum</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
+                <li class="nav-item {{ Route::currentRouteName() == 'alumni-scouting-index' ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#sidebarLayouts">
                         <i class="fas fa-th-list"></i>
-                        <p>Project Mitra</p>
+                        <p>Talent Scouting</p>
                         <span class="caret"></span>
                     </a>
                     <div class="collapse" id="sidebarLayouts">
                         <ul class="nav nav-collapse">
-                            <li>
+                            <li class="{{ Route::currentRouteName() == 'alumni-scouting-index' ? 'active' : '' }}">
                                 <a href="sidebar-style-2.html">
-                                    <span class="sub-item">List Projek</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="icon-menu.html">
-                                    <span class="sub-item">Buat Projek Baru</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
-                        <i class="fas fa-pen-square"></i>
-                        <p>Guru Tamu</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="forms">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Ajukan Guru Tamu</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#tables">
-                        <i class="fas fa-table"></i>
-                        <p>PKL</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="tables">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="tables/tables.html">
-                                    <span class="sub-item">Penilaian</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#maps">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <p>Talent Scouting</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="maps">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="maps/googlemaps.html">
-                                    <span class="sub-item">List Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="maps/jsvectormap.html">
-                                    <span class="sub-item">Hasil Penerimaan</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#charts">
-                        <i class="far fa-chart-bar"></i>
-                        <p>MOOC</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="charts">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">Kelas</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Ujian</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#chart">
-                        <i class="far fa-chart-bar"></i>
-                        <p>Riset & Inovasi Produk</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="submenu">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">List Riset Inovasi</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Hasil Inovasi</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#char">
-                        <i class="far fa-chart-bar"></i>
-                        <p>Beasiswa Talent Scout</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">Daftar Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Hasil Seleksi</span>
+                                    <span class="sub-item">Beasiswa</span>
                                 </a>
                             </li>
                         </ul>

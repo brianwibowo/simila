@@ -83,4 +83,12 @@ class User extends Authenticatable
     public function logbook(){
         return $this->hasOne(Logbook::class, 'siswa_id');
     }
+
+    public function alumni(){
+        return $this->hasOne(Talent_Scouting::class, 'user_id');
+    }
+
+    public function batch(){
+        return $this->hasMany(ScoutingBatch::class, 'perusahaan_id');
+    }
 }

@@ -108,7 +108,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item ">
+                <li class="nav-item {{ request()->routeIs('perusahaan-scouting*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#maps">
                         <i class="fas fa-map-marker-alt"></i>
                         <p>Talent Scouting</p>
@@ -116,14 +116,9 @@
                     </a>
                     <div class="collapse" id="maps">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="maps/googlemaps.html">
-                                    <span class="sub-item">List Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="maps/jsvectormap.html">
-                                    <span class="sub-item">Hasil Penerimaan</span>
+                            <li class="{{ request()->routeIs('perusahaan-scouting*') ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-scouting-index') }}">
+                                    <span class="sub-item">Talent Scouting</span>
                                 </a>
                             </li>
                         </ul>

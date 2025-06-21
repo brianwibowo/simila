@@ -10,6 +10,7 @@ use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectContro
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
+use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
 
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
@@ -128,6 +129,16 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'update' => 'perusahaan-mooc-update',
         'destroy' => 'perusahaan-mooc-destroy',
         'show' => 'perusahaan-mooc-show',
+    ]);
+
+    Route::resource('scouting', PerusahaanScoutingController::class)->names([
+        'index' => 'perusahaan-scouting-index',
+        'create' => 'perusahaan-scouting-create',
+        'store' => 'perusahaan-scouting-store',
+        'edit' => 'perusahaan-scouting-edit',
+        'update' => 'perusahaan-scouting-update',
+        'destroy' => 'perusahaan-scouting-destroy',
+        'show' => 'perusahaan-scouting-show',
     ]);
 });
 

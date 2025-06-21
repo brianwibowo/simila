@@ -15,12 +15,16 @@ class CreateTalentScoutingsTable extends Migration
     {
         Schema::create('talent_scoutings', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_alumni');
             $table->string('file_cv');
             $table->string('file_ijazah');
             $table->string('file_pernyataan');
             $table->enum('status_seleksi', ['lolos', 'tidak lolos']);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('batch_id');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('batch_id')->references('id')->on('scouting_batches')->onDelete('cascade');
         });
     }
 
