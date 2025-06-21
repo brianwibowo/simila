@@ -21,14 +21,7 @@ class Beasiswa extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'nama_siswa',
-        'raport',
-        'surat_rekomendasi',
-        'surat_motivasi',
-        'portofolio',
-        'status',
-    ];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast.

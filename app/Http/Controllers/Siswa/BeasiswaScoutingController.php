@@ -49,17 +49,18 @@ class BeasiswaScoutingController extends Controller
             'portofolio' => 'required|file|mimes:pdf,doc,docx|max:2048'
         ]);
 
+        
         $userId = Auth::id();
-
+        
         // Cegah pendaftaran ganda
         $alreadyApplied = Beasiswa::where('user_id', $userId)
-            ->where('batch_id', $beasiswa->id)
-            ->exists();
-
+        ->where('batch_id', $beasiswa->id)
+        ->exists();
+        
         if ($alreadyApplied) {
             return back()->with('error', 'Anda sudah mendaftar pada batch ini.');
         }
-
+        
         try {
             Beasiswa::create([
                 'batch_id'           => $beasiswa->id,
@@ -69,9 +70,9 @@ class BeasiswaScoutingController extends Controller
                 'surat_rekomendasi'  => $request->file('surat_rekomendasi')->store('beasiswa/rekomendasi', 'public'),
                 'surat_motivasi'     => $request->file('surat_motivasi')->store('beasiswa/motivasi', 'public'),
                 'portofolio'         => $request->file('portofolio')->store('beasiswa/portofolio', 'public'),
-                'status'             => 'pending',
+                'status'             => 'proses',
             ]);
-
+            
             return redirect()->route('siswa-beasiswa-index')->with('success', 'Pendaftaran berhasil dikirim!');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat mengupload data: ' . $e->getMessage());

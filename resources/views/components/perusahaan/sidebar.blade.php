@@ -169,7 +169,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('perusahaan-beasiswa*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#char">
                         <i class="far fa-chart-bar"></i>
                         <p>Beasiswa Talent Scout</p>

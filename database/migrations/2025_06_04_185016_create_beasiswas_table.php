@@ -20,7 +20,7 @@ class CreateBeasiswasTable extends Migration
             $table->text('surat_rekomendasi');
             $table->text('surat_motivasi');
             $table->text('portofolio');
-            $table->enum('status', ['lolos', 'tidak lolos']);
+            $table->enum('status', ['lolos', 'tidak lolos', 'proses']);
             $table->timestamps();
         });
     }
