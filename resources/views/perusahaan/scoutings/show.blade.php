@@ -82,11 +82,11 @@
                                 <td>{{ $pelamar->created_at->format('d M Y, H:i') }}</td>
                                 <td class="text-center">
                                     {{-- Contoh logika status pelamar --}}
-                                    @if($pelamar->status == 'diterima')
+                                    @if($pelamar->status_seleksi == 'lolos')
                                         <span class="badge bg-info">Diterima</span>
-                                    @elseif($pelamar->status == 'ditolak')
+                                    @elseif($pelamar->status_seleksi == 'tidak lolos')
                                         <span class="badge bg-danger">Ditolak</span>
-                                    @elseif($pelamar->status == 'ditinjau')
+                                    @elseif($pelamar->status_seleksi == 'proses')
                                         <span class="badge bg-warning">Ditinjau</span>
                                     @else
                                         <span class="badge bg-light text-dark">Baru</span>

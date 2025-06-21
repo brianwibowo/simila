@@ -160,7 +160,7 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'show' => 'perusahaan-scouting-show',
     ]);
     Route::get('/detail-talents/{user}/{scouting}', [PerusahaanScoutingController::class, 'siswa'])->name('perusahaan-scouting-siswa');
-    Route::post('/scouting/seleksi/{user}', [PerusahaanScoutingController::class, 'seleksi'])->name('perusahaan-scouting-seleksi');
+    Route::post('/scouting/seleksi/{talent}', [PerusahaanScoutingController::class, 'seleksi'])->name('perusahaan-scouting-seleksi');
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {

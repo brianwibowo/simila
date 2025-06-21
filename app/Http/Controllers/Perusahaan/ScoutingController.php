@@ -87,8 +87,17 @@ class ScoutingController extends Controller
         ]);
     }
 
-    public function seleksi(User $user){
-        Talent_Scouting::where('user_id', $user->id)->update(['status_seleksi' => request()->status]);
-        return redirect()->route('perusahaan-scouting-siswa', [$user, request()->scouting]);
+    public function seleksi(Request $request, Talent_Scouting $talent){
+
+        $request->validate([
+            'status' => 'required',
+            'batch' => 'required'
+        ]);
+
+        $talent->update([
+            'status_seleksi' => $request->status
+        ]);
+
+        return redirect()->route('perusahaan-scouting-siswa', ['user'=>$talent->user_id, 'scouting' => $request->batch])->with('success', 'Status pelamar berhasil diperbarui');
     }
 }

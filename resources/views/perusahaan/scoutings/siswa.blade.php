@@ -89,11 +89,11 @@
                 <div class="card-body">
                     <p class="mb-2">Status Saat Ini:</p>
                     <div class="text-center mb-3">
-                        @if($pelamar->status == 'lolos')
+                        @if($pelamar->status_seleksi == 'lolos')
                             <span class="badge fs-6 bg-info">LOLOS SELEKSI</span>
-                        @elseif($pelamar->status == 'ditolak')
+                        @elseif($pelamar->status_seleksi == 'ditolak')
                             <span class="badge fs-6 bg-danger">DITOLAK</span>
-                        @elseif($pelamar->status == 'ditinjau')
+                        @elseif($pelamar->status_seleksi == 'ditinjau')
                             <span class="badge fs-6 bg-warning">SEDANG DITINJAU</span>
                         @else
                             <span class="badge fs-6 bg-light text-dark">BARU</span>
@@ -103,13 +103,14 @@
                     <hr>
 
                     <p class="mb-2 font-weight-bold">Ubah Status:</p>
-                    <form action="{{ route('perusahaan-scouting-seleksi', $pelamar->id) }}" method="POST">
+                    <form action="{{ route('perusahaan-scouting-seleksi', ['talent'=>$pelamar]) }}" method="POST">
                         @csrf
+                        <input type="hidden" value="{{ $pelamar->batch->id }}" name="batch">
                         <div class="mb-3">
                             <select name="status" class="form-select" required>
-                                <option value="ditinjau" @if($pelamar->status == 'proses') selected @endif>Ditinjau</option>
-                                <option value="lolos" @if($pelamar->status == 'lolos') selected @endif>Lolos Seleksi</option>
-                                <option value="ditolak" @if($pelamar->status == 'tidak lolos') selected @endif>Ditolak</option>
+                                <option value="ditinjau" @if($pelamar->status_seleksi == 'proses') selected @endif>Ditinjau</option>
+                                <option value="lolos" @if($pelamar->status_seleksi == 'lolos') selected @endif>Lolos Seleksi</option>
+                                <option value="ditolak" @if($pelamar->status_seleksi == 'tidak lolos') selected @endif>Ditolak</option>
                             </select>
                         </div>
                         <div class="d-grid">
