@@ -12,10 +12,15 @@
                     </a>
                 </div>
                 
-                <div class="card-body">
-                    @if(session('success'))
+                <div class="card-body">                    @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
                         </div>
                     @endif
                     
@@ -46,23 +51,16 @@
                     <td>{{ $gurutamu->keahlian }}</td>
                     <td>{{ $gurutamu->deskripsi }}</td>
                     <td class="jadwal-date">{{ \Carbon\Carbon::parse($gurutamu->jadwal)->format('Y-m-d') }}</td>
-                    <td>
-                        @php
+                    <td>                        @php
                         $statusClasses = [
                             'proses' => 'badge bg-warning text-dark',
                             'disetujui' => 'badge bg-success',
-                            'ditolak' => 'badge bg-danger',
-                            'selesai' => 'badge bg-info'
                         ];
-                        $statusLabels = [
-                            'proses' => 'Menunggu Konfirmasi',
-                            'disetujui' => 'Disetujui',
-                            'ditolak' => 'Ditolak',
-                            'selesai' => 'Selesai'
-                        ];
+                        
+                        $statusLabels = App\Models\GuruTamu::getStatusOptions();
                         @endphp
-                        <span class="{{ $statusClasses[$gurutamu->status] }}">
-                            {{ $statusLabels[$gurutamu->status] }}
+                        <span class="{{ $statusClasses[$gurutamu->status] ?? 'badge bg-secondary' }}">
+                            {{ $statusLabels[$gurutamu->status] ?? $gurutamu->status }}
                         </span>
                     </td>
                     <td>
@@ -74,19 +72,21 @@
                     </td>
                     <td>
                         <a href="{{ asset('storage/' . $gurutamu->file_materi) }}" target="_blank">Unduh materi</a>
-                    </td>
-                    <td>
-                        <div class="btn-group" role="group" aria-label="Actions">
-                            <a href="{{ route('perusahaan-guru-tamu-edit', ['guru_tamu' => $gurutamu->id]) }}" class="btn btn-sm btn-warning">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                            <form action="{{ route('perusahaan-guru-tamu-destroy', ['guru_tamu' => $gurutamu->id]) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">
-                                    <i class="bi bi-trash"></i> Hapus
-                                </button>
-                            </form>
+                    </td>                    <td>
+                        <div class="btn-group" role="group" aria-label="Actions">                            @if($gurutamu->status !== 'disetujui')
+                                <a href="{{ route('perusahaan-guru-tamu-edit', ['guru_tamu' => $gurutamu->id]) }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <form action="{{ route('perusahaan-guru-tamu-destroy', ['guru_tamu' => $gurutamu->id]) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            @else
+                                <span class="badge bg-info">Tidak dapat diubah</span>
+                            @endif
                         </div>
                     </td>
                 </tr>

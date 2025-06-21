@@ -9,10 +9,15 @@
                     <h4 class="mb-0">Daftar Guru Tamu yang Disetujui</h4>
                 </div>
                 
-                <div class="card-body">
-                    @if(session('success'))
+                <div class="card-body">                    @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
                         </div>
                     @endif
                     

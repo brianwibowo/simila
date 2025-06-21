@@ -83,11 +83,6 @@
                                     <span class="sub-item">Manajemen Guru Tamu</span>
                                 </a>
                             </li>
-                            <li class="{{ Route::currentRouteName() == 'admin-guru-tamu-create' ? 'active' : '' }}">
-                                <a href="{{ route('admin-guru-tamu-create') }}">
-                                    <span class="sub-item">Ajukan Guru Tamu</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>

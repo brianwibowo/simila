@@ -40,20 +40,11 @@
                             <td>{{ $guru->keahlian }}</td>
                             <td>{{ $guru->formatted_jadwal }}</td>
                             <td>{{ $guru->submitter ? $guru->submitter->name : 'Tidak diketahui' }}</td>
-                            <td>
-                                @php
+                            <td>                                @php
                                 $statusClasses = [
                                     'proses' => 'badge bg-warning text-dark',
-                                    'disetujui' => 'badge bg-success',
-                                    'ditolak' => 'badge bg-danger',
-                                    'selesai' => 'badge bg-info'
-                                ];
-                                $statusLabels = [
-                                    'proses' => 'Menunggu Konfirmasi',
-                                    'disetujui' => 'Disetujui',
-                                    'ditolak' => 'Ditolak',
-                                    'selesai' => 'Selesai'
-                                ];
+                                    'disetujui' => 'badge bg-success'
+                                ];                                $statusLabels = \App\Models\GuruTamu::getStatusOptions();
                                 @endphp
                                 <span class="{{ $statusClasses[$guru->status] }}">
                                     {{ $statusLabels[$guru->status] }}
@@ -73,13 +64,6 @@
                                         @method('PUT')
                                         <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">
                                             <i class="fa fa-check"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin-guru-tamu-reject', $guru->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?')">
-                                            <i class="fa fa-times"></i>
                                         </button>
                                     </form>
                                     @endif

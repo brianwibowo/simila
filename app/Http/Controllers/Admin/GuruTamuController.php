@@ -129,11 +129,9 @@ class GuruTamuController extends Controller
     {
         $guruTamu->update(['status' => 'disetujui']);
         return redirect()->route('admin-guru-tamu-index')->with('success', 'Pengajuan guru tamu berhasil disetujui.');
-    }
-
-    public function reject(GuruTamu $guruTamu)
+    }    public function reject(GuruTamu $guruTamu)
     {
-        $guruTamu->update(['status' => 'ditolak']);
-        return redirect()->route('admin-guru-tamu-index')->with('success', 'Pengajuan guru tamu berhasil ditolak.');
+        $guruTamu->update(['status' => 'proses']);
+        return redirect()->route('admin-guru-tamu-index')->with('success', 'Pengajuan guru tamu telah dikembalikan ke status proses.');
     }
 }

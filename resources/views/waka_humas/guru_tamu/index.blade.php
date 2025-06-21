@@ -35,9 +35,8 @@
                                     <td>{{ $guruTamu->keahlian }}</td>
                                     <td>{{ $guruTamu->getFormattedJadwalAttribute() }}</td>
                                     <td>{{ $guruTamu->submitter ? $guruTamu->submitter->name : 'Tidak diketahui' }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $guruTamu->status === 'disetujui' ? 'success' : ($guruTamu->status === 'ditolak' ? 'danger' : 'warning') }}">
-                                            {{ $guruTamu->status }}
+                                    <td>                                        <span class="badge bg-{{ $guruTamu->status === 'disetujui' ? 'success' : 'warning' }}">
+                                            {{ $guruTamu->status === 'disetujui' ? 'Disetujui' : 'Menunggu Konfirmasi' }}
                                         </span>
                                     </td>
                                     <td>

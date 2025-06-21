@@ -66,6 +66,10 @@ class GuruTamuController extends Controller
         // Cek apakah guru tamu ini milik perusahaan yang login
         if ($guruTamu->submitted_by !== auth()->id()) {
             abort(403, 'Anda tidak berhak mengakses pengajuan guru tamu ini');
+        }        // Cek apakah status sudah disetujui
+        if ($guruTamu->status === 'disetujui') {
+            return redirect()->route('perusahaan-guru-tamu-index')
+                ->with('error', 'Pengajuan guru tamu yang sudah disetujui tidak dapat diedit lagi.');
         }
         
         return view('perusahaan.guru_tamu.edit', [
@@ -75,6 +79,10 @@ class GuruTamuController extends Controller
     {
         if ($guruTamu->submitted_by !== auth()->id()) {
             abort(403, 'Anda tidak berhak mengubah pengajuan guru tamu ini');
+        }        // Cek apakah status sudah disetujui
+        if ($guruTamu->status === 'disetujui') {
+            return redirect()->route('perusahaan-guru-tamu-index')
+                ->with('error', 'Pengajuan guru tamu yang sudah disetujui tidak dapat diubah lagi.');
         }
         
         $request->validate([
@@ -117,9 +125,14 @@ class GuruTamuController extends Controller
     {
         if ($guruTamu->submitted_by !== auth()->id()) {
             abort(403, 'Anda tidak berhak menghapus pengajuan guru tamu ini');
+        }        // Cek apakah status sudah disetujui
+        if ($guruTamu->status === 'disetujui') {
+            return redirect()->route('perusahaan-guru-tamu-index')
+                ->with('error', 'Pengajuan guru tamu yang sudah disetujui tidak dapat dihapus lagi.');
         }
         
         $guruTamu->delete();
-        return redirect()->route('perusahaan-guru-tamu-index');
+        return redirect()->route('perusahaan-guru-tamu-index')
+            ->with('success', 'Pengajuan guru tamu berhasil dihapus.');
     }
 }

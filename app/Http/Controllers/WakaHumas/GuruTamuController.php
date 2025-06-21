@@ -24,13 +24,11 @@ class GuruTamuController extends Controller
         $guru_tamu->update(['status' => 'disetujui']);
         return redirect()->route('waka-humas-guru-tamu-index')
             ->with('success', 'Guru tamu berhasil disetujui');
-    }
-
-    public function reject(GuruTamu $guru_tamu)
+    }    public function reject(GuruTamu $guru_tamu)
     {
-        $guru_tamu->update(['status' => 'ditolak']);
+        $guru_tamu->update(['status' => 'proses']);
         return redirect()->route('waka-humas-guru-tamu-index')
-            ->with('success', 'Guru tamu berhasil ditolak');
+            ->with('success', 'Guru tamu telah dikembalikan ke status proses');
     }
 
     public function update(Request $request, $id)

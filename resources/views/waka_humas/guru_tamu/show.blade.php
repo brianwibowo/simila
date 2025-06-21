@@ -11,9 +11,8 @@
 
                 <div class="card-body">
                     <div class="mb-3">
-                        <h4>{{ $guru_tamu->nama_karyawan }}</h4>
-                        <span class="badge bg-{{ $guru_tamu->status === 'disetujui' ? 'success' : ($guru_tamu->status === 'ditolak' ? 'danger' : 'warning') }}">
-                            {{ $guru_tamu->status }}
+                        <h4>{{ $guru_tamu->nama_karyawan }}</h4>                        <span class="badge bg-{{ $guru_tamu->status === 'disetujui' ? 'success' : 'warning' }}">
+                            {{ $guru_tamu->status === 'disetujui' ? 'Disetujui' : 'Menunggu Konfirmasi' }}
                         </span>
                     </div>                    <dl class="row">
                         <dt class="col-sm-3">Diajukan Oleh</dt>

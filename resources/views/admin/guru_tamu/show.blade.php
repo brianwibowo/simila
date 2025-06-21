@@ -7,23 +7,14 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Detail Pengajuan Guru Tamu</h4>
-                    <div>
-                        @php
+                    <div>                        @php
                         $statusClasses = [
                             'proses' => 'badge bg-warning text-dark',
                             'disetujui' => 'badge bg-success',
-                            'ditolak' => 'badge bg-danger',
-                            'selesai' => 'badge bg-info'
                         ];
-                        $statusLabels = [
-                            'proses' => 'Menunggu Konfirmasi',
-                            'disetujui' => 'Disetujui',
-                            'ditolak' => 'Ditolak',
-                            'selesai' => 'Selesai'
-                        ];
-                        @endphp
-                        <span class="{{ $statusClasses[$guru_tamu->status] }}">
-                            {{ $statusLabels[$guru_tamu->status] }}
+                        $statusLabels = \App\Models\GuruTamu::getStatusOptions();
+                        @endphp<span class="{{ $statusClasses[$guruTamu->status] }}">
+                            {{ $statusLabels[$guruTamu->status] }}
                         </span>
                     </div>
                 </div>
@@ -75,25 +66,17 @@
                             @endif                        </div>
                     </div>
                 </div>
-                
+
                 <div class="card-footer">
                     <div class="d-flex justify-content-between">
                         <a href="{{ route('admin-guru-tamu-index') }}" class="btn btn-secondary">Kembali</a>
                         
-                        <div>
-                            @if($guruTamu->status == 'proses')
+                        <div>                            @if($guruTamu->status == 'proses')
                             <form action="{{ route('admin-guru-tamu-approve', $guruTamu->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">
                                     <i class="fa fa-check"></i> Setujui
-                                </button>
-                            </form>
-                            <form action="{{ route('admin-guru-tamu-reject', $guruTamu->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?')">
-                                    <i class="fa fa-times"></i> Tolak
                                 </button>
                             </form>
                             @endif

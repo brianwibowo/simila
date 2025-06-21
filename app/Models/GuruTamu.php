@@ -27,15 +27,11 @@ class GuruTamu extends Model
 
     protected $casts = [
         'jadwal' => 'datetime',
-    ];
-
-    public static function getStatusOptions()
+    ];    public static function getStatusOptions()
     {
         return [
-            'pending' => 'Menunggu Konfirmasi',
+            'proses' => 'Menunggu Konfirmasi',
             'disetujui' => 'Disetujui',
-            'ditolak' => 'Ditolak',
-            'selesai' => 'Selesai',
         ];
     }
 
