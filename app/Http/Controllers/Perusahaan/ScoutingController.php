@@ -22,7 +22,7 @@ class ScoutingController extends Controller
 
     public function create()
     {
-        return view ('perusahaan.scoutings.create');
+        return view('perusahaan.scoutings.create');
     }
 
     public function show(ScoutingBatch $scouting)
@@ -74,20 +74,22 @@ class ScoutingController extends Controller
         return redirect()->route('perusahaan-scouting-index')->with('success', 'Batch berhasil diperbarui');
     }
 
-    public function destroy (ScoutingBatch $scouting)
+    public function destroy(ScoutingBatch $scouting)
     {
         $scouting->delete();
         return redirect()->route('perusahaan-scouting-index')->with('success', 'Batch berhasil dihapus');
     }
 
-    public function siswa(User $user, ScoutingBatch $scouting){
+    public function siswa(User $user, ScoutingBatch $scouting)
+    {
 
         return view('perusahaan.scoutings.siswa', [
             'pelamar' => Talent_Scouting::where('user_id', $user->id)->where('batch_id', $scouting->id)->first()
         ]);
     }
 
-    public function seleksi(Request $request, Talent_Scouting $talent){
+    public function seleksi(Request $request, Talent_Scouting $talent)
+    {
 
         $request->validate([
             'status' => 'required',
@@ -98,6 +100,6 @@ class ScoutingController extends Controller
             'status_seleksi' => $request->status
         ]);
 
-        return redirect()->route('perusahaan-scouting-siswa', ['user'=>$talent->user_id, 'scouting' => $request->batch])->with('success', 'Status pelamar berhasil diperbarui');
+        return redirect()->route('perusahaan-scouting-siswa', ['user' => $talent->user_id, 'scouting' => $request->batch])->with('success', 'Status pelamar berhasil diperbarui');
     }
 }

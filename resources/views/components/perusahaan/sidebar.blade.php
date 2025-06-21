@@ -1,12 +1,12 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="logo">
-                <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="navbar brand"
-                    class="navbar-brand" height="20" />
+        <div class="logo-header d-flex align-items-center justify-content-between px-3" data-background-color="dark">
+            {{-- Tulisan besar SIMILA --}}
+            <a href="{{ route('waka-kurikulum-dashboard') }}" class="text-white text-decoration-none">
+                <h3 class="m-0 fw-bold text-uppercase" style="letter-spacing: 1px;">SIMILA</h3>
             </a>
-            <div class="nav-toggle">
+            <div class="nav-toggle d-flex align-items-center">
                 <button class="btn btn-toggle toggle-sidebar">
                     <i class="gg-menu-right"></i>
                 </button>
@@ -29,7 +29,7 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-            <li class="nav-item {{ request()->routeIs('perusahaan-kurikulum*') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('perusahaan-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
@@ -37,12 +37,14 @@
                     </a>
                     <div class="collapse" id="base">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-diajukan' ? 'active' : '' }}">
+                            <li
+                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-diajukan' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum diajukan</span>
                                 </a>
                             </li>
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-validasi' ? 'active' : '' }}">
+                            <li
+                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-validasi' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-validasi') }}">
                                     <span class="sub-item">Kurikulum Sekolah</span>
                                 </a>
@@ -74,7 +76,8 @@
                     </a>
                     <div class="collapse" id="forms">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-guru-tamu-index' ? 'active' : '' }}">
+                            <li
+                                class="{{ Route::currentRouteName() == 'perusahaan-guru-tamu-index' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-guru-tamu-index') }}">
                                     <span class="sub-item">Pengajuan Guru Tamu</span>
                                 </a>
@@ -174,14 +177,9 @@
                     </a>
                     <div class="collapse" id="subnav2">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
-                                    <span class="sub-item">Daftar Pendaftar</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Hasil Seleksi</span>
+                            <li class="nav-item {{ request()->routeIs('perusahaan-beasiswa-*') ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-beasiswa-index') }}">
+                                    <span class="sub-item">Beasiswa Talent Scout</span>
                                 </a>
                             </li>
                         </ul>
@@ -192,20 +190,19 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         // Toggle untuk menu Riset & Inovasi Produk
-        document.querySelector('a[href="#chart"]').addEventListener('click', function (e) {
+        document.querySelector('a[href="#chart"]').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('submenu');
             submenu.classList.toggle('show');
         });
 
         // Toggle untuk menu Beasiswa Talent Scout
-        document.querySelector('a[href="#char"]').addEventListener('click', function (e) {
+        document.querySelector('a[href="#char"]').addEventListener('click', function(e) {
             e.preventDefault();
             const subnav2 = document.getElementById('subnav2');
             subnav2.classList.toggle('show');
         });
     });
 </script>
-

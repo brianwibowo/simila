@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Beasiswa extends Model
-{   
+{
     use HasFactory;
 
     /**
@@ -54,5 +54,15 @@ class Beasiswa extends Model
             'diterima' => 'Diterima',
             'ditolak' => 'Ditolak',
         ];
+    }
+
+    public function batch()
+    {
+        return $this->belongsTo(BeasiswaBatch::class, 'batch_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -1,12 +1,12 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="logo">
-                <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="navbar brand"
-                    class="navbar-brand" height="20" />
+        <div class="logo-header d-flex align-items-center justify-content-between px-3" data-background-color="dark">
+            {{-- Tulisan besar SIMILA --}}
+            <a href="{{ route('waka-kurikulum-dashboard') }}" class="text-white text-decoration-none">
+                <h3 class="m-0 fw-bold text-uppercase" style="letter-spacing: 1px;">SIMILA</h3>
             </a>
-            <div class="nav-toggle">
+            <div class="nav-toggle d-flex align-items-center">
                 <button class="btn btn-toggle toggle-sidebar">
                     <i class="gg-menu-right"></i>
                 </button>
@@ -71,17 +71,23 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
+                <li class="nav-item {{ Route::is('siswa-beasiswa-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#tsBeasiswa">
                         <i class="fas fa-pen-square"></i>
                         <p>Talent Scouting</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="forms">
+
+                    <div class="collapse {{ Route::is('siswa-beasiswa-*') ? 'show' : '' }}" id="tsBeasiswa">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Beasiswa</span>
+                            <li class="{{ Route::is('siswa-beasiswa-index') ? 'active' : '' }}">
+                                <a href="{{ route('siswa-beasiswa-index') }}">
+                                    <span class="sub-item">Daftar Beasiswa</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::is('siswa-beasiswa-status') ? 'active' : '' }}">
+                                <a href="{{ route('siswa-beasiswa-status') }}">
+                                    <span class="sub-item">Status / Riwayat</span>
                                 </a>
                             </li>
                         </ul>
@@ -92,20 +98,19 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         // Toggle untuk menu Riset & Inovasi Produk
-        document.querySelector('a[href="#chart"]').addEventListener('click', function (e) {
+        document.querySelector('a[href="#chart"]').addEventListener('click', function(e) {
             e.preventDefault();
             const submenu = document.getElementById('submenu');
             submenu.classList.toggle('show');
         });
 
         // Toggle untuk menu Beasiswa Talent Scout
-        document.querySelector('a[href="#char"]').addEventListener('click', function (e) {
+        document.querySelector('a[href="#char"]').addEventListener('click', function(e) {
             e.preventDefault();
             const subnav2 = document.getElementById('subnav2');
             subnav2.classList.toggle('show');
         });
     });
 </script>
-

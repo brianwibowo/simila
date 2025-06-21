@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateScoutingBatchesTable extends Migration
+class CreateBeasiswaBatchesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,17 @@ class CreateScoutingBatchesTable extends Migration
      */
     public function up()
     {
-        Schema::create('scouting_batches', function (Blueprint $table) {
+        Schema::create('beasiswa_batches', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('batch');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
-            $table->enum('status', ['open', 'close']);
-            $table->unsignedBigInteger('perusahaan_id');
-
-            $table->foreign('perusahaan_id')->references('id')->on('users')->onDelete('cascade');
+            $table->enum('status', ['open', 'closed'])->default('open');
+            $table->foreignId('perusahaan_id')->constrained('users')->onDelete('cascade');
+            $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -33,6 +32,6 @@ class CreateScoutingBatchesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('scouting_batches');
+        Schema::dropIfExists('beasiswa_batches');
     }
 }

@@ -40,11 +40,20 @@ class ScoutingController extends Controller
             'batch_id' => $scouting->id,
             'file_cv' => $request->file('cv')->store('talent_scoutings/cv', 'public'),
             'file_ijazah' => $request->file('ijazah')->store('talent_scoutings/ijazah', 'public'),
-            'file_pernyataan' => $request->file('pernyataan')->store('talent_scoutings/pernyaataan', 'public'),
+            'file_pernyataan' => $request->file('pernyataan')->store('talent_scoutings/pernyataan', 'public'),
             'status_seleksi' => 'proses',
             'user_id' => auth()->user()->id
         ]);
 
         return redirect()->route('alumni-scouting-index');
+    }
+    public function status()
+    {
+        $talents = Talent_Scouting::with('batch.perusahaan')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('alumni.scoutings.status', compact('talents'));
     }
 }

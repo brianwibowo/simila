@@ -12,6 +12,8 @@ use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuCont
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
 use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
+use App\Http\Controllers\Perusahaan\BeasiswaScoutingController as PerusahaanBeasiswaScoutingController;
+use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScoutingController;
 
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\Alumni\ScoutingController as AlumniScoutingController;
 use App\Http\Controllers\WakaHumas\RisetController as WakaHumasRisetController;
 use App\Http\Controllers\WakaHumas\GuruTamuController as WakaHumasGuruTamuController;
 use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
+
 
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 
@@ -50,7 +53,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
     Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
-    
+
     // Project Routes for Admin
     Route::prefix('project')->name('admin-project-')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\ProjectController::class, 'index'])->name('index');
@@ -60,7 +63,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
             ->name('laporan-update');
         Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
             ->name('laporan-delete');
-    });// Kurikulum Routes
+    }); // Kurikulum Routes
     Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
     Route::get('/kurikulum/monitor-waka', [AdminKurikulumController::class, 'monitorWakaKurikulum'])->name('admin-kurikulum-monitor-waka');
@@ -150,6 +153,17 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'show' => 'perusahaan-mooc-show',
     ]);
 
+    Route::resource('beasiswa', PerusahaanBeasiswaScoutingController::class)->names([
+        'index'   => 'perusahaan-beasiswa-index',
+        'create'  => 'perusahaan-beasiswa-create',
+        'store'   => 'perusahaan-beasiswa-store',
+        'edit'    => 'perusahaan-beasiswa-edit',
+        'update'  => 'perusahaan-beasiswa-update',
+        'destroy' => 'perusahaan-beasiswa-destroy',
+        'show'    => 'perusahaan-beasiswa-show',
+    ]);
+
+
     Route::resource('scouting', PerusahaanScoutingController::class)->names([
         'index' => 'perusahaan-scouting-index',
         'create' => 'perusahaan-scouting-create',
@@ -173,7 +187,7 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
     Route::get('/pkl/show', [SiswaPklController::class, 'show'])->name('siswa-pkl-show');
     Route::delete('/pkl/batal', [SiswaPklController::class, 'batal'])->name('siswa-pkl-batal');
     Route::post('/pkl/{pkl}/upload', [SiswaPklController::class, 'uploadLaporan'])->name('siswa-pkl-uploadLaporan');
-    
+
     Route::resource('pkl/logbook', SiswaLogbookController::class)->names([
         'index' => 'siswa-logbook-index',
         'create' => 'siswa-logbook-create',
@@ -182,6 +196,11 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->group(function () {
         'update' => 'siswa-logbook-update',
         'destroy' => 'siswa-logbook-destroy',
     ])->except('show');
+
+    Route::get('beasiswa', [SiswaBeasiswaScoutingController::class, 'index'])->name('siswa-beasiswa-index');
+    Route::get('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'register'])->name('siswa-beasiswa-register');
+    Route::post('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'apply'])->name('siswa-beasiswa-apply');
+    Route::get('beasiswa/status', [SiswaBeasiswaScoutingController::class, 'status'])->name('siswa-beasiswa-status');
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
@@ -204,7 +223,7 @@ Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->gr
     Route::get('/', function () {
         return view('waka_kurikulum.dashboard');
     })->name('waka-kurikulum-dashboard');
-    
+
     // Kurikulum Routes
     Route::get('/kurikulum', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'index'])->name('waka-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'validasi'])->name('waka-kurikulum-list-validasi');
@@ -233,7 +252,7 @@ Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(func
     ]);
     Route::put('guru-tamu/{guru_tamu}/approve', [WakaHumasGuruTamuController::class, 'approve'])
         ->where('guru_tamu', '[0-9]+')
-        ->name('waka-humas-guru-tamu-approve'); 
+        ->name('waka-humas-guru-tamu-approve');
     Route::put('guru-tamu/{guru_tamu}/reject', [WakaHumasGuruTamuController::class, 'reject'])
         ->where('guru_tamu', '[0-9]+')
         ->name('waka-humas-guru-tamu-reject');
@@ -266,6 +285,7 @@ Route::middleware(['auth', 'role:alumni'])->prefix('alumni')->group(function () 
     Route::get('scouting/', [AlumniScoutingController::class, 'index'])->name('alumni-scouting-index');
     Route::get('scouting/{scouting}', [AlumniScoutingController::class, 'registration'])->name('alumni-scouting-register');
     Route::post('scouting/{scouting}/apply', [AlumniScoutingController::class, 'apply'])->name('alumni-scouting-apply');
+    Route::get('scouting/status/riwayat', [AlumniScoutingController::class, 'status'])->name('alumni-scouting-status');
 });
 
 Route::middleware(['auth', 'role:lsp'])->prefix('lsp')->group(function () {
