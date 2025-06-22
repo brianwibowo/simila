@@ -74,4 +74,9 @@ class Project extends Model
             }
         });
     }
+
+    public function perusahaan()
+    {
+        return $this->belongsTo(User::class, 'perusahaan_id');
+    }
 }

@@ -81,6 +81,9 @@
                             </h6>
                             <span class="badge {{ $badgeClass }}" data-status="{{ $status }}">{{ $statusText }}</span>
                         </div>
+                        <div class="px-3 pt-2 pb-0">
+                            <small class="text-muted">Perusahaan: <strong>{{ $project->perusahaan->name ?? '-' }}</strong></small>
+                        </div>
                         
                         <div class="card-body">
                             <div class="mb-3">
@@ -207,7 +210,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <div class="row mb-2">
+                                    <div class="col-12">
+                                        <small class="text-muted">Perusahaan: <strong>{{ $project->perusahaan->name ?? '-' }}</strong></small>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h6><strong>Timeline:</strong></h6>

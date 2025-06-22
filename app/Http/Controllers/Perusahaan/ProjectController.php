@@ -14,7 +14,7 @@ class ProjectController extends Controller
     public function index()
     {
         return view('perusahaan.project_mitra.index', [
-            'projects' => Project::all()
+            'projects' => Project::where('perusahaan_id', auth()->id())->get()
         ]);
     }
 
@@ -41,6 +41,7 @@ class ProjectController extends Controller
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'file_brief' => $path,
+            'perusahaan_id' => auth()->id(),
         ]);
 
         return redirect()->route('perusahaan-project-index')->with('success', 'Project berhasil ditambahkan');

@@ -11,7 +11,8 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::select('*')
+        $projects = Project::with('perusahaan')
+            ->select('*')
             ->selectRaw('DATE(tanggal_mulai) as tanggal_mulai')
             ->selectRaw('DATE(tanggal_selesai) as tanggal_selesai')
             ->get();
