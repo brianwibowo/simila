@@ -1,3 +1,7 @@
+@php
+use App\Models\User;
+@endphp
+
 @extends('layouts.layout')
 
 @section('content')
@@ -69,6 +73,7 @@
                                 <thead class="bg-light">
                                     <tr>
                                         <th class="border-0">Nama Kurikulum</th>
+                                        <th class="border-0">Perusahaan Tujuan</th>
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
                                         <th class="border-0">Tanggal Pengajuan</th>
@@ -81,6 +86,20 @@
                                     @forelse ($kurikulums as $kurikulum)
                                         <tr>
                                             <td>{{ $kurikulum->nama_kurikulum }}</td>
+                                            <td>
+                                                @if($kurikulum->perusahaan_id)
+                                                    @php 
+                                                        $perusahaan = User::find($kurikulum->perusahaan_id);
+                                                    @endphp
+                                                    @if($perusahaan)
+                                                        {{ $perusahaan->name }}
+                                                    @else
+                                                        <span class="text-muted">-</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                             <td>{{ $kurikulum->tahun_ajaran }}</td>
                                             <td>
                                                 <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -98,27 +117,31 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
-                                                    <a href="{{ route('waka-kurikulum-edit', $kurikulum) }}" 
-                                                    class="btn btn-sm btn-outline-warning" 
-                                                    data-bs-toggle="tooltip" 
-                                                    title="Edit">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <form action="{{ route('waka-kurikulum-destroy', $kurikulum) }}" 
-                                                        method="POST" 
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
-                                                        class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="btn btn-sm btn-outline-danger" 
-                                                                data-bs-toggle="tooltip" 
-                                                                title="Hapus">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                                @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
+                                                    <span class="text-muted">Tidak dapat diubah</span>
+                                                @else
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('waka-kurikulum-edit', $kurikulum) }}" 
+                                                        class="btn btn-sm btn-outline-warning" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <form action="{{ route('waka-kurikulum-destroy', $kurikulum) }}" 
+                                                            method="POST" 
+                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
+                                                            class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" 
+                                                                    class="btn btn-sm btn-outline-danger" 
+                                                                    data-bs-toggle="tooltip" 
+                                                                    title="Hapus">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)
@@ -175,18 +198,26 @@
                 const rows = document.querySelectorAll('#kurikulum-table tbody tr');
 
                 rows.forEach(row => {
+                    if (row.querySelector('td[colspan="8"]')) {
+                        return; // Skip the "no data" row
+                    }
+                    
                     const createdDate = row.querySelector('.created-date').textContent.trim().toLowerCase();
-                    const statusText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+                    const statusElement = row.querySelector('td:nth-child(6) .badge');
+                    const statusText = statusElement ? statusElement.textContent.trim().toLowerCase() : '';
                     const titleText = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
 
-                    const matchDate = !selectedDate || createdDate.startsWith(selectedDate);
-                    const matchStatus = !selectedStatus || statusText.includes(selectedStatus);
+                    const matchDate = !selectedDate || createdDate.includes(selectedDate);
+                    const matchStatus = !selectedStatus || 
+                                        (selectedStatus === 'menunggu' && statusText.includes('menunggu')) ||
+                                        (selectedStatus === 'disetujui' && statusText.includes('disetujui')) ||
+                                        (selectedStatus === 'ditolak' && statusText.includes('ditolak'));
                     const matchKeyword = !searchKeyword || titleText.includes(searchKeyword);
 
                     row.style.display = matchDate && matchStatus && matchKeyword ? '' : 'none';
                 });
             }
-            
+
             dateFilter.addEventListener('input', filterTable);
             statusFilter.addEventListener('change', filterTable);
             searchInput.addEventListener('input', filterTable);

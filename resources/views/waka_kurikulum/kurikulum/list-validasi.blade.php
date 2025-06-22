@@ -242,34 +242,30 @@
     </div>
 </div>
 
-<!-- Modal Tolak -->
+<!-- Modal untuk menolak kurikulum -->
 <div class="modal fade" id="tolakModal" tabindex="-1" aria-labelledby="tolakModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="tolakForm" method="POST">
-            @csrf
-            @method('PATCH')
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tolakModalLabel">
-                        <i class="bi bi-x-circle text-danger me-2"></i>
-                        Komentar Penolakan
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tolakModalLabel">Tolak Kurikulum</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="POST" id="tolakForm">
+                @csrf
+                @method('PATCH')
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="komentar" class="form-label">Berikan alasan penolakan</label>
-                        <textarea class="form-control" name="komentar" id="komentar" rows="4" required placeholder="Masukkan alasan penolakan kurikulum..."></textarea>
+                        <label for="komentar" class="form-label">Alasan Penolakan <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="komentar" name="komentar" rows="4" required></textarea>
+                        <div class="form-text">Berikan alasan mengapa kurikulum ini ditolak. Alasan akan ditampilkan kepada pengirim.</div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-x-circle me-1"></i> Tolak
-                    </button>
+                    <button type="submit" class="btn btn-danger">Tolak Kurikulum</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -312,7 +308,7 @@ document.addEventListener('DOMContentLoaded', function() {
     tolakModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         const kurikulumId = button.getAttribute('data-kurikulum-id');
-        tolakForm.action = `/waka-kurikulum/kurikulum/${kurikulumId}/tolak`;
+        tolakForm.action = `/waka_kurikulum/kurikulum/${kurikulumId}/tolak`;
     });
     // Handle tab switching with URL hash
     const tabHash = window.location.hash;

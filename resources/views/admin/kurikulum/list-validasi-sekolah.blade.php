@@ -1,3 +1,7 @@
+@php
+use App\Models\User;
+@endphp
+
 @extends('layouts.layout')
 
 @section('content')
@@ -24,14 +28,14 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <h1 class="h4 mb-1">Validasi Kurikulum dari Perusahaan</h1>
-                                <p class="text-muted mb-0">Kelola dan validasi kurikulum yang diajukan oleh perusahaan</p>
+                                <h1 class="h4 mb-1">Validasi Kurikulum dari Sekolah</h1>
+                                <p class="text-muted mb-0">Kelola dan validasi kurikulum yang diajukan oleh sekolah</p>
                             </div>
                         </div>
                         
                         <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
                             <i class="bi bi-info-circle-fill"></i>
-                            Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Perusahaan dan melihat riwayat validasi.
+                            Pada halaman ini, Anda dapat memvalidasi kurikulum yang diajukan oleh Sekolah dan melihat riwayat validasi.
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                         
@@ -75,11 +79,11 @@
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="waiting-validation" role="tabpanel">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle kurikulum-table">
-                                        <thead class="bg-light">
+                                    <table class="table table-hover align-middle kurikulum-table">                                        <thead class="bg-light">
                                             <tr>
                                                 <th class="border-0">Pengirim</th>
                                                 <th class="border-0">Nama Kurikulum</th>
+                                                <th class="border-0">Perusahaan Tujuan</th>
                                                 <th class="border-0">Tahun Ajaran</th>
                                                 <th class="border-0">File</th>
                                                 <th class="border-0">Tanggal Pengajuan</th>
@@ -89,11 +93,26 @@
                                         </thead>
                                         <tbody>
                                             @php $hasWaiting = false; @endphp
-                                            @foreach ($kurikulums as $kurikulum)                                                @if($kurikulum->validasi_sekolah == 'proses')
+                                            @foreach ($kurikulums as $kurikulum)
+                                                @if($kurikulum->validasi_perusahaan == 'proses')
                                                     @php $hasWaiting = true; @endphp
                                                     <tr>
                                                         <td>{{ $kurikulum->pengirim->name }}</td>
                                                         <td>{{ $kurikulum->nama_kurikulum }}</td>
+                                                        <td>
+                                                            @if($kurikulum->perusahaan_id)
+                                                                @php 
+                                                                    $perusahaan = App\Models\User::find($kurikulum->perusahaan_id);
+                                                                @endphp
+                                                                @if($perusahaan)
+                                                                    {{ $perusahaan->name }}
+                                                                @else
+                                                                    <span class="text-muted">-</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
+                                                        </td>
                                                         <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                         <td>
                                                             <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -102,7 +121,8 @@
                                                         </td>
                                                         <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
                                                         <td><span class="badge bg-warning">Menunggu</span></td>
-                                                        <td>                                                            <div class="btn-group" role="group">
+                                                        <td>
+                                                            <div class="btn-group" role="group">
                                                                 <form action="{{ route('admin-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline" id="approveForm{{ $kurikulum->id }}">
                                                                     @csrf
                                                                     @method('PATCH')
@@ -123,10 +143,9 @@
                                                         </td>
                                                     </tr>
                                                 @endif
-                                            @endforeach
-                                              @if(!$hasWaiting)
+                                            @endforeach                                            @if(!$hasWaiting)
                                                 <tr>
-                                                    <td colspan="7" class="text-center py-4">
+                                                    <td colspan="8" class="text-center py-4">
                                                         <div class="text-muted">
                                                             <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                                             Tidak ada kurikulum yang sedang menunggu validasi
@@ -141,11 +160,11 @@
                             
                             <div class="tab-pane fade" id="approved" role="tabpanel">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle kurikulum-table">
-                                        <thead class="bg-light">
+                                    <table class="table table-hover align-middle kurikulum-table">                                        <thead class="bg-light">
                                             <tr>
                                                 <th class="border-0">Pengirim</th>
                                                 <th class="border-0">Nama Kurikulum</th>
+                                                <th class="border-0">Perusahaan Tujuan</th>
                                                 <th class="border-0">Tahun Ajaran</th>
                                                 <th class="border-0">File</th>
                                                 <th class="border-0">Tanggal Pengajuan</th>
@@ -154,11 +173,26 @@
                                         </thead>
                                         <tbody>
                                             @php $hasApproved = false; @endphp
-                                            @foreach ($kurikulums as $kurikulum)                                                @if($kurikulum->validasi_sekolah == 'disetujui')
+                                            @foreach ($kurikulums as $kurikulum)
+                                                @if($kurikulum->validasi_perusahaan == 'disetujui')
                                                     @php $hasApproved = true; @endphp
                                                     <tr>
                                                         <td>{{ $kurikulum->pengirim->name }}</td>
                                                         <td>{{ $kurikulum->nama_kurikulum }}</td>
+                                                        <td>
+                                                            @if($kurikulum->perusahaan_id)
+                                                                @php 
+                                                                    $perusahaan = App\Models\User::find($kurikulum->perusahaan_id);
+                                                                @endphp
+                                                                @if($perusahaan)
+                                                                    {{ $perusahaan->name }}
+                                                                @else
+                                                                    <span class="text-muted">-</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
+                                                        </td>
                                                         <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                         <td>
                                                             <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -169,10 +203,9 @@
                                                         <td>{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td>
                                                     </tr>
                                                 @endif
-                                            @endforeach
-                                              @if(!$hasApproved)
+                                            @endforeach                                            @if(!$hasApproved)
                                                 <tr>
-                                                    <td colspan="6" class="text-center py-4">
+                                                    <td colspan="7" class="text-center py-4">
                                                         <div class="text-muted">
                                                             <i class="bi bi-check-circle fs-1 d-block mb-2"></i>
                                                             Belum ada kurikulum yang disetujui
@@ -187,11 +220,11 @@
                             
                             <div class="tab-pane fade" id="rejected" role="tabpanel">
                                 <div class="table-responsive">
-                                    <table class="table table-hover align-middle kurikulum-table">
-                                        <thead class="bg-light">
+                                    <table class="table table-hover align-middle kurikulum-table">                                        <thead class="bg-light">
                                             <tr>
                                                 <th class="border-0">Pengirim</th>
                                                 <th class="border-0">Nama Kurikulum</th>
+                                                <th class="border-0">Perusahaan Tujuan</th>
                                                 <th class="border-0">Tahun Ajaran</th>
                                                 <th class="border-0">File</th>
                                                 <th class="border-0">Tanggal Pengajuan</th>
@@ -200,11 +233,26 @@
                                         </thead>
                                         <tbody>
                                             @php $hasRejected = false; @endphp
-                                            @foreach ($kurikulums as $kurikulum)                                                @if($kurikulum->validasi_sekolah == 'tidak_disetujui')
+                                            @foreach ($kurikulums as $kurikulum)
+                                                @if($kurikulum->validasi_perusahaan == 'tidak_disetujui')
                                                     @php $hasRejected = true; @endphp
                                                     <tr>
                                                         <td>{{ $kurikulum->pengirim->name }}</td>
                                                         <td>{{ $kurikulum->nama_kurikulum }}</td>
+                                                        <td>
+                                                            @if($kurikulum->perusahaan_id)
+                                                                @php 
+                                                                    $perusahaan = App\Models\User::find($kurikulum->perusahaan_id);
+                                                                @endphp
+                                                                @if($perusahaan)
+                                                                    {{ $perusahaan->name }}
+                                                                @else
+                                                                    <span class="text-muted">-</span>
+                                                                @endif
+                                                            @else
+                                                                <span class="text-muted">-</span>
+                                                            @endif
+                                                        </td>
                                                         <td>{{ $kurikulum->tahun_ajaran }}</td>
                                                         <td>
                                                             <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -213,18 +261,15 @@
                                                         </td>
                                                         <td>{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
                                                         <td>
-                                                            @if($kurikulum->komentar)
-                                                                <span class="text-muted">{{ Str::limit($kurikulum->komentar, 50) }}</span>
-                                                            @else
-                                                                <span class="text-muted">-</span>
-                                                            @endif
+                                                            <span class="d-inline-block text-truncate" style="max-width: 150px;" data-bs-toggle="tooltip" title="{{ $kurikulum->komentar }}">
+                                                                {{ $kurikulum->komentar }}
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 @endif
-                                            @endforeach
-                                              @if(!$hasRejected)
+                                            @endforeach                                            @if(!$hasRejected)
                                                 <tr>
-                                                    <td colspan="6" class="text-center py-4">
+                                                    <td colspan="7" class="text-center py-4">
                                                         <div class="text-muted">
                                                             <i class="bi bi-x-circle fs-1 d-block mb-2"></i>
                                                             Belum ada kurikulum yang ditolak
@@ -241,16 +286,16 @@
                 </div>
             </div>
         </div>
-    </div>    
-    <!-- Modal for rejecting curriculum -->
+    </div>
+
+    <!-- Modal Tolak Kurikulum -->
     <div class="modal fade" id="tolakModal" tabindex="-1" aria-labelledby="tolakModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="tolakModalLabel">Tolak Kurikulum</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="" method="POST" id="tolakForm">
+                </div>                <form action="" method="POST" id="tolakForm">
                     @csrf
                     @method('PATCH')
                     <div class="modal-body">
@@ -268,124 +313,85 @@
             </div>
         </div>
     </div>
+@endsection
 
-    <style>
-        .table > :not(caption) > * > * {
-            padding: 1rem;
-        }
-        .btn-group .btn {
-            padding: 0.375rem 0.75rem;
-        }
-        .nav-tabs-custom .nav-link {
-            color: #6c757d;
-            border: none;
-            padding: 0.75rem 1.25rem;
-            font-weight: 500;
-        }
-        .nav-tabs-custom .nav-link.active {
-            color: #0d6efd;
-            background: none;
-            border-bottom: 2px solid #0d6efd;
-        }
-        .nav-tabs-custom .nav-link:hover {
-            color: #0d6efd;
-            border-color: transparent;
-        }
-    </style>
-
+@section('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        });
-
-        const tabHash = window.location.hash;
-        if (tabHash) {
-            const tab = document.querySelector(`a[href="${tabHash}"]`);
-            if (tab) {
-                tab.click();
+        // Set up the modal form action URL when the modal is shown
+        document.addEventListener('DOMContentLoaded', function() {            const tolakModal = document.getElementById('tolakModal');
+            if (tolakModal) {
+                tolakModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const kurikulumId = button.getAttribute('data-kurikulum-id');
+                    const tolakForm = document.getElementById('tolakForm');
+                    tolakForm.setAttribute('action', `/admin/kurikulum/${kurikulumId}/tolak`);
+                });
             }
-        }
-
-        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
-            tab.addEventListener('click', function() {
-                window.location.hash = this.getAttribute('href');
-            });
-        });
-
-        const dateFilter = document.getElementById('filter-date');
-        const searchInput = document.getElementById('search-input');
-
-        function filterTables() {
-            const selectedDate = dateFilter.value;
-            const searchQuery = searchInput.value.toLowerCase();
-            const activeTabId = document.querySelector('.tab-pane.active').id;
+            
+            // Filtering functionality for tables
+            const filterDate = document.getElementById('filter-date');
+            const searchInput = document.getElementById('search-input');
             const tables = document.querySelectorAll('.kurikulum-table');
             
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tbody tr');
-                let visibleCount = 0;
+            if (filterDate) {
+                filterDate.addEventListener('change', filterTables);
+            }
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', filterTables);
+            }
+            
+            function filterTables() {
+                const dateValue = filterDate ? filterDate.value : '';
+                const searchValue = searchInput ? searchInput.value.toLowerCase() : '';
                 
-                rows.forEach(row => {
-                    if (row.cells.length <= 1) return;
+                tables.forEach(table => {
+                    const rows = table.querySelectorAll('tbody tr');
                     
-                    const dateCell = row.querySelector('td.created-date')?.textContent.trim() || '';
-                    const nameCell = row.cells[1]?.textContent.toLowerCase() || '';
-                    const senderCell = row.cells[0]?.textContent.toLowerCase() || '';
-                    const yearCell = row.cells[2]?.textContent.toLowerCase() || '';
-
-                    let showRow = true;
-                    if (selectedDate && selectedDate !== '') {
-                        const filterDate = new Date(selectedDate);
-                        const rowDate = new Date(dateCell);
-                        
-                        if (filterDate.toISOString().split('T')[0] !== rowDate.toISOString().split('T')[0]) {
-                            showRow = false;
+                    rows.forEach(row => {
+                        if (row.querySelector('td[colspan]')) {
+                            return; // Skip empty state rows
                         }
-                    }
+                        
+                        const dateCell = row.querySelector('.created-date');
+                        const nameCell = row.querySelector('td:nth-child(2)');
+                        
+                        const dateMatch = !dateValue || (dateCell && dateCell.textContent.includes(dateValue));
+                        const searchMatch = !searchValue || (nameCell && nameCell.textContent.toLowerCase().includes(searchValue));
+                        
+                        if (dateMatch && searchMatch) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
                     
-                    if (searchQuery && !(
-                        nameCell.includes(searchQuery) || 
-                        senderCell.includes(searchQuery) || 
-                        yearCell.includes(searchQuery)
-                    )) {
-                        showRow = false;
-                    }
+                    // Check if all rows are hidden
+                    const allHidden = Array.from(rows).every(row => {
+                        return row.style.display === 'none' || row.querySelector('td[colspan]');
+                    });
                     
-                    if (showRow) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
+                    // Get or create an empty state row
+                    let emptyRow = table.querySelector('.empty-filter-result');
+                    
+                    if (allHidden && !emptyRow) {
+                        const tbody = table.querySelector('tbody');
+                        emptyRow = document.createElement('tr');
+                        emptyRow.className = 'empty-filter-result';
+                        emptyRow.innerHTML = `
+                            <td colspan="7" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="bi bi-search fs-1 d-block mb-2"></i>
+                                    Tidak ada hasil yang sesuai dengan filter
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(emptyRow);
+                    } else if (!allHidden && emptyRow) {
+                        emptyRow.remove();
                     }
                 });
-                
-                const emptyMessage = table.closest('.tab-pane').querySelector('.text-muted');
-                if (emptyMessage) {
-                    if (emptyMessage.closest('tr').cells.length > 1) return;
-                    emptyMessage.closest('tr').style.display = visibleCount === 0 ? '' : 'none';
-                }
-            });
-        }
-        
-        dateFilter.addEventListener('change', filterTables);
-        dateFilter.addEventListener('input', filterTables);
-        searchInput.addEventListener('input', filterTables);
-        
-        document.querySelectorAll('.nav-tabs .nav-link').forEach(tab => {
-            tab.addEventListener('shown.bs.tab', filterTables);
-        });
-        const tolakModal = document.getElementById('tolakModal');
-        const tolakForm = document.getElementById('tolakForm');
-
-        tolakModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const kurikulumId = button.getAttribute('data-kurikulum-id');
-            tolakForm.action = `/admin/kurikulum/${kurikulumId}/tolak`;
-        });
-        
-        filterTables();
+            }
         });
     </script>
 @endsection

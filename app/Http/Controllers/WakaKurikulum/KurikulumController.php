@@ -33,26 +33,27 @@ class KurikulumController extends Controller
               ->orderBy('created_at', 'desc')
               ->get()
         ]);
-    }
-
-    /**
+    }    /**
      * Show the form for creating a new kurikulum
      */
     public function create()
     {
-        return view('waka_kurikulum.kurikulum.create');
+        $perusahaanUsers = User::role('perusahaan')->get();
+        return view('waka_kurikulum.kurikulum.create', [
+            'perusahaanUsers' => $perusahaanUsers
+        ]);
     }
 
     /**
      * Store a newly created kurikulum
-     */
-    public function store(Request $request)
+     */    public function store(Request $request)
     {
         $request->validate([
             'nama' => 'required|string|unique:kurikulums,nama_kurikulum',
             'tahun' => 'required|string',
             'deskripsi' => 'required|string',
             'file' => 'required|mimes:pdf',
+            'perusahaan_id' => 'required|exists:users,id',
         ]);
 
         $path = $request->file('file')->store('kurikulum/', 'public');
@@ -61,6 +62,7 @@ class KurikulumController extends Controller
         Kurikulum::create([
             'nama_kurikulum' => $request->nama,
             'pengirim_id' => auth()->user()->id,
+            'perusahaan_id' => $request->perusahaan_id, // Store the target company ID
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
             'file_kurikulum' => $path,
@@ -74,8 +76,7 @@ class KurikulumController extends Controller
     
     /**
      * Show the form for editing the specified kurikulum
-     */
-    public function edit(Kurikulum $kurikulum)
+     */    public function edit(Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to edit this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
@@ -83,43 +84,47 @@ class KurikulumController extends Controller
                 ->with('error', 'Anda tidak diizinkan mengedit kurikulum ini');
         }
         
+        $perusahaanUsers = User::role('perusahaan')->get();
         return view('waka_kurikulum.kurikulum.edit', [
-            'kurikulum' => $kurikulum
+            'kurikulum' => $kurikulum,
+            'perusahaanUsers' => $perusahaanUsers
         ]);
     }
 
     /**
      * Update the specified kurikulum
-     */
-    public function update(Request $request, Kurikulum $kurikulum)
+     */    public function update(Request $request, Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to update this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
             return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Anda tidak diizinkan mengedit kurikulum ini');
         }
-
-        $request->validate([
+        
+        // If kurikulum is already fully approved, don't allow edit
+        if ($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui') {
+            return redirect()->route('waka-kurikulum-list-diajukan')
+                ->with('error', 'Kurikulum yang telah disetujui tidak dapat diubah');
+        }        $request->validate([
             'nama' => 'required|string|unique:kurikulums,nama_kurikulum,'.$kurikulum->id,
             'tahun' => 'required|string',
             'deskripsi' => 'required|string',
             'file' => 'nullable|mimes:pdf',
-        ]);
-
-        // Update file if needed
+            'perusahaan_id' => 'required|exists:users,id',
+        ]);        // Update file if needed
         if ($request->hasFile('file')) {
-            Storage::disk('public')->delete($kurikulum->file_kurikulum);
-            $path = $request->file('file')->store('kurikulum/', 'public');
+            // Generate a unique filename to avoid overwriting existing files
+            $filename = uniqid() . '_' . $request->file('file')->getClientOriginalName();
+            $path = $request->file('file')->storeAs('kurikulum', $filename, 'public');
             $kurikulum->update([
                 'file_kurikulum' => $path
             ]);
-        }
-
-        // Update kurikulum data
+        }// Update kurikulum data
         $kurikulum->update([
             'nama_kurikulum' => $request->nama,
             'tahun_ajaran' => $request->tahun,
             'deskripsi' => $request->deskripsi,
+            'perusahaan_id' => $request->perusahaan_id,
             'validasi_perusahaan' => 'proses', // Reset validation status as it's been modified
         ]);
 
@@ -129,13 +134,18 @@ class KurikulumController extends Controller
     
     /**
      * Remove the specified kurikulum
-     */
-    public function destroy(Kurikulum $kurikulum)
+     */    public function destroy(Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to delete this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
             return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Anda tidak diizinkan menghapus kurikulum ini');
+        }
+        
+        // If kurikulum is already fully approved, don't allow delete
+        if ($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui') {
+            return redirect()->route('waka-kurikulum-list-diajukan')
+                ->with('error', 'Kurikulum yang telah disetujui tidak dapat dihapus');
         }
 
         $kurikulum->delete();

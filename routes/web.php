@@ -61,14 +61,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::post('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'uploadLaporan'])
             ->name('laporan-upload');
         Route::put('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'updateLaporan'])
-            ->name('laporan-update');
-        Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
+            ->name('laporan-update');        Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
             ->name('laporan-delete');
-    }); // Kurikulum Routes
+    }); 
+    
+    // Kurikulum Routes
     Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
-    Route::get('/kurikulum/monitor-waka', [AdminKurikulumController::class, 'monitorWakaKurikulum'])->name('admin-kurikulum-monitor-waka');
-    Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
+    Route::get('/kurikulum/validasi-sekolah', [AdminKurikulumController::class, 'validasiSekolah'])->name('admin-kurikulum-list-validasi-sekolah');    Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
+    Route::get('/kurikulum/create-for-school', [AdminKurikulumController::class, 'createForSchool'])->name('admin-kurikulum-create-for-school');
+    Route::get('/kurikulum/create-for-company', [AdminKurikulumController::class, 'createForCompany'])->name('admin-kurikulum-create-for-company');
     Route::post('/kurikulum', [AdminKurikulumController::class, 'store'])->name('admin-kurikulum-store');
     Route::get('/kurikulum/{kurikulum}/edit', [AdminKurikulumController::class, 'edit'])->name('admin-kurikulum-edit');
     Route::put('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'update'])->name('admin-kurikulum-update');

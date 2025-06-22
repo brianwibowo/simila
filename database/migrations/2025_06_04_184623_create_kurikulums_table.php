@@ -18,8 +18,8 @@ class CreateKurikulumsTable extends Migration
             $table->unsignedBigInteger('pengirim_id');
             $table->foreign('pengirim_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('perusahaan_id')->nullable();
-            $table->foreign('perusahaan_id')->references('id')->on('users')->onDelete('set null');
-            $table->string('nama_kurikulum')->unique();
+            $table->foreign('perusahaan_id')->references('id')->on('users')->onDelete('set null');            
+            $table->string('nama_kurikulum');
             $table->longText('deskripsi');
             $table->string('file_kurikulum');
             $table->longText('tahun_ajaran');
