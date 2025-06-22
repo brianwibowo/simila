@@ -62,14 +62,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         Route::post('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'uploadLaporan'])
             ->name('laporan-upload');
         Route::put('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'updateLaporan'])
-            ->name('laporan-update');        Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
+            ->name('laporan-update');
+        Route::delete('/{project}/laporan', [App\Http\Controllers\Admin\ProjectController::class, 'deleteLaporan'])
             ->name('laporan-delete');
-    }); 
-    
+    });
+
     // Kurikulum Routes
     Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
     Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
-    Route::get('/kurikulum/validasi-sekolah', [AdminKurikulumController::class, 'validasiSekolah'])->name('admin-kurikulum-list-validasi-sekolah');    Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
+    Route::get('/kurikulum/validasi-sekolah', [AdminKurikulumController::class, 'validasiSekolah'])->name('admin-kurikulum-list-validasi-sekolah');
+    Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
     Route::get('/kurikulum/create-for-school', [AdminKurikulumController::class, 'createForSchool'])->name('admin-kurikulum-create-for-school');
     Route::get('/kurikulum/create-for-company', [AdminKurikulumController::class, 'createForCompany'])->name('admin-kurikulum-create-for-company');
     Route::post('/kurikulum', [AdminKurikulumController::class, 'store'])->name('admin-kurikulum-store');
@@ -157,15 +159,15 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'show' => 'perusahaan-mooc-show',
     ]);
 
-    Route::resource('module' , PerusahaanMoocModuleController::class)->names([
+    Route::resource('module', PerusahaanMoocModuleController::class)->names([
         'store' => 'perusahaan-module-store',
         'update' => 'perusahaan-module-update',
         'destroy' => 'perusahaan-module-destroy',
         'show' => 'perusahaan-module-show',
     ])->except(['create', 'index', 'edit']);
 
-    Route::get('/module/{mooc}/create' , [PerusahaanMoocModuleController::class, 'create'])->name('perusahaan-module-create');
-    Route::get('/module/{mooc}/{module}/edit' , [PerusahaanMoocModuleController::class, 'edit'])->name('perusahaan-module-edit');
+    Route::get('/module/{mooc}/create', [PerusahaanMoocModuleController::class, 'create'])->name('perusahaan-module-create');
+    Route::get('/module/{mooc}/{module}/edit', [PerusahaanMoocModuleController::class, 'edit'])->name('perusahaan-module-edit');
 
     Route::resource('beasiswa', PerusahaanBeasiswaScoutingController::class)->names([
         'index'   => 'perusahaan-beasiswa-index',
@@ -176,6 +178,11 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
         'destroy' => 'perusahaan-beasiswa-destroy',
         'show'    => 'perusahaan-beasiswa-show',
     ]);
+    Route::get('beasiswa/{beasiswa}/siswa/{user}', [PerusahaanBeasiswaScoutingController::class, 'siswa'])->name('perusahaan-beasiswa-siswa');
+    Route::post('beasiswa/{beasiswa}/siswa/{pendaftar}/seleksi', [PerusahaanBeasiswaScoutingController::class, 'seleksi'])
+        ->name('perusahaan-beasiswa-seleksi');
+
+
 
 
     Route::resource('scouting', PerusahaanScoutingController::class)->names([
@@ -254,6 +261,11 @@ Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->gr
     Route::get('/beasiswa/{beasiswa}', [WakaKurikulumBeasiswaRekomendasiController::class, 'show'])->name('waka_kurikulum.beasiswas.show');
     Route::put('/beasiswa/{beasiswa}', [WakaKurikulumBeasiswaRekomendasiController::class, 'rekomendasi'])->name('waka_kurikulum.beasiswas.rekomendasi');
     Route::get('/beasiswa-hasil', [WakaKurikulumBeasiswaRekomendasiController::class, 'hasil'])->name('waka_kurikulum.beasiswas.hasil');
+    Route::get('/beasiswa-aktif', [WakaKurikulumBeasiswaRekomendasiController::class, 'batchAktifViewOnly'])
+        ->name('waka_kurikulum.beasiswas.batches.list');
+    // routes/web.php
+    Route::get('/beasiswa-hasil/{batch}', [WakaKurikulumBeasiswaRekomendasiController::class, 'hasilDetail'])
+        ->name('waka_kurikulum.beasiswas.hasil.detail');
 });
 
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {

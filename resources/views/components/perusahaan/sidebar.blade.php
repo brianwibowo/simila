@@ -169,22 +169,23 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item {{ request()->routeIs('perusahaan-beasiswa*') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#char">
+                <li class="nav-item {{ request()->routeIs('perusahaan-beasiswa-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#subnav2"
+                       aria-expanded="{{ request()->routeIs('perusahaan-beasiswa-*') ? 'true' : 'false' }}">
                         <i class="far fa-chart-bar"></i>
                         <p>Beasiswa Talent Scout</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="subnav2">
+                    <div class="collapse {{ request()->routeIs('perusahaan-beasiswa-*') ? 'show' : '' }}" id="subnav2">
                         <ul class="nav nav-collapse">
-                            <li class="nav-item {{ request()->routeIs('perusahaan-beasiswa-*') ? 'active' : '' }}">
+                            <li class="{{ request()->routeIs('perusahaan-beasiswa-*') ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-beasiswa-index') }}">
-                                    <span class="sub-item">Beasiswa Talent Scout</span>
+                                    <span class="sub-item">Daftar Batch Beasiswa</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
-                </li>
+                </li>                
             </ul>
         </div>
     </div>

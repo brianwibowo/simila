@@ -22,6 +22,7 @@ class BeasiswaRekomendasiController extends Controller
         return view('waka_kurikulum.beasiswas.index', compact('pendaftar'));
     }
 
+
     public function show(Beasiswa $beasiswa)
     {
         abort_if($beasiswa->user->sekolah_id !== Auth::user()->sekolah_id, 403);
@@ -29,18 +30,18 @@ class BeasiswaRekomendasiController extends Controller
         return view('waka_kurikulum.beasiswas.show', compact('beasiswa'));
     }
 
-    public function update(Request $request, Beasiswa $beasiswa)
+    public function rekomendasi(Request $request, Beasiswa $beasiswa)
     {
         abort_if($beasiswa->user->sekolah_id !== Auth::user()->sekolah_id, 403);
 
         $request->validate([
-            'catatan'          => 'nullable|string|max:1000',
-            'direkomendasikan' => 'nullable|boolean',
+            'catatan' => 'nullable|string|max:1000',
+            'direkomendasikan' => 'required|in:0,1',
         ]);
 
         $beasiswa->update([
-            'catatan'             => $request->catatan,
-            'direkomendasikan'    => $request->boolean('direkomendasikan'),
+            'catatan' => $request->catatan,
+            'direkomendasikan' => (bool) $request->direkomendasikan,
             'tanggal_rekomendasi' => now(),
         ]);
 
@@ -48,6 +49,18 @@ class BeasiswaRekomendasiController extends Controller
             ->route('waka_kurikulum.beasiswas.index')
             ->with('success', 'Rekomendasi berhasil disimpan.');
     }
+
+    public function batchAktifViewOnly()
+    {
+        $batches = \App\Models\BeasiswaBatch::with('perusahaan')
+            ->whereDate('tanggal_mulai', '<=', now())
+            ->whereDate('tanggal_selesai', '>=', now())
+            ->orderByDesc('created_at')
+            ->paginate(10); // <--- aktifkan pagination
+
+        return view('waka_kurikulum.beasiswas.batches_list', compact('batches'));
+    }
+
 
     public function hasil()
     {
@@ -60,10 +73,21 @@ class BeasiswaRekomendasiController extends Controller
             'beasiswas.user',
             'perusahaan'
         ])
-        ->whereHas('beasiswas', fn ($q) => $q->whereHas('user', fn ($q2) => $q2->where('sekolah_id', $sekolahId)))
-        ->orderByDesc('created_at')
-        ->get();
+            ->whereHas('beasiswas', fn ($q) => $q->whereHas('user', fn ($q2) => $q2->where('sekolah_id', $sekolahId)))
+            ->orderByDesc('created_at')
+            ->get();
 
         return view('waka_kurikulum.beasiswas.hasil', compact('batches'));
+    }
+    public function hasilDetail(BeasiswaBatch $batch)
+    {
+        $sekolahId = Auth::user()->sekolah_id;
+
+        $beasiswas = $batch->beasiswas()
+            ->with('user')
+            ->whereHas('user', fn ($q) => $q->where('sekolah_id', $sekolahId))
+            ->get();
+
+        return view('waka_kurikulum.beasiswas.hasil_detail', compact('batch', 'beasiswas'));
     }
 }

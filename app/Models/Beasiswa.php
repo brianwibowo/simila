@@ -43,11 +43,12 @@ class Beasiswa extends Model
     public static function getStatusOptions()
     {
         return [
-            'pending' => 'Menunggu Review',
-            'diterima' => 'Diterima',
-            'ditolak' => 'Ditolak',
+            'lolos' => 'Diterima',
+            'tidak lolos' => 'Ditolak',
+            'proses' => 'Menunggu Review',
         ];
     }
+
 
     public function batch()
     {

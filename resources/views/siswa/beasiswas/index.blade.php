@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h1 class="h3 mb-4 text-gray-800">Peluang Beasiswas dari Perusahaan</h1>
+    <h1 class="h3 mb-4 text-gray-800">Peluang Beasiswa dari Perusahaan</h1>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>

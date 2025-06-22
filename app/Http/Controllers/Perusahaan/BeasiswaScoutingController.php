@@ -45,10 +45,16 @@ class BeasiswaScoutingController extends Controller
     public function show(BeasiswaBatch $beasiswa)
     {
         $this->guard($beasiswa);
+
         $pendaftar = Beasiswa::where('batch_id', $beasiswa->id)
-            ->where('direkomendasikan', true)
+            ->where('direkomendasikan', true) // ✅ hanya siswa yang direkomendasikan
+            ->with('user')
             ->get();
+
+        return view('perusahaan.beasiswas.show', compact('beasiswa', 'pendaftar'));
     }
+
+
 
     public function edit(BeasiswaBatch $beasiswa)
     {
@@ -80,24 +86,24 @@ class BeasiswaScoutingController extends Controller
         return redirect()->route('perusahaan-beasiswa-index')->with('success', 'Batch berhasil dihapus');
     }
 
-    public function siswa(User $user, BeasiswaBatch $beasiswa)
+    public function siswa(BeasiswaBatch $beasiswa, User $user)
     {
         $this->guard($beasiswa);
 
         $pendaftar = Beasiswa::where('user_id', $user->id)
             ->where('batch_id', $beasiswa->id)
-            ->first();
+            ->firstOrFail();
 
         return view('perusahaan.beasiswas.siswa', compact('pendaftar', 'beasiswa'));
     }
 
-    public function seleksi(Request $request, Beasiswa $pendaftar)
+
+    public function seleksi(Request $request, BeasiswaBatch $beasiswa, Beasiswa $pendaftar)
     {
-        $this->guard($pendaftar->batch);
+        $this->guard($beasiswa);
 
         $request->validate([
-            'status' => 'required|in:diterima,ditolak',
-            'batch'  => 'required'
+            'status' => 'required|in:lolos,tidak lolos,proses' // sesuai enum di DB
         ]);
 
         $pendaftar->update([
@@ -105,10 +111,12 @@ class BeasiswaScoutingController extends Controller
         ]);
 
         return redirect()->route('perusahaan-beasiswa-siswa', [
-            'user' => $pendaftar->user_id,
-            'beasiswa' => $request->batch
+            'beasiswa' => $beasiswa->id,
+            'user'     => $pendaftar->user_id
         ])->with('success', 'Status pelamar diperbarui');
     }
+
+
 
     protected function guard(BeasiswaBatch $batch)
     {

@@ -63,6 +63,12 @@
                     </a>
                     <div class="collapse {{ Route::is('waka_kurikulum.beasiswas.*') ? 'show' : '' }}" id="subnav2">
                         <ul class="nav nav-collapse">
+                            <li class="{{ Route::is('waka_kurikulum.beasiswas.batches.list') ? 'active' : '' }}">
+                                <a href="{{ route('waka_kurikulum.beasiswas.batches.list') }}">
+                                    <i class="fas fa-list-alt"></i>
+                                    <p>Beasiswa Aktif</p>
+                                </a>
+                            </li>
                             <li class="{{ Route::is('waka_kurikulum.beasiswas.index') ? 'active' : '' }}">
                                 <a href="{{ route('waka_kurikulum.beasiswas.index') }}">
                                     <i class="fas fa-check-circle"></i>
