@@ -15,6 +15,7 @@ use App\Http\Controllers\Perusahaan\MoocModuleController as PerusahaanMoocModule
 use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
 use App\Http\Controllers\Perusahaan\BeasiswaScoutingController as PerusahaanBeasiswaScoutingController;
 use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScoutingController;
+use App\Http\Controllers\WakaKurikulum\BeasiswaRekomendasiController as WakaKurikulumBeasiswaRekomendasiController;
 
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
@@ -245,6 +246,12 @@ Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->gr
     Route::delete('/kurikulum/{kurikulum}', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'destroy'])->name('waka-kurikulum-destroy');
     Route::patch('/kurikulum/{kurikulum}/setuju', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
     Route::patch('/kurikulum/{kurikulum}/tolak', [App\Http\Controllers\WakaKurikulum\KurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
+
+    // ✅ Beasiswa Rekomendasi
+    Route::get('/beasiswa', [WakaKurikulumBeasiswaRekomendasiController::class, 'index'])->name('waka_kurikulum.beasiswas.index');
+    Route::get('/beasiswa/{beasiswa}', [WakaKurikulumBeasiswaRekomendasiController::class, 'show'])->name('waka_kurikulum.beasiswas.show');
+    Route::put('/beasiswa/{beasiswa}', [WakaKurikulumBeasiswaRekomendasiController::class, 'rekomendasi'])->name('waka_kurikulum.beasiswas.rekomendasi');
+    Route::get('/beasiswa-hasil', [WakaKurikulumBeasiswaRekomendasiController::class, 'hasil'])->name('waka_kurikulum.beasiswas.hasil');
 });
 
 Route::middleware(['auth', 'role:waka_humas'])->prefix('waka_humas')->group(function () {

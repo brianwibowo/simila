@@ -26,7 +26,8 @@ class User extends Authenticatable
         'jenis_guru',
         'pkl_status',
         'laporan_pkl',
-        'nilai_pkl'
+        'nilai_pkl',
+        'sekolah_id',
     ];
 
     /**
