@@ -80,29 +80,32 @@
                                                 @else
                                                     <span class="badge bg-warning">Menunggu</span>
                                                 @endif
-                                            </td>
-                                            <td>
-                                                <div class="btn-group" role="group">
-                                                    <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}" 
-                                                    class="btn btn-sm btn-outline-warning" 
-                                                    data-bs-toggle="tooltip" 
-                                                    title="Edit">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}" 
-                                                        method="POST" 
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
-                                                        class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="btn btn-sm btn-outline-danger" 
-                                                                data-bs-toggle="tooltip" 
-                                                                title="Hapus">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
+                                            </td>                                            <td>
+                                                @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
+                                                    <span class="text-muted">Tidak dapat diubah</span>
+                                                @else
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}" 
+                                                        class="btn btn-sm btn-outline-warning" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}" 
+                                                            method="POST" 
+                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
+                                                            class="d-inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" 
+                                                                    class="btn btn-sm btn-outline-danger" 
+                                                                    data-bs-toggle="tooltip" 
+                                                                    title="Hapus">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)

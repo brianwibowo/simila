@@ -12,6 +12,19 @@ class Kurikulum extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    
+    // Explicitly define fillable fields for clarity
+    protected $fillable = [
+        'nama_kurikulum',
+        'pengirim_id',
+        'perusahaan_id',
+        'tahun_ajaran',
+        'deskripsi',
+        'file_kurikulum',
+        'validasi_sekolah',
+        'validasi_perusahaan',
+        'komentar'
+    ];
 
     protected static function boot()
     {

@@ -20,16 +20,19 @@
                                 {{ session('error') }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-                        @endif
-
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        @endif                        <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
                                 <h1 class="h4 mb-1">Daftar Kurikulum Diajukan</h1>
                                 <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan</p>
                             </div>
-                            <a href="{{ route('admin-kurikulum-create') }}" class="btn btn-success d-flex align-items-center">
-                                + Ajukan Kurikulum
-                            </a>
+                            <div>
+                                <a href="{{ route('admin-kurikulum-create-for-school') }}" class="btn btn-primary me-2">
+                                    <i class="bi bi-building-fill me-1"></i> Ajukan atas nama Sekolah
+                                </a>
+                                <a href="{{ route('admin-kurikulum-create-for-company') }}" class="btn btn-success">
+                                    <i class="bi bi-briefcase-fill me-1"></i> Ajukan atas nama Perusahaan
+                                </a>
+                            </div>
                         </div>
 
                         <div class="row mb-4">
@@ -65,10 +68,11 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="kurikulum-table">
-                                <thead class="bg-light">
+                            <table class="table table-hover align-middle" id="kurikulum-table">                                <thead class="bg-light">
                                     <tr>
                                         <th class="border-0">Nama Kurikulum</th>
+                                        <th class="border-0">Perusahaan Pengaju</th>
+                                        <th class="border-0">Perusahaan Tujuan</th>
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
                                         <th class="border-0">Tanggal Pengajuan</th>
@@ -81,6 +85,37 @@
                                     @forelse ($kurikulums as $kurikulum)
                                         <tr>
                                             <td>{{ $kurikulum->nama_kurikulum }}</td>
+                                            <td>
+                                                @if($kurikulum->pengirim->hasRole('perusahaan'))
+                                                    {{ $kurikulum->pengirim->name }}
+                                                @elseif($kurikulum->pengirim->hasRole('admin') && !$kurikulum->perusahaan_id)
+                                                    @php 
+                                                        // Coba dapatkan perusahaan yang dimaksud untuk pengajuan atas nama perusahaan
+                                                        $perusahaan = App\Models\User::find($kurikulum->pengirim_id);
+                                                    @endphp
+                                                    @if(isset($perusahaan) && $perusahaan->hasRole('perusahaan'))
+                                                        {{ $perusahaan->name }}
+                                                    @else
+                                                        <span class="text-muted">–</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">–</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($kurikulum->perusahaan_id)
+                                                    @php 
+                                                        $perusahaan = App\Models\User::find($kurikulum->perusahaan_id);
+                                                    @endphp
+                                                    @if($perusahaan)
+                                                        {{ $perusahaan->name }}
+                                                    @else
+                                                        <span class="text-muted">–</span>
+                                                    @endif
+                                                @else
+                                                    <span class="text-muted">–</span>
+                                                @endif
+                                            </td>
                                             <td>{{ $kurikulum->tahun_ajaran }}</td>
                                             <td>
                                                 <a href="{{ asset('storage/'.$kurikulum->file_kurikulum) }}" target="_blank" class="btn btn-sm btn-outline-primary">
@@ -128,9 +163,8 @@
                                                 @endif
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="8" class="text-center py-4">
+                                    @empty                                        <tr>
+                                            <td colspan="9" class="text-center py-4">
                                                 <div class="text-muted">
                                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                                     Belum ada kurikulum yang diajukan
@@ -165,9 +199,7 @@
 
             const dateFilter = document.getElementById('filter-date');
             const statusFilter = document.getElementById('filter-status');
-            const searchInput = document.getElementById('search-title');
-
-            function filterTable() {
+            const searchInput = document.getElementById('search-title');            function filterTable() {
                 const selectedDate = dateFilter.value.toLowerCase();
                 const selectedStatus = statusFilter.value.toLowerCase();
                 const searchKeyword = searchInput.value.toLowerCase();
@@ -175,8 +207,13 @@
                 const rows = document.querySelectorAll('#kurikulum-table tbody tr');
 
                 rows.forEach(row => {
+                    // Skip empty state rows
+                    if (row.querySelector('td[colspan]')) {
+                        return;
+                    }
+                    
                     const createdDate = row.querySelector('.created-date').textContent.trim().toLowerCase();
-                    const statusText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+                    const statusText = row.querySelector('td:nth-child(7) .badge').textContent.trim().toLowerCase();
                     const titleText = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
 
                     const matchDate = !selectedDate || createdDate.startsWith(selectedDate);
