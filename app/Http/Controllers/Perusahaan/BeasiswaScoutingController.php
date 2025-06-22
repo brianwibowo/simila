@@ -45,12 +45,9 @@ class BeasiswaScoutingController extends Controller
     public function show(BeasiswaBatch $beasiswa)
     {
         $this->guard($beasiswa);
-        $pendaftar = Beasiswa::where('batch_id', $beasiswa->id)->get();
-
-        return view('perusahaan.beasiswas.show', [
-            'beasiswa' => $beasiswa,
-            'pendaftar' => $pendaftar
-        ]);
+        $pendaftar = Beasiswa::where('batch_id', $beasiswa->id)
+            ->where('direkomendasikan', true)
+            ->get();
     }
 
     public function edit(BeasiswaBatch $beasiswa)
