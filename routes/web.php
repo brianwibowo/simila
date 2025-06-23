@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
 use App\Http\Controllers\Admin\GuruTamuController as AdminGuruTamuController;
-use App\Http\Controllers\Admin\ProjectController as AdminProjectController; // Added for admin project routes
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\SertifikasiController as AdminSertifikasiController;
+use App\Http\Controllers\Admin\ScoutingController as AdminScoutingController;
+use App\Http\Controllers\Admin\BeasiswaScoutingController as AdminBeasiswaScoutingController;
+
 
 // Perusahaan Controllers
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
@@ -24,6 +28,7 @@ use App\Http\Controllers\Perusahaan\SertifikasiController as PerusahaanSertifika
 use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScoutingController;
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
+use App\Http\Controllers\Siswa\SertifikasiController as SiswaSertifikasiController;
 
 // Alumni Controllers
 use App\Http\Controllers\Alumni\ScoutingController as AlumniScoutingController;
@@ -41,11 +46,16 @@ use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 use App\Http\Controllers\Guru\MoocController as GuruMoocController;
 use App\Http\Controllers\Guru\PklController as GuruPklController;
+use App\Http\Controllers\Guru\ReflectionController as GuruReflectionController;
+
+// LSP Controllers
+use App\Http\Controllers\Lsp\SertifikasiController as LspSertifikasiController;
 
 
 
 /*
-|--------------------------------------------------------------------------
+|----------------------
+----------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
@@ -70,6 +80,22 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             return view('admin.dashboard');
         })->name('admin-dashboard');
 
+        // START: Rute Baru untuk Sertifikasi Kompetensi oleh Admin
+        Route::prefix('sertifikasi')->name('admin-sertifikasi-')->group(function () {
+            Route::get('/', [AdminSertifikasiController::class, 'index'])->name('index');
+            Route::get('/create', [AdminSertifikasiController::class, 'create'])->name('create');
+            Route::post('/', [AdminSertifikasiController::class, 'store'])->name('store');
+            Route::get('/{certificationExam}', [AdminSertifikasiController::class, 'show'])->name('show');
+            Route::get('/{certificationExam}/edit', [AdminSertifikasiController::class, 'edit'])->name('edit');
+            Route::put('/{certificationExam}', [AdminSertifikasiController::class, 'update'])->name('update');
+            Route::delete('/{certificationExam}', [AdminSertifikasiController::class, 'destroy'])->name('destroy');
+
+            // Rute untuk melihat hasil pendaftaran dan memberikan sertifikat
+            Route::get('/results/inspect', [AdminSertifikasiController::class, 'listResults'])->name('results');
+            Route::get('/results/{registration}/give-certificate', [AdminSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form');
+            Route::post('/results/{registration}/store-certificate', [AdminSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate');
+        });
+
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
         Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
 
@@ -81,6 +107,30 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::post('/{pkl}', [App\Http\Controllers\Admin\PklAssignController::class, 'assignPembimbing'])->name('store');
             Route::delete('/{pkl}', [App\Http\Controllers\Admin\PklAssignController::class, 'removePembimbing'])->name('remove');
         });
+
+        Route::resource('scouting', AdminScoutingController::class)->names([
+            'index' => 'admin-scouting-index',
+            'create' => 'admin-scouting-create',
+            'store' => 'admin-scouting-store',
+            'edit' => 'admin-scouting-edit',
+            'update' => 'admin-scouting-update',
+            'destroy' => 'admin-scouting-destroy',
+            'show' => 'admin-scouting-show',
+        ]);
+        Route::get('/detail-talents/{user}/{scouting}', [AdminScoutingController::class, 'siswa'])->name('admin-scouting-siswa');
+        Route::post('/scouting/seleksi/{talent}', [AdminScoutingController::class, 'seleksi'])->name('admin-scouting-seleksi');
+
+        Route::resource('beasiswa', AdminBeasiswaScoutingController::class)->names([
+            'index'   => 'admin-beasiswa-index',
+            'create'  => 'admin-beasiswa-create',
+            'store'   => 'admin-beasiswa-store',
+            'edit'    => 'admin-beasiswa-edit',
+            'update'  => 'admin-beasiswa-update',
+            'destroy' => 'admin-beasiswa-destroy',
+            'show'    => 'admin-beasiswa-show',
+        ]);
+        Route::get('beasiswa/{beasiswa}/siswa/{user}', [AdminBeasiswaScoutingController::class, 'siswa'])->name('admin-beasiswa-siswa');
+        Route::post('beasiswa/{beasiswa}/siswa/{pendaftar}/seleksi', [AdminBeasiswaScoutingController::class, 'seleksi'])->name('admin-beasiswa-seleksi');
 
         // Project Routes for Admin
         Route::prefix('project')->name('admin-project-')->group(function () {
@@ -221,28 +271,23 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/detail-talents/{user}/{scouting}', [PerusahaanScoutingController::class, 'siswa'])->name('perusahaan-scouting-siswa');
         Route::post('/scouting/seleksi/{talent}', [PerusahaanScoutingController::class, 'seleksi'])->name('perusahaan-scouting-seleksi');
 
-        // START: Rute Baru untuk Sertifikasi Kompetensi oleh Perusahaan
+        // Rute untuk Fitur Sertifikasi Kompetensi oleh Perusahaan
         Route::prefix('sertifikasi')->name('perusahaan-sertifikasi-')->group(function () {
-            Route::get('/', [PerusahaanSertifikasiController::class, 'index'])->name('index'); // Daftar Ujian yang dibuat
-            Route::get('/create', [PerusahaanSertifikasiController::class, 'create'])->name('create'); // Form buat ujian baru
-            Route::post('/', [PerusahaanSertifikasiController::class, 'store'])->name('store'); // Simpan ujian baru
-            Route::get('/{certificationExam}', [PerusahaanSertifikasiController::class, 'show'])->name('show'); // Detail ujian & soal
-            Route::get('/{certificationExam}/edit', [PerusahaanSertifikasiController::class, 'edit'])->name('edit'); // Form edit ujian
-            Route::put('/{certificationExam}', [PerusahaanSertifikasiController::class, 'update'])->name('update'); // Update ujian
-            Route::delete('/{certificationExam}', [PerusahaanSertifikasiController::class, 'destroy'])->name('destroy'); // Hapus ujian
+            Route::get('/', [PerusahaanSertifikasiController::class, 'index'])->name('index');
+            Route::get('/create', [PerusahaanSertifikasiController::class, 'create'])->name('create');
+            Route::post('/', [PerusahaanSertifikasiController::class, 'store'])->name('store');
+            Route::get('/{certificationExam}', [PerusahaanSertifikasiController::class, 'show'])->name('show');
+            Route::get('/{certificationExam}/edit', [PerusahaanSertifikasiController::class, 'edit'])->name('edit');
+            Route::put('/{certificationExam}', [PerusahaanSertifikasiController::class, 'update'])->name('update');
+            Route::delete('/{certificationExam}', [PerusahaanSertifikasiController::class, 'destroy'])->name('destroy');
 
-            // Rute untuk manajemen soal dalam ujian
-            Route::get('/{certificationExam}/questions/create', [PerusahaanSertifikasiController::class, 'createQuestion'])->name('questions.create');
-            Route::post('/{certificationExam}/questions', [PerusahaanSertifikasiController::class, 'storeQuestion'])->name('questions.store');
-            Route::get('/{certificationExam}/questions/{question}/edit', [PerusahaanSertifikasiController::class, 'editQuestion'])->name('questions.edit');
-            Route::put('/{certificationExam}/questions/{question}', [PerusahaanSertifikasiController::class, 'updateQuestion'])->name('questions.update');
-            Route::delete('/{certificationExam}/questions/{question}', [PerusahaanSertifikasiController::class, 'destroyQuestion'])->name('questions.destroy');
-
-            // Rute untuk melihat hasil ujian dan memberikan sertifikat
-            Route::get('/results/inspect', [PerusahaanSertifikasiController::class, 'listResults'])->name('results'); // Daftar siswa yang ikut ujian
-            Route::get('/results/{registration}/give-certificate', [PerusahaanSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form'); // Form kasih nilai/sertifikat
-            Route::post('/results/{registration}/store-certificate', [PerusahaanSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate'); // Simpan nilai/sertifikat
+            // Rute untuk melihat hasil pendaftaran dan memberikan sertifikat
+            Route::get('/results/inspect', [PerusahaanSertifikasiController::class, 'listResults'])->name('results');
+            Route::get('/results/{registration}/give-certificate', [PerusahaanSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form');
+            Route::post('/results/{registration}/store-certificate', [PerusahaanSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate');
         });
+
+        Route::post('mooc/{mooc}/sertifikat/{user}/upload', [PerusahaanMoocController::class, 'uploadSertifikat'])->name('perusahaan-mooc-sertifikat-upload');
     });
 
     // Siswa Routes
@@ -270,7 +315,17 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'register'])->name('siswa-beasiswa-register');
         Route::post('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'apply'])->name('siswa-beasiswa-apply');
         Route::get('beasiswa/status', [SiswaBeasiswaScoutingController::class, 'status'])->name('siswa-beasiswa-status');
+
+        // START: Rute Baru untuk Sertifikasi Kompetensi oleh Siswa
+        Route::prefix('sertifikasi')->name('siswa-sertifikasi-')->group(function () {
+            Route::get('/', [SiswaSertifikasiController::class, 'index'])->name('index'); // Daftar sertifikasi & pendaftaran saya
+            Route::get('/register/{certificationExam}', [SiswaSertifikasiController::class, 'registerForm'])->name('register'); // Form pendaftaran
+            Route::post('/register/{certificationExam}', [SiswaSertifikasiController::class, 'storeRegistration'])->name('store_registration'); // Simpan pendaftaran
+            Route::get('/status', [SiswaSertifikasiController::class, 'showStatus'])->name('status'); // Status pendaftaran saya
+            Route::get('/{registration}/download-certificate', [SiswaSertifikasiController::class, 'downloadCertificate'])->name('download_certificate'); // Unduh sertifikat
+        });
     });
+
 
     // Guru Routes
     Route::middleware(['role:guru'])->prefix('guru')->group(function () {
@@ -295,6 +350,9 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::post('/logbook/{logbook}/validasi-semua', [GuruPklController::class, 'validateFullLogbook'])->name('validate-full-logbook');
             Route::post('/siswa/{siswa}/validasi-laporan', [GuruPklController::class, 'validateFinalReport'])->name('validate-report');
         });
+        Route::get('/mooc/{mooc}', [GuruMoocController::class, 'show'])->name('guru-mooc-show');
+        Route::get('/mooc/{mooc}/eval', [GuruMoocController::class, 'eval'])->name('guru-mooc-eval');
+        Route::post('/mooc/{mooc}/nilai', [GuruMoocController::class, 'nilai'])->name('guru-mooc-nilai');
     });
 
     // Waka Kurikulum Routes
@@ -371,6 +429,28 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('pkl/{pkl}/download', [WakaHumasPklController::class, 'downloadReport'])->name('waka-humas-pkl-download');
     });
 
+    // LSP Routes
+    Route::middleware(['role:lsp'])->prefix('lsp')->group(function () {
+        Route::get('/', function () {
+            return view('lsp.dashboard');
+        })->name('lsp-dashboard');
+
+        // START: Rute Baru untuk Sertifikasi Kompetensi oleh LSP
+        Route::prefix('sertifikasi')->name('lsp-sertifikasi-')->group(function () {
+            Route::get('/', [LspSertifikasiController::class, 'index'])->name('index');
+            Route::get('/create', [LspSertifikasiController::class, 'create'])->name('create');
+            Route::post('/', [LspSertifikasiController::class, 'store'])->name('store');
+            Route::get('/{certificationExam}', [LspSertifikasiController::class, 'show'])->name('show');
+            Route::get('/{certificationExam}/edit', [LspSertifikasiController::class, 'edit'])->name('edit');
+            Route::put('/{certificationExam}', [LspSertifikasiController::class, 'update'])->name('update');
+            Route::delete('/{certificationExam}', [LspSertifikasiController::class, 'destroy'])->name('destroy');
+
+            // Rute untuk melihat hasil pendaftaran dan memberikan sertifikat
+            Route::get('/results/inspect', [LspSertifikasiController::class, 'listResults'])->name('results');
+            Route::get('/results/{registration}/give-certificate', [LspSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form');
+            Route::post('/results/{registration}/store-certificate', [LspSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate');
+        });
+    });
     // Alumni Routes
     Route::middleware(['role:alumni'])->prefix('alumni')->group(function () {
         Route::get('/', function () {

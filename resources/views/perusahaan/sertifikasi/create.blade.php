@@ -30,20 +30,6 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="durasi_menit" class="form-label">Durasi Ujian (Menit, Opsional)</label>
-                    <input type="number" class="form-control @error('durasi_menit') is-invalid @enderror" id="durasi_menit" name="durasi_menit" value="{{ old('durasi_menit') }}">
-                    @error('durasi_menit')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3">
-                    <label for="nilai_minimum_lulus" class="form-label">Nilai Minimum Lulus</label>
-                    <input type="number" class="form-control @error('nilai_minimum_lulus') is-invalid @enderror" id="nilai_minimum_lulus" name="nilai_minimum_lulus" value="{{ old('nilai_minimum_lulus') }}" required>
-                    @error('nilai_minimum_lulus')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
                 <button type="submit" class="btn btn-primary">Simpan Ujian</button>
                 <a href="{{ route('perusahaan-sertifikasi-index') }}" class="btn btn-secondary">Batal</a>
             </form>

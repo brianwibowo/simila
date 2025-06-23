@@ -23,9 +23,6 @@
                             <th>#</th>
                             <th>Nama Ujian</th>
                             <th>Kompetensi</th>
-                            <th>Durasi (menit)</th>
-                            <th>Nilai Min Lulus</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -35,9 +32,6 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $exam->nama_ujian }}</td>
                                 <td>{{ $exam->kompetensi_terkait ?? '-' }}</td>
-                                <td>{{ $exam->durasi_menit ?? '-' }}</td>
-                                <td>{{ $exam->nilai_minimum_lulus }}</td>
-                                <td>{{ ucfirst($exam->status_ujian) }}</td>
                                 <td>
                                     <a href="{{ route('perusahaan-sertifikasi-show', $exam->id) }}" class="btn btn-sm btn-info">Detail & Soal</a>
                                     <a href="{{ route('perusahaan-sertifikasi-edit', $exam->id) }}" class="btn btn-sm btn-warning">Edit</a>

@@ -55,17 +55,25 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarLayouts">
-                        <i class="fas fa-th-list"></i>
+                {{-- Sertifikasi Kompetensi (BARU) --}}
+                <li class="nav-item {{ request()->routeIs('siswa-sertifikasi*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#sertifikasiSiswaCollapse"
+                        aria-expanded="{{ request()->routeIs('siswa-sertifikasi*') ? 'true' : 'false' }}">
+                        <i class="fas fa-certificate"></i>
                         <p>Sertifikasi Kompetensi</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="sidebarLayouts">
+                    <div class="collapse {{ request()->routeIs('siswa-sertifikasi*') ? 'show' : '' }}"
+                        id="sertifikasiSiswaCollapse">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="sidebar-style-2.html">
-                                    <span class="sub-item">Daftar Ujian</span>
+                            <li class="{{ Route::currentRouteName() == 'siswa-sertifikasi-index' ? 'active' : '' }}">
+                                <a href="{{ route('siswa-sertifikasi-index') }}">
+                                    <span class="sub-item">Daftar & Daftar Sertifikasi</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'siswa-sertifikasi-status' ? 'active' : '' }}">
+                                <a href="{{ route('siswa-sertifikasi-status') }}">
+                                    <span class="sub-item">Status Sertifikasi Saya</span>
                                 </a>
                             </li>
                         </ul>

@@ -8,9 +8,9 @@
     <div class="card">
         <div class="card-header">Form Penilaian & Sertifikat</div>
         <div class="card-body">
-            @if ($latestAttempt)
+            @if ($latestAttempt ?? '')
                 <div class="alert alert-info">
-                    Nilai terakhir dari upaya ujian siswa (otomatis): <strong>{{ $latestAttempt->nilai ?? 'Belum ada nilai' }}</strong>
+                    Nilai terakhir dari upaya ujian siswa (otomatis): <strong>{{ $latestAttempt ?? ''->nilai ?? 'Belum ada nilai' }}</strong>
                 </div>
             @else
                 <div class="alert alert-warning">

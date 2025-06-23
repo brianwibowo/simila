@@ -32,25 +32,15 @@ class MoocModuleController extends Controller
             'module_name' => 'required',
             'link_materi' => 'required',
             'dokumen_materi' => 'required|mimes:pdf',
-            'question' => 'required',
-            'pilihan_jawaban_1' => 'required',
-            'pilihan_jawaban_2' => 'required',
-            'pilihan_jawaban_3' => 'required',
-            'pilihan_jawaban_4' => 'required',
-            'answer' => 'required',
-            'mooc_id' => 'required',
+            'link_eval' => 'required',
+            'mooc_id' => 'required'
         ]);
 
         MoocModule::create([
             'module_name' => $request->module_name,
             'link_materi' => $request->link_materi,
             'dokumen_materi' => $request->file('dokumen_materi')->store('mooc_modules', 'public'),
-            'question' => $request->question,
-            'pilihan_jawaban_1' => $request->pilihan_jawaban_1,
-            'pilihan_jawaban_2' => $request->pilihan_jawaban_2,
-            'pilihan_jawaban_3' => $request->pilihan_jawaban_3,
-            'pilihan_jawaban_4' => $request->pilihan_jawaban_4,
-            'answer' => $request->answer,
+            'link_eval' => $request->link_eval,
             'mooc_id' => $request->mooc_id
         ]);
 

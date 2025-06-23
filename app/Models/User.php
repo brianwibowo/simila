@@ -115,4 +115,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(StudentExamAttempt::class, 'user_id');
     }
+
+    public function moocScores()
+    {
+        return $this->hasMany(MoocScore::class, 'user_id');
+    }
+
+    public function moocReflections()
+    {
+        return $this->hasMany(MoocReflection::class, 'user_id');
+    }
 }

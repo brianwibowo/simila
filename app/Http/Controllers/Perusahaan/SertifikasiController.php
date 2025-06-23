@@ -5,28 +5,25 @@ namespace App\Http\Controllers\Perusahaan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CertificationExam;
-use App\Models\CertificationExamQuestion;
 use App\Models\Sertifikasi;
-use App\Models\StudentExamAttempt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
-// use Illuminate\Support\Str; // Tidak diperlukan di controller jika hanya untuk Blade
+use Illuminate\Validation\Rule; 
 
 class SertifikasiController extends Controller
 {
     /**
-     * Menampilkan daftar ujian sertifikasi yang dibuat oleh perusahaan ini.
+     * Menampilkan daftar nama sertifikasi/batch yang dibuat oleh perusahaan ini.
      */
     public function index()
     {
         $perusahaanId = Auth::id();
         $exams = CertificationExam::where('pembuat_user_id', $perusahaanId)->get();
-        return view('perusahaan.sertifikasi.index', compact('exams')); // Tidak perlu 'header'
+        return view('perusahaan.sertifikasi.index', compact('exams'));
     }
 
     /**
-     * Menampilkan form untuk membuat ujian sertifikasi baru.
+     * Menampilkan form untuk membuat nama sertifikasi/batch baru.
      */
     public function create()
     {
@@ -34,7 +31,7 @@ class SertifikasiController extends Controller
     }
 
     /**
-     * Menyimpan ujian sertifikasi baru.
+     * Menyimpan nama sertifikasi/batch baru.
      */
     public function store(Request $request)
     {
@@ -42,8 +39,6 @@ class SertifikasiController extends Controller
             'nama_ujian' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
             'kompetensi_terkait' => 'nullable|string|max:255',
-            'durasi_menit' => 'nullable|integer|min:1',
-            'nilai_minimum_lulus' => 'required|integer|min:0',
         ]);
 
         CertificationExam::create([
@@ -51,26 +46,22 @@ class SertifikasiController extends Controller
             'deskripsi' => $request->deskripsi,
             'kompetensi_terkait' => $request->kompetensi_terkait,
             'pembuat_user_id' => Auth::id(),
-            'durasi_menit' => $request->durasi_menit,
-            'nilai_minimum_lulus' => $request->nilai_minimum_lulus,
-            'status_ujian' => 'draft',
         ]);
 
-        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Ujian sertifikasi berhasil ditambahkan!');
+        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Nama Sertifikasi berhasil ditambahkan!');
     }
 
     /**
-     * Menampilkan detail ujian dan daftar soalnya.
+     * Menampilkan detail nama sertifikasi/batch dan pendaftarnya.
      */
     public function show(CertificationExam $certificationExam)
     {
-        $questions = $certificationExam->questions;
         $registrations = $certificationExam->registrations()->with('siswa')->get();
-        return view('perusahaan.sertifikasi.show', compact('certificationExam', 'questions', 'registrations'));
+        return view('perusahaan.sertifikasi.show', compact('certificationExam', 'registrations'));
     }
 
     /**
-     * Menampilkan form untuk mengedit ujian sertifikasi.
+     * Menampilkan form untuk mengedit nama sertifikasi/batch.
      */
     public function edit(CertificationExam $certificationExam)
     {
@@ -78,122 +69,39 @@ class SertifikasiController extends Controller
     }
 
     /**
-     * Memperbarui ujian sertifikasi.
+     * Memperbarui nama sertifikasi/batch.
      */
     public function update(Request $request, CertificationExam $certificationExam)
     {
         $request->validate([
             'nama_ujian' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'kompetensi_terkait' => 'nullable|string|max:255',  
-            'durasi_menit' => 'nullable|integer|min:1',
-            'nilai_minimum_lulus' => 'required|integer|min:0',
-            'status_ujian' => ['required', Rule::in(['draft', 'published', 'archived'])],
+            'kompetensi_terkait' => 'nullable|string|max:255',
         ]);
 
         $certificationExam->update([
             'nama_ujian' => $request->nama_ujian,
             'deskripsi' => $request->deskripsi,
             'kompetensi_terkait' => $request->kompetensi_terkait,
-            'durasi_menit' => $request->durasi_menit,
-            'nilai_minimum_lulus' => $request->nilai_minimum_lulus,
-            'status_ujian' => $request->status_ujian,
         ]);
 
-        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Ujian sertifikasi berhasil diperbarui!');
+        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Nama Sertifikasi berhasil diperbarui!');
     }
 
     /**
-     * Menghapus ujian sertifikasi.
+     * Menghapus nama sertifikasi/batch.
      */
     public function destroy(CertificationExam $certificationExam)
     {
         $certificationExam->delete();
 
-        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Ujian sertifikasi berhasil dihapus!');
-    }
-
-    // --- Manajemen Soal Ujian ---
-
-    /**
-     * Menampilkan form untuk menambah soal baru ke ujian.
-     */
-    public function createQuestion(CertificationExam $certificationExam)
-    {
-        return view('perusahaan.sertifikasi.questions.create', compact('certificationExam'));
-    }
-
-    /**
-     * Menyimpan soal baru ke ujian.
-     */
-    public function storeQuestion(Request $request, CertificationExam $certificationExam)
-    {
-        $request->validate([
-            'soal' => 'required|string',
-            'pilihan_jawaban_1' => 'required|string|max:255',
-            'pilihan_jawaban_2' => 'required|string|max:255',
-            'pilihan_jawaban_3' => 'required|string|max:255',
-            'pilihan_jawaban_4' => 'required|string|max:255',
-            'jawaban_benar' => 'required|integer|between:1,4',
-            'nilai_akhir' => 'required|integer|min:0',
-        ]);
-
-        $certificationExam->questions()->create([
-            'soal' => $request->soal,
-            'pilihan_jawaban_1' => $request->pilihan_jawaban_1,
-            'pilihan_jawaban_2' => $request->pilihan_jawaban_2,
-            'pilihan_jawaban_3' => $request->pilihan_jawaban_3,
-            'pilihan_jawaban_4' => $request->pilihan_jawaban_4,
-            'jawaban_benar' => $request->jawaban_benar,
-            'nilai_akhir' => $request->nilai_akhir,
-        ]);
-
-        return redirect()->route('perusahaan-sertifikasi-show', $certificationExam)->with('success', 'Soal berhasil ditambahkan!');
-    }
-
-    /**
-     * Menampilkan form untuk mengedit soal.
-     */
-    public function editQuestion(CertificationExam $certificationExam, CertificationExamQuestion $question)
-    {
-        return view('perusahaan.sertifikasi.questions.edit', compact('certificationExam', 'question'));
-    }
-
-    /**
-     * Memperbarui soal.
-     */
-    public function updateQuestion(Request $request, CertificationExam $certificationExam, CertificationExamQuestion $question)
-    {
-        $request->validate([
-            'soal' => 'required|string',
-            'pilihan_jawaban_1' => 'required|string|max:255',
-            'pilihan_jawaban_2' => 'required|string|max:255',
-            'pilihan_jawaban_3' => 'required|string|max:255',
-            'pilihan_jawaban_4' => 'required|string|max:255',
-            'jawaban_benar' => 'required|integer|between:1,4',
-            'nilai_akhir' => 'required|integer|min:0',
-        ]);
-
-        $question->update($request->all());
-
-        return redirect()->route('perusahaan-sertifikasi-show', $certificationExam)->with('success', 'Soal berhasil diperbarui!');
-    }
-
-    /**
-     * Menghapus soal.
-     */
-    public function destroyQuestion(CertificationExam $certificationExam, CertificationExamQuestion $question)
-    {
-        $question->delete();
-
-        return redirect()->route('perusahaan-sertifikasi-show', $certificationExam)->with('success', 'Soal berhasil dihapus!');
+        return redirect()->route('perusahaan-sertifikasi-index')->with('success', 'Nama Sertifikasi berhasil dihapus!');
     }
 
     // --- Manajemen Hasil Ujian & Penerbitan Sertifikat ---
 
     /**
-     * Menampilkan daftar siswa yang sudah mengikuti ujian sertifikasi tertentu
-     * atau semua ujian yang dibuat perusahaan ini.
+     * Menampilkan daftar siswa yang mendaftar sertifikasi yang dibuat perusahaan ini.
      */
     public function listResults()
     {
@@ -210,16 +118,12 @@ class SertifikasiController extends Controller
      */
     public function giveCertificateForm(Sertifikasi $registration)
     {
-        if ($registration->exam->pembuat_user_id !== Auth::id()) {
+        // Pastikan registrasi ini milik ujian yang dibuat oleh perusahaan yang login
+        if ($registration->perusahaan_user_id !== Auth::id() && $registration->exam->pembuat_user_id !== Auth::id()) {
             abort(403, 'Anda tidak memiliki akses untuk tindakan ini.');
         }
 
-        $latestAttempt = StudentExamAttempt::where('user_id', $registration->user_id)
-                                          ->where('certification_exam_id', $registration->certification_exam_id)
-                                          ->orderByDesc('created_at')
-                                          ->first();
-
-        return view('perusahaan.sertifikasi.results.give_certificate', compact('registration', 'latestAttempt'));
+        return view('perusahaan.sertifikasi.results.give_certificate', compact('registration'));
     }
 
     /**
@@ -227,7 +131,8 @@ class SertifikasiController extends Controller
      */
     public function storeCertificate(Request $request, Sertifikasi $registration)
     {
-        if ($registration->exam->pembuat_user_id !== Auth::id()) {
+        // Pastikan registrasi ini milik ujian yang dibuat oleh perusahaan yang login
+        if ($registration->perusahaan_user_id !== Auth::id() && $registration->exam->pembuat_user_id !== Auth::id()) {
             abort(403, 'Anda tidak memiliki akses untuk tindakan ini.');
         }
 

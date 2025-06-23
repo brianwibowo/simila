@@ -62,8 +62,8 @@
                     </div>
                 </li>
                 @endif
-                <li class="nav-item {{ request()->routeIs('guru-mooc-*') ? 'active' : '' }} {{ auth()->user()->jenis_guru == 'guru-produktif' ? 'disabled' : '' }}">
-                    <a data-bs-toggle="collapse" href="#charts">
+                <li class="nav-item {{ request()->routeIs('guru-mooc-*') ? 'active' : '' }} {{ auth()->user()->jenis_guru == 'guru-produktif' ? '' : 'disable' }}">
+                    <a data-bs-toggle="collapse" href="{{ auth()->user()->jenis_guru == 'guru-produktif' ? '#charts' : '#' }}">
                         <i class="far fa-chart-bar"></i>
                         <p>MOOC</p>
                         <span class="caret"></span>
