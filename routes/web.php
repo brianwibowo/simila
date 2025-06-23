@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
 use App\Http\Controllers\Admin\GuruTamuController as AdminGuruTamuController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\SertifikasiController as AdminSertifikasiController;
+use App\Http\Controllers\Admin\ScoutingController as AdminScoutingController;
+use App\Http\Controllers\Admin\BeasiswaScoutingController as AdminBeasiswaScoutingController;
+
 
 // Perusahaan Controllers
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
@@ -94,6 +97,31 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
 
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
         Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
+
+        Route::resource('scouting', AdminScoutingController::class)->names([
+            'index' => 'admin-scouting-index',
+            'create' => 'admin-scouting-create',
+            'store' => 'admin-scouting-store',
+            'edit' => 'admin-scouting-edit',
+            'update' => 'admin-scouting-update',
+            'destroy' => 'admin-scouting-destroy',
+            'show' => 'admin-scouting-show',
+        ]);
+        Route::get('/detail-talents/{user}/{scouting}', [AdminScoutingController::class, 'siswa'])->name('admin-scouting-siswa');
+        Route::post('/scouting/seleksi/{talent}', [AdminScoutingController::class, 'seleksi'])->name('admin-scouting-seleksi');
+
+        Route::resource('beasiswa', AdminBeasiswaScoutingController::class)->names([
+            'index'   => 'admin-beasiswa-index',
+            'create'  => 'admin-beasiswa-create',
+            'store'   => 'admin-beasiswa-store',
+            'edit'    => 'admin-beasiswa-edit',
+            'update'  => 'admin-beasiswa-update',
+            'destroy' => 'admin-beasiswa-destroy',
+            'show'    => 'admin-beasiswa-show',
+        ]);
+        Route::get('beasiswa/{beasiswa}/siswa/{user}', [AdminBeasiswaScoutingController::class, 'siswa'])->name('admin-beasiswa-siswa');
+        Route::post('beasiswa/{beasiswa}/siswa/{pendaftar}/seleksi', [AdminBeasiswaScoutingController::class, 'seleksi'])->name('admin-beasiswa-seleksi');
+
 
         // Project Routes for Admin
         Route::prefix('project')->name('admin-project-')->group(function () {
@@ -370,7 +398,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::post('pkl/{pkl}/validate', [WakaHumasPklController::class, 'validateReport'])->name('waka-humas-pkl-validate');
         Route::get('pkl/{pkl}/download', [WakaHumasPklController::class, 'downloadReport'])->name('waka-humas-pkl-download');
     });
-    
+
     // LSP Routes
     Route::middleware(['role:lsp'])->prefix('lsp')->group(function () {
         Route::get('/', function () {
