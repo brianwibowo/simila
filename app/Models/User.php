@@ -22,12 +22,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
-        'jenis_guru',
+        'sekolah_id', // Pastikan ini ada di fillable jika kamu punya kolom ini di tabel users
+        'jenis_guru', // Pastikan ini ada di fillable
         'pkl_status',
         'laporan_pkl',
         'nilai_pkl',
-        'sekolah_id',
+        'pkl_id',
     ];
 
     /**
@@ -49,9 +49,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected static function booted(){
-        static::created(function($user){
-            if(!$user->hasAnyRole()){
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            if (!$user->hasAnyRole()) {
                 $user->assignRole('user');
             }
         });
@@ -65,31 +66,53 @@ class User extends Authenticatable
         });
     }
 
-    public function pklSiswa(){
+    public function pklSiswa()
+    {
         return $this->belongsTo(PKL::class, 'pkl_id');
     }
 
-    public function pklPerusahaan(){
+    public function pklPerusahaan()
+    {
         return $this->hasMany(PKL::class, 'perusahaan_id');
     }
 
-    public function pklPembimbing(){
+    public function pklPembimbing()
+    {
         return $this->hasMany(PKL::class, 'pembimbing_id');
     }
 
-    public function moocs(){
+    public function moocs()
+    {
         return $this->hasMany(Mooc::class, 'perusahaan_id');
     }
 
-    public function logbook(){
+    public function logbook()
+    {
         return $this->hasOne(Logbook::class, 'siswa_id');
     }
 
-    public function alumni(){
+    public function alumni()
+    {
         return $this->hasOne(Talent_Scouting::class, 'user_id');
     }
 
-    public function batch(){
+    public function batch()
+    {
         return $this->hasMany(ScoutingBatch::class, 'perusahaan_id');
+    }
+    // Relasi baru untuk fitur sertifikasi
+    public function createdCertificationExams()
+    {
+        return $this->hasMany(CertificationExam::class, 'pembuat_user_id');
+    }
+
+    public function sertifikasiRegistrations()
+    {
+        return $this->hasMany(Sertifikasi::class, 'user_id');
+    }
+
+    public function examAttempts()
+    {
+        return $this->hasMany(StudentExamAttempt::class, 'user_id');
     }
 }
