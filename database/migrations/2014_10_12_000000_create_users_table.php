@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->enum('pkl_status',['disetujui', 'proses', 'tidak_disetujui'])->nullable();
             $table->string('laporan_pkl')->nullable();
             $table->integer('nilai_pkl')->nullable();
+            $table->integer('nilai_mooc')->nullable();
         });
     }
 

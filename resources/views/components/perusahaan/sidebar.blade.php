@@ -151,16 +151,9 @@
                     <div class="collapse {{ request()->routeIs('perusahaan-mooc*') ? 'show' : '' }}"
                         id="moocCollapse">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-mooc-index' ? 'active' : '' }}">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-mooc-index' ? 'active' : '' || Route::currentRouteName() == 'perusahaan-quiz-create' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-mooc-index') }}">
                                     <span class="sub-item">Kelas</span>
-                                </a>
-                            </li>
-                            {{-- Mengembalikan sub-menu "Ujian" --}}
-                            {{-- Pastikan kamu mendefinisikan rute ini nanti di web.php --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">Ujian</span>
                                 </a>
                             </li>
                         </ul>

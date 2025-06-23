@@ -41,12 +41,12 @@
         </div>
     </div>
 
-    {{-- New Module List Section --}}
-    <div class="card shadow-sm">
+    {{-- Module List Section --}}
+    <div class="card shadow-sm mb-4">
         <div class="card-header bg-white py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Daftar Modul</h5>
-                {{-- Make sure you have a route named 'perusahaan-mooc-module-create' --}}
+                {{-- Make sure you have a route named 'perusahaan-module-create' --}}
                 <a href="{{ route('perusahaan-module-create', $mooc->id) }}" class="btn btn-primary">
                     <i class="bi bi-plus-circle"></i> Tambah Modul Baru
                 </a>
@@ -74,6 +74,51 @@
                 <div class="text-center p-4">
                     <p class="text-muted">Belum ada modul untuk pelatihan ini.</p>
                     <p>Silakan tambahkan modul baru untuk memulai.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- New Final Evaluation Section --}}
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Evaluasi Akhir</h5>
+                {{-- Make sure you have a route named 'perusahaan-quiz-create' for the final evaluation --}}
+                <a href="{{ route('perusahaan-quiz-create', $mooc->id) }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Tambah Soal Baru
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if($quizzes && $quizzes->count() > 0)
+                <div class="list-group">
+                    @foreach($quizzes as $quiz)
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ $quiz->soal }}</h6>
+                                <div>
+                                    {{-- Make sure you have a route named 'perusahaan-quiz-edit' --}}
+                                    <a href="{{ route('perusahaan-quiz-edit', ['mooc' => $mooc->id, 'quiz' => $quiz->id]) }}" class="btn btn-warning btn-sm me-2">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    {{-- Make sure you have a route named 'perusahaan-quiz-destroy' --}}
+                                    <form action="{{ route('perusahaan-quiz-destroy', ['quiz' => $quiz->id]) }}" method="post" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus soal ini?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center p-4">
+                    <p class="text-muted">Belum ada soal evaluasi akhir untuk pelatihan ini.</p>
+                    <p>Silakan tambahkan soal baru untuk memulai evaluasi.</p>
                 </div>
             @endif
         </div>

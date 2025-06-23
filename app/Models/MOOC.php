@@ -22,4 +22,9 @@ class MOOC extends Model
     {
         return $this->hasMany(MoocModule::class, 'mooc_id');
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(MOOC_Eval::class, 'mooc_id');
+    }
 }

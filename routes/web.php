@@ -179,6 +179,12 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/module/{mooc}/create', [PerusahaanMoocModuleController::class, 'create'])->name('perusahaan-module-create');
         Route::get('/module/{mooc}/{module}/edit', [PerusahaanMoocModuleController::class, 'edit'])->name('perusahaan-module-edit');
 
+        Route::get('{mooc}/quiz/create', [PerusahaanMoocController::class, 'createQuiz'])->name('perusahaan-quiz-create');
+        Route::post('quiz', [PerusahaanMoocController::class, 'storeQuiz'])->name('perusahaan-quiz-store');
+        Route::get('quiz/{quiz}/edit', [PerusahaanMoocController::class, 'editQuiz'])->name('perusahaan-quiz-edit');
+        Route::put('quiz/{quiz}', [PerusahaanMoocController::class, 'updateQuiz'])->name('perusahaan-quiz-update');
+        Route::delete('quiz/{quiz}', [PerusahaanMoocController::class, 'destroyQuiz'])->name('perusahaan-quiz-destroy');
+
         Route::resource('beasiswa', PerusahaanBeasiswaScoutingController::class)->names([
             'index'   => 'perusahaan-beasiswa-index',
             'create'  => 'perusahaan-beasiswa-create',

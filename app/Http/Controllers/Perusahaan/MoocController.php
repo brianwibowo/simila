@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mooc;
+use App\Models\MOOC_Eval;
 
 class MoocController extends Controller
 {
@@ -25,7 +26,8 @@ class MoocController extends Controller
     {
         return view('perusahaan.mooc.show', [
             'mooc' => $mooc,
-            'modules' => $mooc->modules()->get()
+            'modules' => $mooc->modules()->get(),
+            'quizzes' => $mooc->quizzes()->get()
         ]);
     }
 
@@ -72,5 +74,61 @@ class MoocController extends Controller
         ]);
 
         return redirect()->route('perusahaan-mooc-index')->with('success', 'Data berhasil disimpan');
+    }
+
+    
+    public function createQuiz(Mooc $mooc){
+        return view('perusahaan.mooc.quiz.create', [
+            'mooc' => $mooc
+        ]);
+    }
+
+    public function editQuiz(MOOC_Eval $quiz){
+        return view('perusahaan.mooc.quiz.edit', [
+            'quiz' => $quiz,
+            'mooc' => $quiz->mooc
+        ]);
+    }
+
+    public function storeQuiz(Request $request, Mooc $mooc){
+        $request->validate([
+            'mooc_id' => 'required',
+            'soal' => 'required',
+            'pilihan_jawaban_1' => 'required',
+            'pilihan_jawaban_2' => 'required',
+            'pilihan_jawaban_3' => 'required',
+            'pilihan_jawaban_4' => 'required',
+            'jawaban_benar' => 'required',
+        ]);
+
+        Mooc_Eval::create([
+            'mooc_id' => $request->mooc_id,
+            'soal' => $request->soal,
+            'pilihan_jawaban_1' => $request->pilihan_jawaban_1,
+            'pilihan_jawaban_2' => $request->pilihan_jawaban_2,
+            'pilihan_jawaban_3' => $request->pilihan_jawaban_3,
+            'pilihan_jawaban_4' => $request->pilihan_jawaban_4,
+            'jawaban_benar' => $request->jawaban_benar,
+        ]);
+
+        return redirect()->route('perusahaan-mooc-index');
+    }
+
+    public function destroyQuiz(MOOC_Eval $quiz){
+        $mooc_id = $quiz->mooc_id;
+        $quiz->delete();
+        return redirect()->route('perusahaan-mooc-show', ['mooc' => $mooc_id])->with('success', 'Data berhasil dihapus');
+    }
+
+    public function updateQuiz(Request $request, MOOC_Eval $quiz){
+        $quiz->update([
+            'soal' => $request->soal,
+            'pilihan_jawaban_1' => $request->pilihan_jawaban_1,
+            'pilihan_jawaban_2' => $request->pilihan_jawaban_2,
+            'pilihan_jawaban_3' => $request->pilihan_jawaban_3,
+            'pilihan_jawaban_4' => $request->pilihan_jawaban_4,
+            'jawaban_benar' => $request->jawaban_benar,
+        ]);
+        return redirect()->route('perusahaan-mooc-show', ['mooc' => $quiz->mooc_id])->with('success', 'Data berhasil diperbarui');
     }
 }

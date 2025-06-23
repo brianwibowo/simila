@@ -21,7 +21,6 @@ class CreateMOOCEvalsTable extends Migration
             $table->string('pilihan_jawaban_3');
             $table->string('pilihan_jawaban_4');
             $table->string('jawaban_benar');
-            $table->bigInteger('nilai_akhir');
             $table->foreignId('mooc_id')->constrained('moocs')->onDelete('cascade');
             $table->timestamps();
         });

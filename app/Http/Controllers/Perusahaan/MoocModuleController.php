@@ -23,7 +23,7 @@ class MoocModuleController extends Controller
 
     public function show(MoocModule $module){
         return view('perusahaan.mooc.module.show', [
-            'module' => $module
+            'module' => $module,
         ]);
     }
 
