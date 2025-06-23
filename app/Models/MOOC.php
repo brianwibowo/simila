@@ -32,4 +32,9 @@ class MOOC extends Model
     {
         return $this->hasMany(MoocScore::class, 'mooc_id');
     }
+
+    public function reflections()
+    {
+        return $this->hasMany(MoocReflection::class, 'mooc_id');
+    }
 }

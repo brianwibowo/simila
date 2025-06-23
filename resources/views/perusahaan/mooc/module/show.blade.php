@@ -37,6 +37,15 @@
                     </div>
                 @endif
 
+                @if($module->link_eval)
+                    <div class="mb-3">
+                        <strong>Link Evaluasi:</strong><br>
+                        <a href="{{ $module->link_eval }}" class="btn btn-outline-primary btn-sm mt-1" target="_blank" rel="noopener noreferrer">
+                            <i class="bi bi-link-45deg"></i> Buka Link
+                        </a>
+                    </div>
+                @endif
+
                 @if($module->dokumen_materi)
                     <div>
                         <strong>Dokumen Materi:</strong><br>
@@ -53,39 +62,6 @@
             </div>
 
             <hr class="my-4">
-
-            {{-- Section Kuis Modul --}}
-            <h5 class="card-title mb-3">Kuis Modul</h5>
-            <div class="mb-3">
-                <strong>Pertanyaan:</strong>
-                <p class="fs-5 mt-1">{{ $module->question }}</p>
-            </div>
-
-            <strong>Pilihan Jawaban:</strong>
-            <div class="list-group mt-2">
-                @php
-                    // Membuat array dari pilihan jawaban untuk memudahkan perulangan
-                    $pilihanJawaban = [
-                        1 => $module->pilihan_jawaban_1,
-                        2 => $module->pilihan_jawaban_2,
-                        3 => $module->pilihan_jawaban_3,
-                        4 => $module->pilihan_jawaban_4,
-                    ];
-                @endphp
-
-                @foreach ($pilihanJawaban as $index => $pilihan)
-                    @php
-                        // Cek apakah ini adalah jawaban yang benar
-                        $isCorrect = ($module->answer == $index);
-                    @endphp
-                    <div class="list-group-item d-flex justify-content-between align-items-center {{ $isCorrect ? 'list-group-item-success' : '' }}">
-                        <span><strong>{{ chr(64 + $index) }}.</strong> {{ $pilihan }}</span>
-                        @if($isCorrect)
-                            <span class="badge bg-success rounded-pill"><i class="bi bi-check-circle-fill"></i> Jawaban Benar</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
 
         </div>
         <div class="card-footer text-muted small bg-white">

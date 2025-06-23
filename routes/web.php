@@ -40,11 +40,13 @@ use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
 // Guru Controllers
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
 use App\Http\Controllers\Guru\MoocController as GuruMoocController;
+use App\Http\Controllers\Guru\ReflectionController as GuruReflectionController;
 
 
 
 /*
-|--------------------------------------------------------------------------
+|----------------------
+----------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
@@ -233,10 +235,12 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::get('/results/{registration}/give-certificate', [PerusahaanSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form'); // Form kasih nilai/sertifikat
             Route::post('/results/{registration}/store-certificate', [PerusahaanSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate'); // Simpan nilai/sertifikat
         });
+
+        Route::post('mooc/{mooc}/sertifikat/{user}/upload', [PerusahaanMoocController::class, 'uploadSertifikat'])->name('perusahaan-mooc-sertifikat-upload');
     });
 
     // Siswa Routes
-    Route::middleware(['role:siswa'])->prefix('siswa')->group(function () {
+Route::middleware(['role:siswa'])->prefix('siswa')->group(function () {
         Route::get('/', function () {
             return view('siswa.dashboard');
         })->name('siswa-dashboard');
@@ -279,6 +283,9 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/mooc/{mooc}', [GuruMoocController::class, 'show'])->name('guru-mooc-show');
         Route::get('/mooc/{mooc}/eval', [GuruMoocController::class, 'eval'])->name('guru-mooc-eval');
         Route::post('/mooc/{mooc}/nilai', [GuruMoocController::class, 'nilai'])->name('guru-mooc-nilai');
+
+        Route::get('/mooc/{mooc}/reflection', [GuruReflectionController::class, 'create'])->name('guru-reflection-create');
+        Route::post('/mooc/{mooc}/reflection', [GuruReflectionController::class, 'store'])->name('guru-reflection-store');
 
     });
 
