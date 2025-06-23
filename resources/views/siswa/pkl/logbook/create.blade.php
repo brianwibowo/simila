@@ -46,9 +46,7 @@
                             {{ $message }}
                         </div>
                     @enderror
-                </div>
-
-                <div class="mb-3">
+                </div>                <div class="mb-3">
                     <label for="detail" class="form-label">Detail Kegiatan <span class="text-danger">*</span></label>
                     <textarea name="detail" id="detail" rows="5" class="form-control @error('detail') is-invalid @enderror" placeholder="Jelaskan secara rinci kegiatan yang Anda lakukan hari ini." required>{{ old('detail') }}</textarea>
                     @error('detail')
@@ -56,12 +54,10 @@
                             {{ $message }}
                         </div>
                     @enderror
-                </div>
-
-                <div class="mb-3">
+                </div>                <div class="mb-3">
                     <label for="dokumentasi" class="form-label">Dokumentasi</label>
-                    <input type="file" name="dokumentasi" id="dokumentasi" class="form-control @error('dokumentasi') is-invalid @enderror" accept="image/*" required>
-                    <div class="form-text">Unggah foto atau dokumen terkait kegiatan (JPG, PNG, maks 2MB).</div>
+                    <input type="file" name="dokumentasi" id="dokumentasi" class="form-control @error('dokumentasi') is-invalid @enderror" accept="image/png, image/jpeg, image/jpg" required>
+                    <div class="form-text">Unggah foto terkait kegiatan (hanya format JPG dan PNG, maks 2MB).</div>
                     @error('dokumentasi')
                         <div class="invalid-feedback">
                             {{ $message }}

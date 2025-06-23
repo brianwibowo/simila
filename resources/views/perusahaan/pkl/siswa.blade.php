@@ -30,43 +30,64 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-light">
                     Informasi Siswa
-                </div>
-                <div class="card-body">
+                </div>                <div class="card-body">
                     <p class="mb-2"><strong>Nama:</strong> {{ $user->name ?? '-' }}</p>
-                    <p class="mb-2"><strong>Email:</strong> {{ $user->email ?? '-' }}</p>
-                    
-                    {{-- Status Aplikasi PKL --}}
-                    <p class="mb-2"><strong>Status Aplikasi PKL:</strong>
-                        @php
-                            $statusAplikasi = $user->status_aplikasi ?? 'N/A';
-                            $badgeClass = '';
-                            switch ($statusAplikasi) {
-                                case 'accepted': $badgeClass = 'bg-success'; break;
-                                case 'rejected': $badgeClass = 'bg-danger'; break;
-                                case 'pending': default: $badgeClass = 'bg-warning text-dark'; break;
-                            }
-                        @endphp
-                        <span class="badge {{ $badgeClass }}">{{ ucfirst($statusAplikasi) }}</span>
-                    </p>
-
+                    <p class="mb-2"><strong>Email:</strong> {{ $user->email ?? '-' }}</p>                    
                     <p class="mb-2"><strong>Terdaftar PKL:</strong> {{ $user->pklSiswa->nama ?? 'Belum Terdaftar' }}</p>
-                    <p class="mb-0"><strong>Pembimbing Lapangan:</strong> {{ $user->pklSiswa->pembimbing->name ?? 'Belum Ditentukan' }}</p>
+                    <p class="mb-0"><strong>Pembimbing Lapangan:</strong> {{ $user->pklSiswa && $user->pklSiswa->pembimbing ? $user->pklSiswa->pembimbing->name : 'Belum Ditentukan' }}</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            {{-- Laporan Akhir PKL Siswa Card --}}
+        <div class="col-md-8">            {{-- Laporan Akhir PKL Siswa Card --}}
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-light">
-                    Laporan Akhir PKL Siswa
-                </div>
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <span>Laporan Akhir PKL Siswa</span>
+                    @if($user->pklSiswa)
+                        @php
+                            $statusClass = 'secondary';
+                            $statusText = 'Proses';
+                            
+                            if ($user->pklSiswa->status_waka_humas === 'disetujui') {
+                                $statusClass = 'success';
+                                $statusText = 'Disetujui';
+                            } elseif ($user->pklSiswa->status_waka_humas === 'ditolak') {
+                                $statusClass = 'danger';
+                                $statusText = 'Ditolak';
+                            }
+                        @endphp
+                        <span class="badge bg-{{ $statusClass }}">{{ $statusText }}</span>
+                    @endif
+                </div>                
                 <div class="card-body">
-                    @if($user->laporan_akhir_pkl)
-                        <p class="mb-3">Laporan telah diunggah.</p>
-                        <a href="{{ asset('storage/' . $user->laporan_akhir_pkl) }}" target="_blank" class="btn btn-primary btn-sm">
-                            <i class="bi bi-download"></i> Unduh Laporan Akhir
-                        </a>
+                    @if($user->laporan_pkl)
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p class="mb-3">Laporan telah diunggah.</p>
+                                <a href="{{ asset('storage/' . $user->laporan_pkl) }}" target="_blank" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-download"></i> Unduh Laporan Akhir
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="border-start ps-3">
+                                    <p class="mb-1"><strong>Status Validasi:</strong></p>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <span class="badge bg-{{ $user->pklSiswa && $user->pklSiswa->status_pembimbing === 'disetujui' ? 'success' : ($user->pklSiswa && $user->pklSiswa->status_pembimbing === 'revisi' ? 'warning' : 'secondary') }} me-1">
+                                                {{ $user->pklSiswa ? ucfirst($user->pklSiswa->status_pembimbing) : 'Proses' }}
+                                            </span>
+                                            <small>Pembimbing</small>
+                                        </li>
+                                        <li>
+                                            <span class="badge bg-{{ $user->pklSiswa && $user->pklSiswa->status_waka_humas === 'disetujui' ? 'success' : ($user->pklSiswa && $user->pklSiswa->status_waka_humas === 'ditolak' ? 'danger' : 'secondary') }} me-1">
+                                                {{ $user->pklSiswa ? ucfirst($user->pklSiswa->status_waka_humas) : 'Proses' }}
+                                            </span>
+                                            <small>Waka Humas</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     @else
                         <p class="text-muted mb-0">Siswa ini belum mengunggah laporan akhir PKL.</p>
                     @endif

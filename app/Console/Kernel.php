@@ -19,6 +19,10 @@ class Kernel extends ConsoleKernel
         // Run project file cleanup weekly
         $schedule->command('project:cleanup-files')->weekly()->sundays()->at('01:00')
             ->appendOutputTo(storage_path('logs/project-cleanup.log'));
+            
+        // Update PKL statuses daily
+        $schedule->command('pkl:update-status')->dailyAt('00:15')
+            ->appendOutputTo(storage_path('logs/pkl-status-update.log'));
     }
 
     /**

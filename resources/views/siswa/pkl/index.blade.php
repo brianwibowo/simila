@@ -8,16 +8,13 @@
     <div class="row mb-4">
         <div class="col-md-5 mb-2">
             <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan judul atau perusahaan...">
-        </div>
-        <div class="col-md-4 mb-2">
+        </div>            <div class="col-md-4 mb-2">
             <select id="filter-status" class="form-control">
                 <option value="">Semua Status</option>
-                <option value="proses">Proses (Pendaftaran Dibuka)</option>
+                <option value="proses">Proses</option>
                 <option value="berjalan">Berjalan</option>
+                <option value="ditolak">Ditolak</option>
                 <option value="selesai">Selesai</option>
-                <option value="kuota_penuh">Kuota Penuh</option>
-                <option value="pendaftaran_belum_dibuka">Pendaftaran Belum Dibuka</option>
-                <option value="pendaftaran_berakhir">Pendaftaran Berakhir</option>
             </select>
         </div>
         <div class="col-md-3 mb-2">
@@ -45,57 +42,130 @@
                 $actionButtonText = '';
                 $actionButtonClass = '';
                 $actionButtonDisabled = false;
-                $buttonActionType = null; // 'register', 'cancel', or null for disabled
-
-                // --- PKL Activity Status for Display Badge ---
-                if ($pkl->status === 'selesai') {
-                    $pklDisplayStatus = 'Selesai';
-                    $statusBadgeClass = 'bg-danger';
-                    $cardBorder = 'border-danger';
-                } elseif ($pkl->status === 'berjalan') {
-                    $pklDisplayStatus = 'Berjalan';
-                    $statusBadgeClass = 'bg-primary'; // Changed to primary for 'Berjalan'
-                    $cardBorder = 'border-primary';
-                } elseif ($pkl->status === 'proses') {
-                    $pklDisplayStatus = 'Proses'; // This is the state where registration might be open
-                    $statusBadgeClass = 'bg-warning text-dark';
-                    $cardBorder = 'border-warning';
+                $buttonActionType = null; // 'register', 'cancel', or null for disabled                // --- PKL Activity Status for Display Badge ---
+                // Calculate progress percentage for this PKL
+                $progress = $pkl->calculateProgress();
+                $progressPercentage = $progress['percentage'];
+                
+                // First, get the general PKL status
+                $pklStatus = $pkl->status;
+                
+                // For current student, override with their application status if they applied to this PKL
+                if (isset($currentStudentPklId) && $currentStudentPklId == $pkl->id) {
+                    $userPklStatus = auth()->user()->pkl_status;
+                      // Check if PKL is complete first (overrides all other statuses)
+                    if ($progressPercentage >= 100) {
+                        $pklDisplayStatus = 'Selesai';
+                        $statusBadgeClass = 'bg-success';
+                        $cardBorder = 'border-success';
+                        
+                        // Update user's PKL status to "selesai" if progress is 100% but status hasn't been updated
+                        if ($userPklStatus === 'disetujui') {
+                            auth()->user()->pkl_status = 'selesai';
+                            auth()->user()->save();
+                        }
+                    } 
+                    // Then check user's application status
+                    else if ($userPklStatus === 'disetujui') {
+                        $pklDisplayStatus = 'Berjalan';
+                        $statusBadgeClass = 'bg-primary';
+                        $cardBorder = 'border-primary';
+                    } elseif ($userPklStatus === 'tidak_disetujui') {
+                        $pklDisplayStatus = 'Ditolak';
+                        $statusBadgeClass = 'bg-danger';
+                        $cardBorder = 'border-danger';
+                    } elseif ($userPklStatus === 'proses') {
+                        $pklDisplayStatus = 'Proses';
+                        $statusBadgeClass = 'bg-warning text-dark';
+                        $cardBorder = 'border-warning';
+                    } else {
+                        // Fallback for other statuses
+                        $pklDisplayStatus = 'Proses';
+                        $statusBadgeClass = 'bg-warning text-dark';
+                        $cardBorder = 'border-warning';
+                    }
                 } else {
-                    $pklDisplayStatus = 'Tidak Diketahui';
-                    $statusBadgeClass = 'bg-secondary';
-                    $cardBorder = 'border-secondary';
+                    // For PKLs the student hasn't applied to, show PKL's general status
+                    if ($progressPercentage >= 100) {
+                        $pklDisplayStatus = 'Selesai';
+                        $statusBadgeClass = 'bg-success';
+                        $cardBorder = 'border-success';
+                    } elseif ($pklStatus === 'berjalan') {
+                        $pklDisplayStatus = 'Berjalan';
+                        $statusBadgeClass = 'bg-primary';
+                        $cardBorder = 'border-primary';
+                    } elseif ($pklStatus === 'proses') {
+                        $pklDisplayStatus = 'Proses';
+                        $statusBadgeClass = 'bg-warning text-dark';
+                        $cardBorder = 'border-warning';
+                    } else {
+                        $pklDisplayStatus = 'Tidak Diketahui';
+                        $statusBadgeClass = 'bg-secondary';
+                        $cardBorder = 'border-secondary';
+                    }
                 }
-
-                // --- Button Logic for Registration/Cancellation ---
+                
+                // Set progress bar color based on percentage
+                $progressBarColor = 'bg-danger';
+                if ($progressPercentage >= 100) {
+                    $progressBarColor = 'bg-success';
+                } elseif ($progressPercentage >= 75) {
+                    $progressBarColor = 'bg-info';
+                } elseif ($progressPercentage >= 50) {
+                    $progressBarColor = 'bg-primary';
+                } elseif ($progressPercentage >= 25) {
+                    $progressBarColor = 'bg-warning';
+                }                // --- Button Logic for Registration/Cancellation ---
                 $isRegisteredForThisPkl = (isset($currentStudentPklId) && $currentStudentPklId == $pkl->id);
                 $isRegisteredForOtherPkl = (isset($currentStudentPklId) && $currentStudentPklId !== null && $currentStudentPklId != $pkl->id);
                 $isRegistrationPeriodOpen = ($today >= $regStartDate && $today <= $regEndDate);
                 $isPklFull = ($pkl->kuota <= 0); // Assuming 'kuota' is remaining slots
+                $isPklCompleted = ($progressPercentage >= 100);
 
-                if ($isRegisteredForThisPkl && auth()->user()->pkl_status === 'proses') {
+                // PKL is completed
+                if ($isPklCompleted) {
+                    if ($isRegisteredForThisPkl) {
+                        $actionButtonText = 'PKL Selesai';
+                        $actionButtonClass = 'btn-success';
+                    } else {
+                        $actionButtonText = 'PKL Sudah Berakhir';
+                        $actionButtonClass = 'btn-secondary';
+                    }
+                    $actionButtonDisabled = true;
+                    $buttonActionType = 'disabled';
+                }
+                // User is registered for this PKL and status is 'proses' (pending)
+                else if ($isRegisteredForThisPkl && auth()->user()->pkl_status === 'proses') {
                     $actionButtonText = 'Batal Daftar';
                     $actionButtonClass = 'btn-danger';
-                    $actionButtonDisabled = false; // Enable cancellation
+                    $actionButtonDisabled = false;
                     $buttonActionType = 'cancel';
-                } elseif ($isRegisteredForOtherPkl) {
+                } 
+                // User is registered for this PKL and approved
+                else if ($isRegisteredForThisPkl && auth()->user()->pkl_status === 'disetujui') {
+                    $actionButtonText = 'Sedang Berjalan';
+                    $actionButtonClass = 'btn-info';
+                    $actionButtonDisabled = true;
+                    $buttonActionType = 'disabled';
+                }
+                // User is registered for another PKL
+                else if ($isRegisteredForOtherPkl) {
                     $actionButtonText = 'Sudah Terdaftar di PKL Lain';
                     $actionButtonClass = 'btn-info';
                     $actionButtonDisabled = true;
                     $buttonActionType = 'disabled';
-                } elseif (auth()->user()->pkl_status === 'disetujui') {
-                    $actionButtonText = 'Sudah Terdaftar';
-                    $actionButtonClass = 'btn-info';
-                    $actionButtonDisabled = true;
-                    $buttonActionType = 'disabled';
-                } else { 
+                }
+                // Allow registration for other PKLs
+                else { 
                     $actionButtonText = 'Daftar Sekarang';
                     $actionButtonClass = 'btn-primary';
                     $actionButtonDisabled = false;
                     $buttonActionType = 'register';
+                }// For JS filter (match the exact filter options: proses, berjalan, ditolak, selesai)
+                $dataStatusForFilter = strtolower($pklDisplayStatus);
+                if ($dataStatusForFilter === 'tidak diketahui') {
+                    $dataStatusForFilter = 'proses'; // Default to proses for filtering unknown status
                 }
-
-                // For JS filter (use the derived PKL activity status)
-                $dataStatusForFilter = strtolower(str_replace(' ', '_', $pklDisplayStatus));
             @endphp
 
             <div class="col-lg-4 col-md-6 mb-4 pkl-card"
@@ -110,8 +180,7 @@
                         </h6>
                         <span class="badge {{ $statusBadgeClass }}">{{ $pklDisplayStatus }}</span>
                     </div>
-                    
-                    <div class="card-body">
+                      <div class="card-body">
                         <p class="card-text text-muted mb-3" style="min-height: 60px;">
                             {{ Str::limit($pkl->deskripsi ?? '', 100) }}
                         </p>

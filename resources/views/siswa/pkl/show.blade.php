@@ -74,13 +74,54 @@
                         <h5>Perusahaan</h5>
                         <p class="text-muted">{{ $pkl->perusahaan->name ?? 'Perusahaan tidak ditemukan' }}</p>
                     </div>
-                </div>
+                </div>                
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <h5>Status Pendaftaran PKL (Umum)</h5>
                         <span class="badge bg-{{ auth()->user()->pkl_status === 'proses' ? 'warning' : 'success' }}">{{ auth()->user()->pkl_status }}</span>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <h5>Progress PKL</h5>
+                        @php
+                            $progress = $pkl->calculateProgress();
+                            $progressPercentage = round($progress['percentage'], 1);
+
+                            $progressBarColor = 'bg-danger';
+                            if ($progressPercentage >= 100) {
+                                $progressBarColor = 'bg-success';
+                            } elseif ($progressPercentage >= 75) {
+                                $progressBarColor = 'bg-info';
+                            } elseif ($progressPercentage >= 50) {
+                                $progressBarColor = 'bg-primary';
+                            } elseif ($progressPercentage >= 25) {
+                                $progressBarColor = 'bg-warning';
+                            }
+                        @endphp
+
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            @if($progressPercentage >= 100)
+                                <span class="badge bg-success">Selesai</span>
+                            @elseif($progressPercentage > 0)
+                                <span class="badge bg-primary">Berlangsung</span>
+                            @else
+                                <span class="badge bg-warning text-dark">Belum Dimulai</span>
+                            @endif
+
+                            <span class="badge bg-secondary">{{ $progressPercentage }}%</span>
+                        </div>
+
+                        <div class="progress" style="height: 12px;">
+                            <div class="progress-bar {{ $progressBarColor }}" role="progressbar"
+                                style="width: {{ $progressPercentage }}%; transition: width 0.5s;"
+                                aria-valuenow="{{ $progressPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if (auth()->user()->logbook->logbookContents()->count() < 50)
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -102,32 +143,72 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
-                    @else
+                        </form>                    @else
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <h5>Upload Laporan Akhir</h5>
                                 <p class="text-muted">Laporan akhir telah diupload.</p>
-                                <a href="{{ asset('storage/' . auth()->user()->laporan_pkl) }}" class="btn btn-primary" target="_blank">Lihat Laporan</a>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ asset('storage/' . auth()->user()->laporan_pkl) }}" class="btn btn-primary" target="_blank">Lihat Laporan</a>
+                                    
+                                    @if($pkl->status_waka_humas === 'ditolak' || $pkl->status_pembimbing === 'revisi')
+                                    <form action="{{ route('siswa-pkl-uploadLaporan', $pkl->id) }}" method="post" enctype="multipart/form-data" class="mt-3 w-100">
+                                        @csrf
+                                        <div class="alert alert-warning">
+                                            <strong>Perhatian!</strong> Laporan Anda perlu direvisi.
+                                            @if($pkl->catatan_waka_humas)
+                                                <p class="mb-0 mt-1"><strong>Catatan Waka Humas:</strong> {{ $pkl->catatan_waka_humas }}</p>
+                                            @endif
+                                            @if($pkl->catatan_pembimbing)
+                                                <p class="mb-0 mt-1"><strong>Catatan Pembimbing:</strong> {{ $pkl->catatan_pembimbing }}</p>
+                                            @endif
+                                        </div>
+                                        <div class="input-group mt-2">
+                                            <input class="form-control" type="file" name="laporan_akhir" id="laporan_akhir" required>
+                                            <button type="submit" class="btn btn-warning">Upload Ulang</button>
+                                        </div>
+                                    </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endif
                 @endif
-                
-                <h5 class="mt-4">Informasi Validasi & Penempatan</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Status Validasi Pembimbing:
+                  <h5 class="mt-4">Informasi Validasi & Penempatan</h5>
+                <ul class="list-group list-group-flush">                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Status Validasi Laporan Akhir oleh Pembimbing:
                         <span class="badge {{ $pkl->status_pembimbing === 'disetujui' ? 'bg-success' : ($pkl->status_pembimbing === 'revisi' ? 'bg-warning text-dark' : 'bg-secondary') }}">
                             {{ ucfirst($pkl->status_pembimbing ?? 'proses') }}
                         </span>
                     </li>
+                    @if($pkl->status_pembimbing != 'proses' && $pkl->catatan_pembimbing)
+                    <li class="list-group-item">
+                        <div>Catatan Pembimbing:</div>
+                        <div class="alert alert-{{ $pkl->status_pembimbing === 'disetujui' ? 'success' : 'warning' }} mt-2">
+                            {{ $pkl->catatan_pembimbing }}
+                        </div>
+                    </li>
+                    @endif
+                    @if($pkl->tanggal_validasi_pembimbing)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Status Validasi Waka Humas:
+                        Tanggal Validasi Pembimbing:
+                        <span class="text-muted">{{ \Carbon\Carbon::parse($pkl->tanggal_validasi_pembimbing)->format('d F Y, H:i') }}</span>
+                    </li>
+                    @endif
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Status Validasi Laporan Akhir oleh Waka Humas:
                         <span class="badge {{ $pkl->status_waka_humas === 'disetujui' ? 'bg-success' : ($pkl->status_waka_humas === 'ditolak' ? 'bg-danger' : 'bg-secondary') }}">
                             {{ ucfirst($pkl->status_waka_humas ?? 'proses') }}
                         </span>
                     </li>
+                    @if($pkl->status_waka_humas != 'proses' && $pkl->catatan_waka_humas)
+                    <li class="list-group-item">
+                        <div>Catatan Waka Humas:</div>
+                        <div class="alert alert-{{ $pkl->status_waka_humas === 'disetujui' ? 'success' : 'danger' }} mt-2">
+                            {{ $pkl->catatan_waka_humas }}
+                        </div>
+                    </li>
+                    @endif
                     @if($pkl->tanggal_validasi_waka_humas)
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Tanggal Validasi Waka Humas:

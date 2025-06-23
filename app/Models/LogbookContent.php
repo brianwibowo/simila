@@ -14,6 +14,11 @@ class LogbookContent extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'tanggal' => 'date',
+        'tanggal_validasi_pembimbing' => 'datetime',
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -23,6 +28,20 @@ class LogbookContent extends Model
                 Storage::disk('public')->delete($logbook->dokumentasi);
             }
         });
+    }
+
+    /**
+     * Get the status validasi options.
+     *
+     * @return array
+     */
+    public static function getStatusValidasiOptions()
+    {
+        return [
+            'belum_validasi' => 'Belum Validasi',
+            'valid' => 'Valid',
+            'revisi' => 'Perlu Revisi',
+        ];
     }
 
     public function logbook()

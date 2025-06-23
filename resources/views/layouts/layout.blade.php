@@ -32,8 +32,9 @@
           @include('template.footer')
         </footer>
       </div>
-    </div>
-
-   @include('template.script')
+    </div>   @include('template.script')
+   
+   {{-- Stack for page-specific scripts --}}
+   @stack('scripts')
   </body>
 </html>

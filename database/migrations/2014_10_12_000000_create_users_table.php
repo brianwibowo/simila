@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->string('jenis_guru')->nullable();
             $table->timestamps();
-            $table->enum('pkl_status',['disetujui', 'proses', 'tidak_disetujui'])->nullable();
+            $table->enum('pkl_status',['disetujui', 'proses', 'tidak_disetujui', 'selesai'])->nullable();
             $table->string('laporan_pkl')->nullable();
             $table->integer('nilai_pkl')->nullable();
             $table->integer('nilai_mooc')->nullable();

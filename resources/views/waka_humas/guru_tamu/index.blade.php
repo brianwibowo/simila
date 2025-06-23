@@ -18,7 +18,8 @@
 
                     <div class="table-responsive">
                         <table class="table table-striped">
-                            <thead>                                <tr>
+                            <thead>                                
+                                <tr>
                                     <th>Nama</th>
                                     <th>Jabatan</th>
                                     <th>Keahlian</th>
@@ -30,12 +31,14 @@
                             </thead>
                             <tbody>
                                 @forelse($guruTamus as $guruTamu)
-                                <tr>                                    <td>{{ $guruTamu->nama_karyawan }}</td>
+                                <tr>                                    
+                                    <td>{{ $guruTamu->nama_karyawan }}</td>
                                     <td>{{ $guruTamu->jabatan }}</td>
                                     <td>{{ $guruTamu->keahlian }}</td>
                                     <td>{{ $guruTamu->getFormattedJadwalAttribute() }}</td>
                                     <td>{{ $guruTamu->submitter ? $guruTamu->submitter->name : 'Tidak diketahui' }}</td>
-                                    <td>                                        <span class="badge bg-{{ $guruTamu->status === 'disetujui' ? 'success' : 'warning' }}">
+                                    <td>                                        
+                                        <span class="badge bg-{{ $guruTamu->status === 'disetujui' ? 'success' : 'warning' }}">
                                             {{ $guruTamu->status === 'disetujui' ? 'Disetujui' : 'Menunggu Konfirmasi' }}
                                         </span>
                                     </td>

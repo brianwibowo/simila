@@ -9,16 +9,12 @@ class Logbook extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
-
-    public function user()
+    protected $guarded = ['id'];    public function siswa()
     {
-        return $this->hasOne(User::class);
-    }
-
-    public function pkl()
+        return $this->belongsTo(User::class, 'siswa_id');
+    }public function pkl()
     {
-        return $this->belongsTo(PKL::class);
+        return $this->belongsTo(PKL::class, 'pkl_id');
     }
 
     public function logbookContents()

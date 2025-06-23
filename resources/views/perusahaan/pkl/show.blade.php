@@ -14,6 +14,25 @@
             }
         }
 
+        // Mendapatkan progress PKL
+        $progress = $pkl->calculateProgress();
+        $progressPercentage = $progress['percentage'];
+        $progressStatus = $progress['status'];
+
+        // Set warna progress bar berdasarkan persentase
+        $progressBarColor = 'bg-info';
+        if ($progressPercentage >= 100) {
+            $progressBarColor = 'bg-success';
+        } elseif ($progressPercentage >= 75) {
+            $progressBarColor = 'bg-info';
+        } elseif ($progressPercentage >= 50) {
+            $progressBarColor = 'bg-primary';
+        } elseif ($progressPercentage >= 25) {
+            $progressBarColor = 'bg-warning';
+        } else {
+            $progressBarColor = 'bg-danger';
+        }
+
         // Logika untuk status utama PKL
         $status = $pkl->status;
         $badgeClass = '';
@@ -64,9 +83,19 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    
-    <div class="alert {{ $badgeClass }} d-inline-block" role="alert">
+      <div class="alert {{ $badgeClass }} d-inline-block mb-2" role="alert">
         Status PKL Saat Ini: <strong>{{ $statusText }}</strong>
+    </div>
+    
+    <div class="mb-4">
+        <p class="mb-1"><strong>Progress PKL:</strong> <span class="badge bg-secondary">{{ $progressPercentage }}%</span></p>
+        <div class="progress" style="height: 15px;">
+            <div class="progress-bar {{ $progressBarColor }}" role="progressbar" 
+                 style="width: {{ $progressPercentage }}%;" 
+                 aria-valuenow="{{ $progressPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                {{ $progressPercentage }}%
+            </div>
+        </div>
     </div>
 
     <hr>
@@ -79,9 +108,8 @@
                 </div>
                 <div class="card-body">
                     <h6 class="text-muted">INFORMASI UTAMA</h6>
-                    <dl class="row mb-4">
-                        <dt class="col-sm-4"><i class="bi bi-person-check-fill text-muted me-1"></i> Pembimbing</dt>
-                        <dd class="col-sm-8">{{ $pkl->pembimbing->nama ?? 'Belum ditentukan' }}</dd>
+                    <dl class="row mb-4">                        <dt class="col-sm-4"><i class="bi bi-person-check-fill text-muted me-1"></i> Pembimbing</dt>
+                        <dd class="col-sm-8">{{ $pkl->pembimbing ? $pkl->pembimbing->name : 'Belum ditentukan' }}</dd>
 
                         <dt class="col-sm-4"><i class="bi bi-calendar-event text-muted me-1"></i> Tanggal Mulai</dt>
                         <dd class="col-sm-8">{{ \Carbon\Carbon::parse($pkl->tanggal_mulai)->translatedFormat('d F Y') }}</dd>
@@ -91,15 +119,6 @@
                         
                         <dt class="col-sm-4"><i class="bi bi-clock-history text-muted me-1"></i> Durasi</dt>
                         <dd class="col-sm-8">{{ \Carbon\Carbon::parse($pkl->tanggal_mulai)->diffInMonths(\Carbon\Carbon::parse($pkl->tanggal_selesai)) }} Bulan</dd>
-                    </dl>
-                    
-                    <h6 class="text-muted">STATUS & PENILAIAN</h6>
-                    <dl class="row mb-4">
-                        <dt class="col-sm-4">Status Pembimbing</dt>
-                        <dd class="col-sm-8">{!! getStatusBadge($pkl->status_pembimbing) !!}</dd>
-                        
-                        <dt class="col-sm-4">Status Waka Humas</dt>
-                        <dd class="col-sm-8">{!! getStatusBadge($pkl->status_waka_humas) !!}</dd>
                     </dl>
                 </div>
             </div>
@@ -149,7 +168,7 @@
                 <h5 class="modal-title" id="nilaiModalLabel">Input Nilai Akhir PKL</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('perusahaan-pkl-updateNilai', $pkl->id) }}" method="POST">
+            <form action="{{ route('perusahaan-pkl-nilai', $pkl->siswas->first()) }}" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="modal-body">

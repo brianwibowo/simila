@@ -22,8 +22,7 @@
     </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
-            <ul class="nav nav-secondary">
-                <li class="nav-item {{ Route::currentRouteName() == 'waka-humas-dashboard' ? 'active' : '' }}">
+            <ul class="nav nav-secondary">                <li class="nav-item {{ Route::currentRouteName() == 'waka-humas-dashboard' ? 'active' : '' }}">
                     <a href="{{ route('waka-humas-dashboard') }}" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
@@ -45,8 +44,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                <li class="nav-item {{ request()->routeIs('waka-humas-pkl-*') ? 'active' : '' }}">
+                </li>                <li class="nav-item {{ request()->routeIs('waka-humas-pkl-*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#pklMenu" aria-expanded="{{ request()->routeIs('waka-humas-pkl-*') ? 'true' : 'false' }}">
                         <i class="fas fa-briefcase"></i>
                         <p>PKL</p>
@@ -54,9 +52,17 @@
                     </a>
                     <div class="collapse {{ request()->routeIs('waka-humas-pkl-*') ? 'show' : '' }}" id="pklMenu">
                         <ul class="nav nav-collapse">
-                            <li class="{{ request()->routeIs('waka-humas-pkl-index') ? 'active' : '' }}">
+                            <li class="{{ request()->routeIs('waka-humas-pkl-index') && !request()->routeIs('waka-humas-pkl-assign-*') ? 'active' : '' }}">
                                 <a href="{{ route('waka-humas-pkl-index') }}">
-                                    <span class="sub-item">Daftar Laporan PKL</span>
+                                    <span class="sub-item">Daftar PKL</span>
+                                </a>
+                            </li>                            <li class="{{ request()->routeIs('waka-humas-pkl-assign-*') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-pkl-assign-index') }}">
+                                    <span class="sub-item">Penugasan Pembimbing</span>
+                                </a>
+                            </li>                            <li class="{{ request()->is('waka-humas/pkl/logbook*') ? 'active' : '' }}">
+                                <a href="{{ route('waka-humas-pkl-logbook-validation-index') }}">
+                                    <span class="sub-item">Lihat Logbook</span>
                                 </a>
                             </li>
                         </ul>

@@ -29,10 +29,10 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" class="text-center">#</th>
-                            <th scope="col">Nama Pelamar</th>
+                            <th scope="col" class="text-center">#</th>                            <th scope="col">Nama Pelamar</th>
                             <th scope="col">Email</th>
                             <th scope="col">Program PKl</th>
+                            <th scope="col">Pembimbing</th>
                             <th scope="col" class="text-center">Status Aplikasi</th>
                             <th scope="col" class="text-center">Aksi</th>
                         </tr>
@@ -56,10 +56,10 @@
                                 }
                             @endphp
                             <tr>
-                                <td class="text-center">{{ $loop->iteration }}</td>
-                                <td>{{ $siswa->name ?? '-' }}</td>
+                                <td class="text-center">{{ $loop->iteration }}</td>                                <td>{{ $siswa->name ?? '-' }}</td>
                                 <td>{{ $siswa->email ?? '-' }}</td>
                                 <td>{{ $siswa->pklSiswa->nama ?? 'Belum Terdaftar' }}</td>
+                                <td>{{ $siswa->pklSiswa && $siswa->pklSiswa->pembimbing ? $siswa->pklSiswa->pembimbing->name : 'Belum Ditentukan' }}</td>
                                 <td class="text-center">
                                     <span class="badge {{ $badgeClass }}">{{ ucfirst($statusAplikasi) }}</span>
                                 </td>
@@ -88,7 +88,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-4">
+                                <td colspan="7" class="text-center py-4">
                                     <div class="mb-2">
                                         <i class="bi bi-people" style="font-size: 3rem; color: #6c757d;"></i>
                                     </div>

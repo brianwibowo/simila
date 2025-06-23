@@ -30,7 +30,7 @@
                         @forelse($pkls as $pkl)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $pkl->siswa->name ?? '-' }}</td>
+                            <td>{{ $pkl->siswas->first()->name ?? '-' }}</td>
                             <td>{{ $pkl->pembimbing->name ?? '-' }}</td>
                             <td>{{ $pkl->perusahaan->name ?? '-' }}</td>
                             <td>
@@ -44,8 +44,7 @@
                                 </span>
                             </td>
                             <td>{{ $pkl->nilai ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('waka-humas.pkl.show', $pkl) }}" class="btn btn-sm btn-info">
+                            <td>                                <a href="{{ route('waka-humas-pkl-show', $pkl) }}" class="btn btn-sm btn-info">
                                     <i class="bi bi-eye"></i> Detail
                                 </a>
                             </td>

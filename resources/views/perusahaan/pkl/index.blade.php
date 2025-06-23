@@ -11,6 +11,28 @@
         </a>
     </div>
 
+    {{-- Flash Messages --}}
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    
+    @if (session('warning'))
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ session('warning') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     {{-- Opsi Filter --}}
     <div class="row mb-4">
         <div class="col-md-4">
@@ -36,34 +58,63 @@
 
     {{-- Daftar Card Kelompok PKL --}}
     <div class="row" id="kelompok-cards">
-        @forelse ($pkls as $kelompok)
-            @php
+        @forelse ($pkls as $kelompok)            @php
                 // Logika untuk status, badge, dan border
-                $status = $kelompok->status;
-                $badgeClass = '';
-                $cardBorder = '';
-                $statusText = '';
-
-                switch ($status) {
-                    case 'proses':
-                        $badgeClass = 'bg-warning text-dark';
-                        $cardBorder = 'border-warning';
-                        $statusText = 'Proses';
-                        break;
-                    case 'berjalan':
-                        $badgeClass = 'bg-primary';
-                        $cardBorder = 'border-primary';
-                        $statusText = 'Berjalan';
-                        break;
-                    case 'selesai':
-                        $badgeClass = 'bg-success';
-                        $cardBorder = 'border-success';
-                        $statusText = 'Selesai';
-                        break;
+                $progress = $kelompok->calculateProgress();
+                $progressPercentage = $progress['percentage'];
+                $progressStatus = $progress['status'];
+                
+                // Cek apakah ada siswa yang terdaftar
+                $hasApplicants = $kelompok->siswas()->count() > 0;
+                
+                // Default status
+                $status = 'proses';
+                $badgeClass = 'bg-warning text-dark';
+                $cardBorder = 'border-warning';
+                $statusText = 'Proses';
+                
+                // Update status berdasarkan progress dan keberadaan pelamar
+                if ($progressPercentage >= 100) {
+                    // Jika progress sudah 100%, maka status "selesai"
+                    $status = 'selesai';
+                    $badgeClass = 'bg-success';
+                    $cardBorder = 'border-success';
+                    $statusText = 'Selesai';
+                } elseif ($hasApplicants) {
+                    // Jika sudah ada pelamar dan progress belum 100%, maka status "berjalan"
+                    $status = 'berjalan';
+                    $badgeClass = 'bg-primary';
+                    $cardBorder = 'border-primary';
+                    $statusText = 'Berjalan';
+                }
+                
+                // Update status PKL di database jika perlu
+                if ($kelompok->status !== $status) {
+                    $kelompok->status = $status;
+                    $kelompok->save();
                 }
                 
                 $tanggalMulai = \Carbon\Carbon::parse($kelompok->tanggal_mulai);
                 $tahunPkl = $tanggalMulai->format('Y');
+                
+                // Calculate progress
+                $progress = $kelompok->calculateProgress();
+                $progressPercentage = $progress['percentage'];
+                $progressStatus = $progress['status'];
+                
+                // Set progress bar color
+                $progressBarColor = 'bg-info';
+                if ($progressPercentage >= 100) {
+                    $progressBarColor = 'bg-success';
+                } elseif ($progressPercentage >= 75) {
+                    $progressBarColor = 'bg-info';
+                } elseif ($progressPercentage >= 50) {
+                    $progressBarColor = 'bg-primary';
+                } elseif ($progressPercentage >= 25) {
+                    $progressBarColor = 'bg-warning';
+                } else {
+                    $progressBarColor = 'bg-danger';
+                }
             @endphp
             
             <div class="col-lg-4 col-md-6 mb-4 kelompok-card" 
@@ -87,9 +138,8 @@
                         </div>
                         <div class="d-flex align-items-center mb-2">
                             <i class="bi bi-person-check-fill text-muted me-2" style="font-size: 1.2rem;"></i>
-                            <span class="text-truncate">{{ $kelompok->pembimbing->name ?? 'Pembimbing belum diatur' }}</span>
-                        </div>
-                        <div class="d-flex align-items-center text-muted">
+                            <span class="text-truncate">{{ $kelompok->pembimbing ? $kelompok->pembimbing->name : 'Pembimbing belum diatur' }}</span>
+                        </div>                        <div class="d-flex align-items-center mb-2 text-muted">
                             <i class="bi bi-calendar-range text-muted me-2" style="font-size: 1.2rem;"></i>
                             <small>{{ $tanggalMulai->format('d M Y') }} - {{ \Carbon\Carbon::parse($kelompok->tanggal_selesai)->format('d M Y') }}</small>
                         </div>

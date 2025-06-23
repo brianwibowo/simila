@@ -44,23 +44,24 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#tables">
-                        <i class="fas fa-table"></i>
+                </li>                @if(auth()->user()->jenis_guru == 'guru pembimbing')
+                <li class="nav-item {{ request()->routeIs('guru-pkl-*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#pklMenu" class="{{ request()->routeIs('guru-pkl-*') ? '' : 'collapsed' }}" aria-expanded="{{ request()->routeIs('guru-pkl-*') ? 'true' : 'false' }}">
+                        <i class="fas fa-user-graduate"></i>
                         <p>PKL</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse" id="tables">
+                    <div class="collapse {{ request()->routeIs('guru-pkl-*') ? 'show' : '' }}" id="pklMenu">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="tables/tables.html">
-                                    <span class="sub-item">Penilaian</span>
+                            <li class="{{ request()->routeIs('guru-pkl-index') ? 'active' : '' }}">
+                                <a href="{{ route('guru-pkl-index') }}">
+                                    <span class="sub-item">Daftar PKL</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+                @endif
                 <li class="nav-item {{ request()->routeIs('guru-mooc-*') ? 'active' : '' }} {{ auth()->user()->jenis_guru == 'guru-produktif' ? 'disabled' : '' }}">
                     <a data-bs-toggle="collapse" href="#charts">
                         <i class="far fa-chart-bar"></i>

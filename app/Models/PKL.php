@@ -30,6 +30,9 @@ class PKL extends Model
      */
     protected $casts = [
         'nilai' => 'integer',
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
+        'tanggal_validasi_pembimbing' => 'datetime',
         'tanggal_validasi_waka_humas' => 'datetime',
     ];
 
@@ -74,10 +77,51 @@ class PKL extends Model
     public function perusahaan()
     {
         return $this->belongsTo(User::class, 'perusahaan_id');
-    }
-
-    public function logbooks()
+    }    public function logbooks()
     {
-        return $this->hasMany(Logbook::class);
+        return $this->hasMany(Logbook::class, 'pkl_id');
+    }
+    
+    /**
+     * Calculate the progress percentage of the PKL program
+     * 
+     * @return array with percentage and status
+     */
+    public function calculateProgress()
+    {
+        $today = now();
+        $startDate = $this->tanggal_mulai;
+        $endDate = $this->tanggal_selesai;
+        
+        // If PKL hasn't started yet
+        if ($today < $startDate) {
+            return [
+                'percentage' => 0,
+                'status' => 'belum_mulai'
+            ];
+        }
+        
+        // If PKL has ended
+        if ($today > $endDate) {
+            return [
+                'percentage' => 100,
+                'status' => 'selesai'
+            ];
+        }
+        
+        // Calculate percentage if PKL is in progress
+        $totalDuration = $startDate->diffInDays($endDate);
+        $elapsedDuration = $startDate->diffInDays($today);
+        
+        if ($totalDuration == 0) {
+            $percentage = 100; // If start and end date are the same, consider it 100%
+        } else {
+            $percentage = min(100, round(($elapsedDuration / $totalDuration) * 100));
+        }
+        
+        return [
+            'percentage' => $percentage,
+            'status' => 'berlangsung'
+        ];
     }
 }

@@ -24,13 +24,85 @@
             {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    @endif    {{-- Final Report Status Card --}}
+    @php
+        $user = auth()->user();
+        $userPkl = $user->pklSiswa;
+        
+        function getStatusBadge($status) {
+            switch ($status) {
+                case 'disetujui': return '<span class="badge bg-success">Disetujui</span>';
+                case 'ditolak': return '<span class="badge bg-danger">Ditolak</span>';
+                default: return '<span class="badge bg-warning text-dark">Proses</span>';
+            }
+        }
+        
+        function getStatusIcon($status) {
+            switch ($status) {
+                case 'disetujui': return '<i class="bi bi-check-circle-fill text-success"></i>';
+                case 'ditolak': return '<i class="bi bi-exclamation-circle-fill text-danger"></i>';
+                default: return '<i class="bi bi-clock-history text-warning"></i>';
+            }
+        }
+    @endphp
+    
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-light">
+            <h5 class="card-title mb-0">Status Validasi Laporan Akhir PKL</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 fs-3">
+                            {!! getStatusIcon($userPkl ? $userPkl->status_pembimbing : 'proses') !!}
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Guru Pembimbing</h6>
+                            <div>{!! getStatusBadge($userPkl ? $userPkl->status_pembimbing : 'proses') !!}</div>
+                            @if($userPkl && $userPkl->catatan_pembimbing)
+                                <div class="mt-2 small text-muted">
+                                    <strong>Komentar:</strong> {{ $userPkl->catatan_pembimbing }}
+                                </div>
+                            @endif
+                            @if($userPkl && $userPkl->tanggal_validasi_pembimbing)
+                                <div class="mt-1 small text-muted">
+                                    <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($userPkl->tanggal_validasi_pembimbing)->format('d M Y, H:i') }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 fs-3">
+                            {!! getStatusIcon($userPkl ? $userPkl->status_waka_humas : 'proses') !!}
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Waka Humas</h6>
+                            <div>{!! getStatusBadge($userPkl ? $userPkl->status_waka_humas : 'proses') !!}</div>
+                            @if($userPkl && $userPkl->catatan_waka_humas)
+                                <div class="mt-2 small text-muted">
+                                    <strong>Komentar:</strong> {{ $userPkl->catatan_waka_humas }}
+                                </div>
+                            @endif
+                            @if($userPkl && $userPkl->tanggal_validasi_waka_humas)
+                                <div class="mt-1 small text-muted">
+                                    <strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($userPkl->tanggal_validasi_waka_humas)->format('d M Y, H:i') }}
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle">                   
+                     <thead class="table-light">                       
                         <tr>
                             <th scope="col" class="text-center">#</th>
                             <th scope="col">Tanggal</th>
@@ -54,8 +126,7 @@
                                         </a>
                                     @else
                                         <span class="text-muted small">Tidak ada</span>
-                                    @endif
-                                </td>
+                                    @endif                                </td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <a href="{{ route('siswa-logbook-edit', $logbookEntry->id) }}" class="btn btn-sm btn-outline-warning" title="Edit">
@@ -71,8 +142,7 @@
                                     </form>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
+                        @empty                            <tr>
                                 <td colspan="6" class="text-center py-4">
                                     <div class="mb-2">
                                         <i class="bi bi-journal-text" style="font-size: 3rem; color: #6c757d;"></i>

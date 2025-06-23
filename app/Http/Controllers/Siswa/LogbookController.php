@@ -30,15 +30,12 @@ class LogbookController extends Controller
     public function create()
     {
         return view('siswa.pkl.logbook.create');
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
+    }    public function store(Request $request)
+    {        $request->validate([
             'tanggal' => 'required',
             'nama' => 'required',
             'detail' => 'required',
-            'dokumentasi' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'dokumentasi' => 'required|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $dokumentasiPath = $request->file('dokumentasi')->store('public/logbook');
@@ -60,9 +57,7 @@ class LogbookController extends Controller
         return view('siswa.pkl.logbook.edit', [
             'logbook' => $logbook
         ]);
-    }
-
-    public function update(Request $request, LogbookContent $logbook)
+    }    public function update(Request $request, LogbookContent $logbook)
     {
         $request->validate([
             'tanggal' => 'required',
@@ -79,12 +74,21 @@ class LogbookController extends Controller
                 'dokumentasi' => $dokumentasiPath
             ]);
         }
-
+        
         $logbook->update([
             'tanggal' => $request->tanggal,
             'nama' => $request->nama,
             'detail' => $request->detail
         ]);
+        
+        // Reset validation status for the entire logbook if any entry is modified
+        $userLogbook = auth()->user()->logbook;
+        if ($userLogbook) {
+            $userLogbook->update([
+                'status_validasi_pembimbing' => 'belum_validasi',
+                'status_validasi_waka_humas' => 'belum_validasi'
+            ]);
+        }
 
         return redirect()->route('siswa-logbook-index');
     }
