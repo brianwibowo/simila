@@ -1,14 +1,17 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container">
-    <h2>Input Nilai & Sertifikat untuk Siswa: {{ $registration->siswa->name ?? 'N/A' }}</h2>
-    <p>Ujian: <strong>{{ $registration->exam->nama_ujian ?? 'N/A' }}</strong></p>
+<div class="container mt-4">
+    <h1 class="h3 mb-0 text-gray-800">Input Nilai & Sertifikat untuk Siswa: {{ $registration->siswa->name ?? 'N/A' }}</h1>
+    <p class="mb-4">Sertifikasi: <strong>{{ $registration->exam->nama_ujian ?? 'N/A' }}</strong></p>
 
-    <div class="card">
-        <div class="card-header">Form Penilaian & Sertifikat</div>
+    <div class="card shadow-sm">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Form Penilaian & Sertifikat</h6>
+        </div>
         <div class="card-body">
-            @if ($latestAttempt ?? '')
+            {{-- Bagian ini dikosongkan karena nilai otomatis dari kuis tidak ada lagi --}}
+            {{-- @if ($latestAttempt ?? '')
                 <div class="alert alert-info">
                     Nilai terakhir dari upaya ujian siswa (otomatis): <strong>{{ $latestAttempt ?? ''->nilai ?? 'Belum ada nilai' }}</strong>
                 </div>
@@ -16,9 +19,9 @@
                 <div class="alert alert-warning">
                     Siswa ini belum mengerjakan ujian ini atau belum ada nilai upaya yang tercatat.
                 </div>
-            @endif
+            @endif --}}
 
-            <form action="{{ route('perusahaan-sertifikasi-results.store_certificate', $registration->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('lsp-sertifikasi-results.store_certificate', $registration->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label for="nilai" class="form-label">Nilai Akhir (0-100)</label>
@@ -49,7 +52,7 @@
                     @endif
                 </div>
                 <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('perusahaan-sertifikasi-results') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ route('lsp-sertifikasi-results') }}" class="btn btn-secondary">Batal</a>
             </form>
         </div>
     </div>

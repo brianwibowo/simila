@@ -9,20 +9,18 @@ class Sertifikasi extends Model
 {
     use HasFactory;
 
-    protected $table = 'sertifikasis'; // Pastikan nama tabel benar
+    protected $table = 'sertifikasis';
 
     protected $fillable = [
-        'user_id', // Siswa
-        'lsp_user_id', // LSP (null jika dari perusahaan)
-        'perusahaan_user_id', // Perusahaan (null jika dari LSP)
-        'certification_exam_id', // Ujian yang diikuti
+        'user_id',
+        'lsp_user_id',
+        'perusahaan_user_id',
+        'certification_exam_id',
         'dokumen_persyaratan',
         'nilai',
         'sertifikat_kelulusan',
-        'status_pendaftaran_ujian', // 'terdaftar', 'selesai_ujian', 'lulus', 'tidak_lulus'
-        // Kolom `raport`, `surat_rekomendasi`, `surat_motivasi`, `portofolio` HANYA tambahkan jika memang ada di tabel `sertifikasis` kamu.
-        // Berdasarkan simila.sql yang diberikan, kolom ini ada di `beasiswas`, bukan `sertifikasis`.
-        // Jadi, kemungkinan besar kamu TIDAK PERLU menambahkan ini di sini.
+        'status_pendaftaran_ujian',
+        'kompetensi', 
     ];
 
     protected $casts = [

@@ -1,16 +1,18 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container">
-    <h2>Buat Ujian Sertifikasi Baru</h2>
+<div class="container mt-4">
+    <h1 class="h3 mb-0 text-gray-800">Buat Nama Sertifikasi/Batch Baru</h1>
 
-    <div class="card">
-        <div class="card-header">Form Ujian</div>
+    <div class="card shadow-sm mt-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Form Pembuatan Sertifikasi</h6>
+        </div>
         <div class="card-body">
-            <form action="{{ route('perusahaan-sertifikasi-store') }}" method="POST">
+            <form action="{{ route('lsp-sertifikasi-store') }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="nama_ujian" class="form-label">Nama Ujian</label>
+                    <label for="nama_ujian" class="form-label">Nama Ujian/Sertifikasi</label>
                     <input type="text" class="form-control @error('nama_ujian') is-invalid @enderror" id="nama_ujian" name="nama_ujian" value="{{ old('nama_ujian') }}" required>
                     @error('nama_ujian')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -30,8 +32,8 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">Simpan Ujian</button>
-                <a href="{{ route('perusahaan-sertifikasi-index') }}" class="btn btn-secondary">Batal</a>
+                <button type="submit" class="btn btn-primary">Simpan Sertifikasi</button>
+                <a href="{{ route('lsp-sertifikasi-index') }}" class="btn btn-secondary">Batal</a>
             </form>
         </div>
     </div>
