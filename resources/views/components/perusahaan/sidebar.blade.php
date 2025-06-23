@@ -151,7 +151,7 @@
                     <div class="collapse {{ request()->routeIs('perusahaan-mooc*') ? 'show' : '' }}"
                         id="moocCollapse">
                         <ul class="nav nav-collapse">
-                            <li class="{{ Route::currentRouteName() == 'perusahaan-mooc-index' ? 'active' : '' || Route::currentRouteName() == 'perusahaan-quiz-create' ? 'active' : '' }}">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-mooc-index' ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-mooc-index') }}">
                                     <span class="sub-item">Kelas</span>
                                 </a>

@@ -39,6 +39,8 @@ use App\Http\Controllers\WakaHumas\PklController as WakaHumasPklController;
 
 // Guru Controllers
 use App\Http\Controllers\Guru\ProjectController as GuruProjectController;
+use App\Http\Controllers\Guru\MoocController as GuruMoocController;
+
 
 
 /*
@@ -272,6 +274,8 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::put('/{project}/laporan', [GuruProjectController::class, 'updateLaporan'])->name('laporan-update');
             Route::delete('/{project}/laporan', [GuruProjectController::class, 'deleteLaporan'])->name('laporan-delete');
         });
+
+        Route::get('/mooc', [GuruMoocController::class, 'index'])->name('guru-mooc-index');
     });
 
     // Waka Kurikulum Routes
