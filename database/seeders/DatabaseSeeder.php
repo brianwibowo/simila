@@ -79,15 +79,32 @@ class DatabaseSeeder extends Seeder
                 'password' => 'viantech',
                 'role' => 'perusahaan',
             ],
+            [
+                'name' => 'guru_produktif',
+                'email' => 'produktif@example.com',
+                'password' => 'produktif',
+                'role' => 'guru',
+                'jenis_guru' => 'guru-produktif',
+            ],
         ];
 
         foreach ($usersToCreate as $userData) {
             if (! User::where('email', $userData['email'])->exists()) {
-                $user = User::create([
+                if($userData['jenis_guru']){                    
+                    $user = User::create([
                     'name' => $userData['name'],
                     'email' => $userData['email'],
-                    'password' => Hash::make($userData['password']), // Gunakan Hash::make() untuk password
-                ]);
+                    'password' => Hash::make($userData['password']),
+                    'jenis_guru' => $userData['jenis_guru']
+                    ]);
+                    
+                } else{   
+                    $user = User::create([
+                        'name' => $userData['name'],
+                        'email' => $userData['email'],
+                        'password' => Hash::make($userData['password']), // Gunakan Hash::make() untuk password
+                    ]);
+                }
 
                 $user->assignRole($userData['role']);
 
