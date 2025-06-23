@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\KurikulumController as AdminKurikulumController;
 use App\Http\Controllers\Admin\GuruTamuController as AdminGuruTamuController;
-use App\Http\Controllers\Admin\ProjectController as AdminProjectController; // Added for admin project routes
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\SertifikasiController as AdminSertifikasiController;
 
 // Perusahaan Controllers
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
@@ -74,6 +75,22 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/', function () {
             return view('admin.dashboard');
         })->name('admin-dashboard');
+
+        // START: Rute Baru untuk Sertifikasi Kompetensi oleh Admin
+        Route::prefix('sertifikasi')->name('admin-sertifikasi-')->group(function () {
+            Route::get('/', [AdminSertifikasiController::class, 'index'])->name('index');
+            Route::get('/create', [AdminSertifikasiController::class, 'create'])->name('create');
+            Route::post('/', [AdminSertifikasiController::class, 'store'])->name('store');
+            Route::get('/{certificationExam}', [AdminSertifikasiController::class, 'show'])->name('show');
+            Route::get('/{certificationExam}/edit', [AdminSertifikasiController::class, 'edit'])->name('edit');
+            Route::put('/{certificationExam}', [AdminSertifikasiController::class, 'update'])->name('update');
+            Route::delete('/{certificationExam}', [AdminSertifikasiController::class, 'destroy'])->name('destroy');
+
+            // Rute untuk melihat hasil pendaftaran dan memberikan sertifikat
+            Route::get('/results/inspect', [AdminSertifikasiController::class, 'listResults'])->name('results');
+            Route::get('/results/{registration}/give-certificate', [AdminSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form');
+            Route::post('/results/{registration}/store-certificate', [AdminSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate');
+        });
 
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
         Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
