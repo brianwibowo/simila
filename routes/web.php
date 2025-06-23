@@ -221,7 +221,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::delete('/{certificationExam}/questions/{question}', [PerusahaanSertifikasiController::class, 'destroyQuestion'])->name('questions.destroy');
 
             // Rute untuk melihat hasil ujian dan memberikan sertifikat
-            Route::get('/results', [PerusahaanSertifikasiController::class, 'listResults'])->name('results'); // Daftar siswa yang ikut ujian
+            Route::get('/results/inspect', [PerusahaanSertifikasiController::class, 'listResults'])->name('results'); // Daftar siswa yang ikut ujian
             Route::get('/results/{registration}/give-certificate', [PerusahaanSertifikasiController::class, 'giveCertificateForm'])->name('results.give_certificate_form'); // Form kasih nilai/sertifikat
             Route::post('/results/{registration}/store-certificate', [PerusahaanSertifikasiController::class, 'storeCertificate'])->name('results.store_certificate'); // Simpan nilai/sertifikat
         });
