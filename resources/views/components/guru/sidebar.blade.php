@@ -61,7 +61,7 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ request()->routeIs('guru-mooc-*') ? 'active' : '' }} {{ auth()->user()->jenis_guru == 'guru-produktif' ? 'disabled' : '' }}">
                     <a data-bs-toggle="collapse" href="#charts">
                         <i class="far fa-chart-bar"></i>
                         <p>MOOC</p>
@@ -69,14 +69,9 @@
                     </a>
                     <div class="collapse" id="charts">
                         <ul class="nav nav-collapse">
-                            <li>
-                                <a href="charts/charts.html">
+                            <li class="{{ request()->routeIs('guru-mooc-index') ? 'active' : '' }}">
+                                <a href="{{ route('guru-mooc-index') }}">
                                     <span class="sub-item">Kelas</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="charts/sparkline.html">
-                                    <span class="sub-item">Ujian</span>
                                 </a>
                             </li>
                         </ul>

@@ -182,9 +182,6 @@ Route::middleware(['auth', 'role:perusahaan'])->prefix('perusahaan')->group(func
     Route::post('beasiswa/{beasiswa}/siswa/{pendaftar}/seleksi', [PerusahaanBeasiswaScoutingController::class, 'seleksi'])
         ->name('perusahaan-beasiswa-seleksi');
 
-
-
-
     Route::resource('scouting', PerusahaanScoutingController::class)->names([
         'index' => 'perusahaan-scouting-index',
         'create' => 'perusahaan-scouting-create',
@@ -238,6 +235,8 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
         Route::delete('/{project}/laporan', [GuruProjectController::class, 'deleteLaporan'])
             ->name('laporan-delete');
     });
+
+    
 });
 
 Route::middleware(['auth', 'role:waka_kurikulum'])->prefix('waka_kurikulum')->group(function () {
