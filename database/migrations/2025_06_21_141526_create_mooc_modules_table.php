@@ -20,12 +20,7 @@ class CreateMoocModulesTable extends Migration
             $table->string('link_materi');
             $table->string('dokumen_materi');
             $table->unsignedBigInteger('mooc_id');
-            $table->text('question');
-            $table->text('pilihan_jawaban_1');
-            $table->text('pilihan_jawaban_2');
-            $table->text('pilihan_jawaban_3');
-            $table->text('pilihan_jawaban_4');
-            $table->string('answer');
+            $table->string('link_eval');
 
             $table->foreign('mooc_id')->references('id')->on('moocs')->onDelete('cascade');
         });

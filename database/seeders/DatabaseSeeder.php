@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
 
         $usersToCreate = [
+            // ... (array usersToCreate Anda tetap sama)
             [
                 'name' => 'admin',
                 'email' => 'admin@example.com',
@@ -84,34 +85,45 @@ class DatabaseSeeder extends Seeder
                 'email' => 'produktif@example.com',
                 'password' => 'produktif',
                 'role' => 'guru',
-                'jenis_guru' => 'guru-produktif',
+                'jenis_guru' => 'guru-produktif', // Kunci ini hanya ada di sini
             ],
         ];
 
         foreach ($usersToCreate as $userData) {
             if (! User::where('email', $userData['email'])->exists()) {
-                if($userData['jenis_guru']){                    
-                    $user = User::create([
+                
+                // ===============================================
+                // LOGIKA YANG DIPERBAIKI ADA DI SINI
+                // ===============================================
+
+                // 1. Siapkan data dasar yang selalu ada
+                $userCreateData = [
                     'name' => $userData['name'],
                     'email' => $userData['email'],
                     'password' => Hash::make($userData['password']),
-                    'jenis_guru' => $userData['jenis_guru']
-                    ]);
-                    
-                } else{   
-                    $user = User::create([
-                        'name' => $userData['name'],
-                        'email' => $userData['email'],
-                        'password' => Hash::make($userData['password']), // Gunakan Hash::make() untuk password
-                    ]);
+                ];
+
+                // 2. Gunakan isset() untuk memeriksa apakah 'jenis_guru' ada
+                // Jika ada, tambahkan ke array data.
+                if (isset($userData['jenis_guru'])) {
+                    $userCreateData['jenis_guru'] = $userData['jenis_guru'];
                 }
 
+                // 3. Buat user dengan data yang sudah disiapkan (hanya satu kali pemanggilan)
+                $user = User::create($userCreateData);
+
+                // ===============================================
+                // AKHIR PERBAIKAN LOGIKA
+                // ===============================================
+                
                 $user->assignRole($userData['role']);
 
                 $this->command->info("User '{$userData['email']}' created and assigned role '{$userData['role']}'.");
+
             } else {
                 $this->command->warn("User '{$userData['email']}' already exists. Skipping creation.");
 
+                // Logika untuk assign role ke user yang sudah ada (opsional, tapi baik untuk dimiliki)
                 $existingUser = User::where('email', $userData['email'])->first();
                 if ($existingUser && ! $existingUser->hasRole($userData['role'])) {
                     $existingUser->assignRole($userData['role']);

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mooc;
+use App\Models\MoocScore;
+use App\Models\User;
 use App\Models\MOOC_Eval;
 
 class MoocController extends Controller
@@ -24,12 +26,19 @@ class MoocController extends Controller
 
     public function show(Mooc $mooc)
     {
+        $userIds = $mooc->reflections()->where('mooc_id', $mooc->id)->get()
+            ->pluck('user_id')
+            ->toArray();
+
         return view('perusahaan.mooc.show', [
             'mooc' => $mooc,
             'modules' => $mooc->modules()->get(),
-            'quizzes' => $mooc->quizzes()->get()
+            'quizzes' => $mooc->quizzes()->get(),
+            'reflections' => $mooc->reflections()->get(),
+            'participants' => $mooc->nilai()->whereIn('user_id', $userIds)->get()
         ]);
-    }
+    }   
+
 
     public function edit(Mooc $mooc)    
     {
@@ -130,5 +139,28 @@ class MoocController extends Controller
             'jawaban_benar' => $request->jawaban_benar,
         ]);
         return redirect()->route('perusahaan-mooc-show', ['mooc' => $quiz->mooc_id])->with('success', 'Data berhasil diperbarui');
+    }
+
+    public function uploadSertifikat(Request $request, Mooc $mooc, User $user){
+        $request->validate([
+            'sertifikat_file' => 'required|file|mimes:pdf',
+        ]);
+
+        $moocEvals = MoocScore::where('mooc_id', $mooc->id)->where('user_id', $user->id)->first();
+
+        if($moocEvals){
+            $moocEvals->update([
+                'file_sertifikat' => $request->file('sertifikat_file')->store('mooc_evals', 'public'),
+            ]);
+        }
+        else{
+            MoocScore::create([
+                'mooc_id' => $mooc->id,
+                'user_id' => $user->id,
+                'file_sertifikat' => $request->file('sertifikat_file')->store('mooc_evals', 'public'),
+            ]);
+        }
+
+        return redirect()->route('perusahaan-mooc-show', ['mooc' => $mooc->id])->with('success', 'Data berhasil disimpan');
     }
 }
