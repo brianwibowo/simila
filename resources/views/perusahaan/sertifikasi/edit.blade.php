@@ -31,31 +31,6 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="durasi_menit" class="form-label">Durasi Ujian (Menit, Opsional)</label>
-                    <input type="number" class="form-control @error('durasi_menit') is-invalid @enderror" id="durasi_menit" name="durasi_menit" value="{{ old('durasi_menit', $certificationExam->durasi_menit) }}"> {{-- Nama variabel disesuaikan --}}
-                    @error('durasi_menit')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3">
-                    <label for="nilai_minimum_lulus" class="form-label">Nilai Minimum Lulus</label>
-                    <input type="number" class="form-control @error('nilai_minimum_lulus') is-invalid @enderror" id="nilai_minimum_lulus" name="nilai_minimum_lulus" value="{{ old('nilai_minimum_lulus', $certificationExam->nilai_minimum_lulus) }}" required> {{-- Nama variabel disesuaikan --}}
-                    @error('nilai_minimum_lulus')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-                <div class="mb-3">
-                    <label for="status_ujian" class="form-label">Status Ujian</label>
-                    <select class="form-control @error('status_ujian') is-invalid @enderror" id="status_ujian" name="status_ujian" required>
-                        <option value="draft" {{ old('status_ujian', $certificationExam->status_ujian) == 'draft' ? 'selected' : '' }}>Draft</option> {{-- Nama variabel disesuaikan --}}
-                        <option value="published" {{ old('status_ujian', $certificationExam->status_ujian) == 'published' ? 'selected' : '' }}>Published</option> {{-- Nama variabel disesuaikan --}}
-                        <option value="archived" {{ old('status_ujian', $certificationExam->status_ujian) == 'archived' ? 'selected' : '' }}>Archived</option> {{-- Nama variabel disesuaikan --}}
-                    </select>
-                    @error('status_ujian')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
                 <button type="submit" class="btn btn-primary">Perbarui Ujian</button>
                 <a href="{{ route('perusahaan-sertifikasi-index') }}" class="btn btn-secondary">Batal</a>
             </form>
