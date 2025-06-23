@@ -85,7 +85,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'produktif@example.com',
                 'password' => 'produktif',
                 'role' => 'guru',
-                'jenis_guru' => 'guru-produktif', // Kunci ini hanya ada di sini
+                'jenis_guru' => 'guru-produktif', 
             ],
         ];
 
