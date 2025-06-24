@@ -90,7 +90,6 @@ class ScoutingController extends Controller
 
     public function seleksi(Request $request, Talent_Scouting $talent)
     {
-
         $request->validate([
             'status' => 'required',
             'batch' => 'required'
