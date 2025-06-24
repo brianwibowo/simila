@@ -5,6 +5,9 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Manajemen Project Mitra</h1>
             <div>
+                <a href="{{ route('admin-project-create') }}" class="btn btn-primary btn-sm me-2">
+                    <i class="bi bi-plus-circle"></i> Tambah Project
+                </a>
                 <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#adminInfoModal">
                     <i class="bi bi-info-circle"></i> Info Admin
                 </button>
@@ -22,6 +25,8 @@
                         <div class="alert alert-info">
                             <h6><i class="bi bi-info-circle-fill"></i> Hak Istimewa Admin:</h6>
                             <ul class="mb-0">
+                                <li>Admin dapat membuat, mengedit, dan menghapus project mitra.</li>
+                                <li>Admin dapat memilih perusahaan yang mengajukan project.</li>
                                 <li>Admin dapat mengupload, memperbarui, dan menghapus laporan project kapan saja, termasuk setelah timeline project berakhir.</li>
                                 <li>Jika project timeline telah berakhir, sistem akan meminta admin untuk memberikan catatan saat mengupload/memperbarui laporan.</li>
                                 <li>Catatan admin akan ditampilkan di halaman Guru dan Perusahaan untuk transparansi.</li>
@@ -134,6 +139,15 @@
                                 <small class="text-muted">{{ round($progressPercentage) }}% selesai</small>
                             </div>
                             
+                            <!-- Add Perusahaan information -->
+                            <div class="mb-3">
+                                <small class="text-muted">Perusahaan:</small>
+                                <div class="d-flex align-items-center mt-1">
+                                    <i class="bi bi-building me-2 text-secondary"></i>
+                                    <strong>{{ $project->perusahaan ? $project->perusahaan->name : 'Tidak ada perusahaan' }}</strong>
+                                </div>
+                            </div>
+                            
                             <div class="row text-center mb-3">
                                 <div class="col-6">
                                     <small class="text-muted d-block">Mulai</small>
@@ -183,22 +197,35 @@
                         </div>
                         
                         <div class="card-footer bg-white">
-                            <div class="btn-group w-100" role="group">
-                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal{{ $project->id }}">
-                                    <i class="bi bi-eye"></i> Detail
-                                </button>
-                                @if($project->file_laporan)
-                                    <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateLaporanModal{{ $project->id }}">
-                                        <i class="bi bi-pencil"></i> Update Laporan
+                            <div class="d-flex flex-column gap-2">
+                                <!-- Project Actions -->
+                                <div class="btn-group w-100" role="group">
+                                    <a href="{{ route('admin-project-edit', $project) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-pencil-square"></i> Edit Project
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeleteProject({{ $project->id }})">
+                                        <i class="bi bi-trash"></i> Hapus Project
                                     </button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeleteLaporan({{ $project->id }})">
-                                        <i class="bi bi-trash"></i> Hapus
+                                </div>
+                                
+                                <!-- Laporan Actions -->
+                                <div class="btn-group w-100" role="group">
+                                    <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#detailModal{{ $project->id }}">
+                                        <i class="bi bi-eye"></i> Detail
                                     </button>
-                                @else
-                                    <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadLaporanModal{{ $project->id }}">
-                                        <i class="bi bi-upload"></i> Upload Laporan
-                                    </button>
-                                @endif
+                                    @if($project->file_laporan)
+                                        <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateLaporanModal{{ $project->id }}">
+                                            <i class="bi bi-pencil"></i> Update Laporan
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDeleteLaporan({{ $project->id }})">
+                                            <i class="bi bi-trash"></i> Hapus Laporan
+                                        </button>
+                                    @else
+                                        <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadLaporanModal{{ $project->id }}">
+                                            <i class="bi bi-upload"></i> Upload Laporan
+                                        </button>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -223,6 +250,25 @@
                                             <div class="progress-bar bg-{{ $status === 'selesai' ? 'success' : ($status === 'berlangsung' ? 'primary' : 'secondary') }}" 
                                                 style="width: {{ $progressPercentage }}%">
                                                 {{ round($progressPercentage) }}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Display perusahaan information -->
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="card bg-light">
+                                            <div class="card-body py-2">
+                                                <h6 class="text-primary mb-2"><i class="bi bi-building"></i> Perusahaan</h6>
+                                                <p class="mb-0">
+                                                    @if($project->perusahaan)
+                                                        <strong>{{ $project->perusahaan->name }}</strong><br>
+                                                        <small class="text-muted">{{ $project->perusahaan->email }}</small>
+                                                    @else
+                                                        <span class="text-muted">Tidak ada perusahaan terkait</span>
+                                                    @endif
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -381,7 +427,7 @@
                     </div>
                 </div>
 
-                <form id="deleteLaporanForm{{ $project->id }}" action="{{ route('admin-project-laporan-delete', $project->id) }}" method="POST" style="display: none;">
+                <form id="deleteLaporanForm{{ $project->id }}" action="{{ route('admin-project-laporan-delete', $project) }}" method="POST" style="display: none;">
                     @csrf
                     @method('DELETE')
                 </form>
@@ -455,5 +501,23 @@
                 document.getElementById('deleteLaporanForm' + projectId).submit();
             }
         }
+
+        function confirmDeleteProject(projectId) {
+            if (confirm('Apakah Anda yakin ingin menghapus project ini? Semua data termasuk file brief dan laporan akan dihapus.')) {
+                document.getElementById('deleteProjectForm' + projectId).submit();
+            }
+        }
     </script>
+
+    <!-- Delete Project Forms -->
+    @foreach($projects as $project)
+        <form id="deleteProjectForm{{ $project->id }}" action="{{ route('admin-project-destroy', $project) }}" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
+        <form id="deleteLaporanForm{{ $project->id }}" action="{{ route('admin-project-laporan-delete', $project) }}" method="POST" style="display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
 @endsection

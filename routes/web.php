@@ -136,6 +136,11 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         // Project Routes for Admin
         Route::prefix('project')->name('admin-project-')->group(function () {
             Route::get('/', [AdminProjectController::class, 'index'])->name('index');
+            Route::get('/create', [AdminProjectController::class, 'create'])->name('create');
+            Route::post('/', [AdminProjectController::class, 'store'])->name('store');
+            Route::get('/{project}/edit', [AdminProjectController::class, 'edit'])->name('edit');
+            Route::put('/{project}', [AdminProjectController::class, 'update'])->name('update');
+            Route::delete('/{project}', [AdminProjectController::class, 'destroy'])->name('destroy');
             Route::post('/{project}/laporan', [AdminProjectController::class, 'uploadLaporan'])->name('laporan-upload');
             Route::put('/{project}/laporan', [AdminProjectController::class, 'updateLaporan'])->name('laporan-update');
             Route::delete('/{project}/laporan', [AdminProjectController::class, 'deleteLaporan'])->name('laporan-delete');

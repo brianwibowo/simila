@@ -11,7 +11,8 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::select('*')
+        $projects = Project::with('perusahaan')
+            ->select('*')
             ->selectRaw('DATE(tanggal_mulai) as tanggal_mulai')
             ->selectRaw('DATE(tanggal_selesai) as tanggal_selesai')
             ->get();
@@ -105,5 +106,92 @@ class ProjectController extends Controller
         
         return redirect()->route('admin-project-index')
             ->with('error', 'Tidak ada laporan yang bisa dihapus');
+    }
+
+    public function create()
+    {
+        // Get all users with perusahaan role
+        $perusahaans = \App\Models\User::role('perusahaan')->get();
+        return view('admin.project.create', compact('perusahaans'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'file_brief' => 'required|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'perusahaan_id' => 'required|exists:users,id'
+        ]);
+
+        // Handle file upload
+        $path = $request->file('file_brief')->store('project/brief', 'public');
+
+        Project::create([
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'file_brief' => $path,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'perusahaan_id' => $request->perusahaan_id
+        ]);
+
+        return redirect()->route('admin-project-index')
+            ->with('success', 'Project berhasil ditambahkan');
+    }
+
+    public function edit(Project $project)
+    {
+        // Get all users with perusahaan role
+        $perusahaans = \App\Models\User::role('perusahaan')->get();
+        return view('admin.project.edit', compact('project', 'perusahaans'));
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        $request->validate([
+            'judul' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'file_brief' => 'nullable|file|mimes:pdf,doc,docx|max:10240', // Max 10MB
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after:tanggal_mulai',
+            'perusahaan_id' => 'required|exists:users,id'
+        ]);
+
+        $data = [
+            'judul' => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'perusahaan_id' => $request->perusahaan_id
+        ];
+
+        // Handle file upload if a new brief file is provided
+        if ($request->hasFile('file_brief')) {
+            // Delete old file if exists
+            if ($project->file_brief && Storage::disk('public')->exists($project->file_brief)) {
+                Storage::disk('public')->delete($project->file_brief);
+            }
+            
+            $path = $request->file('file_brief')->store('project/brief', 'public');
+            $data['file_brief'] = $path;
+        }
+
+        $project->update($data);
+
+        return redirect()->route('admin-project-index')
+            ->with('success', 'Project berhasil diperbarui');
+    }
+
+    public function destroy(Project $project)
+    {
+        // Project deletion will automatically clean up associated files
+        // because of the boot method in the Project model
+        $project->delete();
+        
+        return redirect()->route('admin-project-index')
+            ->with('success', 'Project berhasil dihapus');
     }
 }
