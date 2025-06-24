@@ -145,6 +145,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/kurikulum', [AdminKurikulumController::class, 'index'])->name('admin-kurikulum-list-diajukan');
         Route::get('/kurikulum/validasi', [AdminKurikulumController::class, 'validasi'])->name('admin-kurikulum-list-validasi');
         Route::get('/kurikulum/validasi-sekolah', [AdminKurikulumController::class, 'validasiSekolah'])->name('admin-kurikulum-list-validasi-sekolah');
+        Route::patch('/kurikulum/{kurikulum}/tolak-sekolah', [AdminKurikulumController::class, 'tolakSekolah'])->name('admin-kurikulum-tolak-sekolah');
         Route::get('/kurikulum/create', [AdminKurikulumController::class, 'create'])->name('admin-kurikulum-create');
         Route::get('/kurikulum/create-for-school', [AdminKurikulumController::class, 'createForSchool'])->name('admin-kurikulum-create-for-school');
         Route::get('/kurikulum/create-for-company', [AdminKurikulumController::class, 'createForCompany'])->name('admin-kurikulum-create-for-company');

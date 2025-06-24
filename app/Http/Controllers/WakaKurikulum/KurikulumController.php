@@ -12,23 +12,43 @@ class KurikulumController extends Controller
 {
     /**
      * Display a listing of kurikulums submitted by the waka kurikulum
-     */
-    public function index()
+     */    public function index()
     {
         return view('waka_kurikulum.kurikulum.list-diajukan', [
-            'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)->get()
+            'kurikulums' => Kurikulum::where(function($query) {
+                // Show curricula created by this waka kurikulum
+                $query->where('pengirim_id', auth()->user()->id)
+                // Or created by admin on behalf of school (using submission_type='school' logic)
+                ->orWhere(function($q) {
+                    $q->whereHas('pengirim', function($sq) {
+                        $sq->role('admin');
+                    })
+                    ->whereNotNull('perusahaan_id') // Has a target company
+                    ->where('validasi_sekolah', 'disetujui'); // School-side already approved
+                });
+            })->orderBy('created_at', 'desc')->get()
         ]);
     }
     
     /**
      * Display a listing of kurikulums submitted by perusahaan for review
-     */
-    public function validasi()
+     */    public function validasi()
     {
-        // Get all kurikulums submitted by perusahaan users, regardless of validation status
+        // Get all kurikulums submitted by perusahaan users or admin on behalf of perusahaan,
+        // regardless of validation status
         return view('waka_kurikulum.kurikulum.list-validasi', [
-            'kurikulums' => Kurikulum::whereHas('pengirim', function($query) {
-                $query->role('perusahaan');
+            'kurikulums' => Kurikulum::where(function($query) {
+                // Kurikulums from perusahaan
+                $query->whereHas('pengirim', function($q) {
+                    $q->role('perusahaan');
+                })
+                // Or created by admin on behalf of perusahaan (company submission)
+                ->orWhere(function($q) {
+                    $q->whereHas('pengirim', function($sq) {
+                        $sq->role('admin');
+                    })->where('validasi_perusahaan', 'disetujui')
+                      ->where('validasi_sekolah', 'proses');
+                });
             })->orderBy('validasi_sekolah', 'asc') // Show 'proses' status first
               ->orderBy('created_at', 'desc')
               ->get()
@@ -49,7 +69,7 @@ class KurikulumController extends Controller
      */    public function store(Request $request)
     {
         $request->validate([
-            'nama' => 'required|string|unique:kurikulums,nama_kurikulum',
+            'nama' => 'required|string',
             'tahun' => 'required|string',
             'deskripsi' => 'required|string',
             'file' => 'required|mimes:pdf',
@@ -106,7 +126,7 @@ class KurikulumController extends Controller
             return redirect()->route('waka-kurikulum-list-diajukan')
                 ->with('error', 'Kurikulum yang telah disetujui tidak dapat diubah');
         }        $request->validate([
-            'nama' => 'required|string|unique:kurikulums,nama_kurikulum,'.$kurikulum->id,
+            'nama' => 'required|string',
             'tahun' => 'required|string',
             'deskripsi' => 'required|string',
             'file' => 'nullable|mimes:pdf',

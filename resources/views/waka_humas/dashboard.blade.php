@@ -1,9 +1,6 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container">
-    <h1>Dashboard {{ Auth::user()->getRoleNames()->first() }}</h1>
-</div>
   <div class="container">
     {{-- Mengikuti pola judul seperti di view fitur lainnya --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -17,9 +14,5 @@
             <p class="card-text">Anda dapat mulai mengelola laman ini.</p>
         </div>
     </div>
-
-    {{-- Kamu bisa tambahkan elemen dashboard lainnya di sini jika diperlukan --}}
-    {{-- Misalnya, statistik singkat, link cepat, dll. --}}
-
   </div>
 @endsection

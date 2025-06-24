@@ -11,15 +11,54 @@ use Illuminate\Support\Facades\Storage;
 class KurikulumController extends Controller
 {    public function index()
     {
+        // Get all curricula for both tabs
+        $allCurricula = Kurikulum::where('pengirim_id', auth()->user()->id)
+            ->orWhereHas('pengirim', function($q) {
+                $q->whereHas('roles', function($r) {
+                    $r->whereIn('name', ['perusahaan', 'waka_kurikulum']);
+                });
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();              // School curricula - submitted by admin on behalf of school or by waka_kurikulum
+        $schoolCurricula = $allCurricula->filter(function($kurikulum) {
+            // If sender is waka_kurikulum
+            if ($kurikulum->pengirim->hasRole('waka_kurikulum')) {
+                return true;
+            }
+            
+            // If sender is admin and it's on behalf of school (has perusahaan_id means it's for schools)
+            if ($kurikulum->pengirim->hasRole('admin') && 
+                !is_null($kurikulum->perusahaan_id)) {
+                return true;
+            }
+            
+            return false;
+        })->unique('id'); // This ensures no duplicates// Company curricula - submitted by companies or admin on behalf of companies
+        $companyCurricula = $allCurricula->filter(function($kurikulum) {
+            // If sender is a company
+            if ($kurikulum->pengirim->hasRole('perusahaan')) {
+                return true;
+            }
+            
+            // If sender is admin and it's on behalf of company (no perusahaan_id means it's for companies)
+            if ($kurikulum->pengirim->hasRole('admin') && 
+                is_null($kurikulum->perusahaan_id)) {
+                return true;
+            }
+            
+            // Explicitly exclude any curriculum that should be in the school tab
+            if ($kurikulum->pengirim->hasRole('waka_kurikulum') || 
+                !is_null($kurikulum->perusahaan_id)) {
+                return false;
+            }
+            
+            return false;
+        })->unique('id'); // This ensures no duplicates
+        
         return view('admin.kurikulum.list-diajukan', [
-            'kurikulums' => Kurikulum::where('pengirim_id', auth()->user()->id)
-                ->orWhereHas('pengirim', function($q) {
-                    $q->whereHas('roles', function($r) {
-                        $r->whereIn('name', ['perusahaan', 'waka_kurikulum']);
-                    });
-                })
-                ->orderBy('created_at', 'desc')
-                ->get()
+            'kurikulums' => $allCurricula,
+            'schoolCurricula' => $schoolCurricula,
+            'companyCurricula' => $companyCurricula
         ]);
     }public function validasi()
     {
@@ -214,11 +253,14 @@ class KurikulumController extends Controller
     {
         // Get the route that requested the validation
         $route = request()->route()->getName();
+        $referrer = request()->headers->get('referer');
         
-        // If this is from the validasi-sekolah route (company curriculum)
-        if ($route === 'admin-kurikulum-list-validasi') {
-            // This is for validating perusahaan curriculum
-            if (!$kurikulum->pengirim->hasRole('perusahaan')) {
+        // Determine which validation page called this method
+        $isFromValidasiPerusahaan = $route === 'admin-kurikulum-setuju' && strpos($referrer, 'validasi-sekolah') === false;
+        
+        if ($isFromValidasiPerusahaan) {
+            // This is for validating perusahaan curriculum - admin can validate any perusahaan curriculum
+            if (!$kurikulum->pengirim->hasRole('perusahaan') && $kurikulum->validasi_perusahaan !== 'disetujui') {
                 return redirect()->route('admin-kurikulum-list-validasi')
                     ->with('error', 'Halaman ini untuk memvalidasi kurikulum dari perusahaan');
             }
@@ -258,8 +300,8 @@ class KurikulumController extends Controller
             strpos($referrer, 'validasi-sekolah') === false;
         
         if ($isFromValidasiPerusahaan) {
-            // This is for validating perusahaan curriculum
-            if (!$kurikulum->pengirim->hasRole('perusahaan')) {
+            // This is for validating perusahaan curriculum - admin can validate any perusahaan curriculum
+            if (!$kurikulum->pengirim->hasRole('perusahaan') && $kurikulum->validasi_perusahaan !== 'disetujui') {
                 return redirect()->route('admin-kurikulum-list-validasi')
                     ->with('error', 'Halaman ini untuk memvalidasi kurikulum dari perusahaan');
             }
@@ -272,19 +314,30 @@ class KurikulumController extends Controller
             return redirect()->route('admin-kurikulum-list-validasi')
                 ->with('success', 'Kurikulum berhasil ditolak');
         } else {
-            // This is for validating sekolah curriculum
-            if (!($kurikulum->pengirim->hasRole('waka_kurikulum') || $kurikulum->pengirim->hasRole('admin'))) {
-                return redirect()->route('admin-kurikulum-list-validasi-sekolah')
-                    ->with('error', 'Halaman ini untuk memvalidasi kurikulum dari sekolah');
-            }
-            
-            $kurikulum->update([
-                'validasi_perusahaan' => 'tidak_disetujui',
-                'komentar' => $request->komentar
-            ]);
-    
-            return redirect()->route('admin-kurikulum-list-validasi-sekolah')
-                ->with('success', 'Kurikulum berhasil ditolak');
+            // Already handled by tolakSekolah method
+            return redirect()->route('admin-kurikulum-list-validasi')
+                ->with('error', 'Gunakan form yang sesuai untuk menolak kurikulum');
         }
+    }
+    
+    public function tolakSekolah(Request $request, Kurikulum $kurikulum)
+    {
+        $request->validate([
+            'komentar' => 'required|string',
+        ]);
+        
+        // Validate only for school curricula
+        if (!($kurikulum->pengirim->hasRole('waka_kurikulum') || $kurikulum->pengirim->hasRole('admin'))) {
+            return redirect()->route('admin-kurikulum-list-validasi-sekolah')
+                ->with('error', 'Halaman ini untuk memvalidasi kurikulum dari sekolah');
+        }
+        
+        $kurikulum->update([
+            'validasi_perusahaan' => 'tidak_disetujui',
+            'komentar' => $request->komentar
+        ]);
+
+        return redirect()->route('admin-kurikulum-list-validasi-sekolah')
+            ->with('success', 'Kurikulum berhasil ditolak');
     }
 }

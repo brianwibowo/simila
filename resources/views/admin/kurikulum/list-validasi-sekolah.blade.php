@@ -324,7 +324,7 @@ use App\Models\User;
                     const button = event.relatedTarget;
                     const kurikulumId = button.getAttribute('data-kurikulum-id');
                     const tolakForm = document.getElementById('tolakForm');
-                    tolakForm.setAttribute('action', `/admin/kurikulum/${kurikulumId}/tolak`);
+                    tolakForm.setAttribute('action', `/admin/kurikulum/${kurikulumId}/tolak-sekolah`);
                 });
             }
             
