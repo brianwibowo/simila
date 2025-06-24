@@ -9,12 +9,36 @@
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
                                 <h1 class="h4 mb-1">Daftar Kurikulum Diajukan</h1>
-                                <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan</p>
+                                <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan oleh Anda</p>
                             </div>
                             <a href="{{ route('perusahaan-kurikulum-create') }}" class="btn btn-success d-flex align-items-center">
                                 + Ajukan Kurikulum
                             </a>
                         </div>
+
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-circle me-2"></i>
+                                {{ session('error') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        @if(session('info'))
+                            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                                <i class="bi bi-info-circle me-2"></i>
+                                {{ session('info') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
 
                         <div class="row mb-4">
                             <div class="col-md-4">
@@ -22,7 +46,7 @@
                                     <span class="input-group-text bg-light">
                                         <i class="bi bi-calendar3"></i>
                                     </span>
-                                    <input type="date" id="filter-date" class="form-control" placeholder="Filter berdasarkan tanggal mulai">
+                                    <input type="date" id="filter-date" class="form-control" placeholder="Filter berdasarkan tanggal pengajuan">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -31,10 +55,10 @@
                                         <i class="bi bi-tag"></i>
                                     </span>
                                     <select id="filter-status" class="form-control">
-                                        <option value="">Semua Status</option>
-                                        <option value="menunggu">Menunggu</option>
+                                        <option value="">Semua Status Validasi Sekolah</option>
+                                        <option value="proses">Menunggu</option>
                                         <option value="disetujui">Disetujui</option>
-                                        <option value="ditolak">Ditolak</option>
+                                        <option value="tidak_disetujui">Ditolak</option>
                                     </select>
                                 </div>
                             </div>
@@ -43,7 +67,7 @@
                                     <span class="input-group-text bg-light">
                                         <i class="bi bi-search"></i>
                                     </span>
-                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan judul project...">
+                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan nama kurikulum...">
                                 </div>
                             </div>
                         </div>
@@ -56,9 +80,9 @@
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
                                         <th class="border-0">Tanggal Pengajuan</th>
-                                        <th class="border-0">Status Validasi</th>
+                                        <th class="border-0">Status Validasi Sekolah</th> {{-- Hanya menampilkan validasi_sekolah --}}
                                         <th class="border-0">Aksi</th>
-                                        <th class="border-0">Komentar</th>
+                                        <th class="border-0">Komentar Sekolah</th> {{-- Ubah nama kolom --}}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -71,7 +95,7 @@
                                                     <i class="bi bi-download me-1"></i> Unduh
                                                 </a>
                                             </td>
-                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td>
+                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td> {{-- Tanggal pengajuan --}}
                                             <td>
                                                 @if($kurikulum->validasi_sekolah == 'disetujui')
                                                     <span class="badge bg-success">Disetujui</span>
@@ -80,32 +104,47 @@
                                                 @else
                                                     <span class="badge bg-warning">Menunggu</span>
                                                 @endif
-                                            </td>                                            <td>
-                                                @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
-                                                    <span class="text-muted">Tidak dapat diubah</span>
-                                                @else
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}" 
-                                                        class="btn btn-sm btn-outline-warning" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="Edit">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}" 
-                                                            method="POST" 
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    {{-- Tombol Edit selalu ada karena bisa direset statusnya --}}
+                                                    <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}"
+                                                    class="btn btn-sm btn-outline-warning"
+                                                    data-bs-toggle="tooltip"
+                                                    title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    {{-- Tombol Hapus selalu ada --}}
+                                                    <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                data-bs-toggle="tooltip"
+                                                                title="Hapus">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                    {{-- Tombol Batalkan Persetujuan (Cancel) hanya jika validasi perusahaan adalah 'disetujui' --}}
+                                                    @if($kurikulum->validasi_perusahaan == 'disetujui')
+                                                        <form action="{{ route('perusahaan-kurikulum-cancel-approval', ['kurikulum' => $kurikulum->id]) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan kurikulum ini? Status akan direset untuk validasi ulang.')"
                                                             class="d-inline">
                                                             @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" 
-                                                                    class="btn btn-sm btn-outline-danger" 
-                                                                    data-bs-toggle="tooltip" 
-                                                                    title="Hapus">
-                                                                <i class="bi bi-trash"></i>
+                                                            @method('PATCH')
+                                                            <button type="submit"
+                                                                    class="btn btn-sm btn-outline-info"
+                                                                    data-bs-toggle="tooltip"
+                                                                    title="Batalkan Pengajuan">
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
                                                             </button>
                                                         </form>
-                                                    </div>
-                                                @endif
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)
@@ -117,7 +156,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">
+                                            <td colspan="7" class="text-center py-4"> {{-- colspan disesuaikan --}}
                                                 <div class="text-muted">
                                                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                                                     Belum ada kurikulum yang diajukan
@@ -135,19 +174,7 @@
     </div>
 
     <style>
-        .avatar-sm {
-            width: 32px;
-            height: 32px;
-        }
-        .bg-primary-subtle {
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-        .table > :not(caption) > * > * {
-            padding: 1rem;
-        }
-        .btn-group .btn {
-            padding: 0.375rem 0.75rem;
-        }
+        /* ... (Style tetap sama) ... */
     </style>
 
     <script>
@@ -169,12 +196,15 @@
                 const rows = document.querySelectorAll('#kurikulum-table tbody tr');
 
                 rows.forEach(row => {
+                    // Pastikan sel yang diakses benar setelah perubahan kolom
                     const createdDate = row.querySelector('.created-date').textContent.trim().toLowerCase();
-                    const statusText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase();
+                    const statusSekolahText = row.querySelector('td:nth-child(5)').textContent.trim().toLowerCase(); // Ambil status validasi sekolah
                     const titleText = row.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
 
+                    // Logika filter status hanya berdasarkan validasi_sekolah
+                    const matchStatus = !selectedStatus || statusSekolahText.includes(selectedStatus);
+
                     const matchDate = !selectedDate || createdDate.startsWith(selectedDate);
-                    const matchStatus = !selectedStatus || statusText.includes(selectedStatus);
                     const matchKeyword = !searchKeyword || titleText.includes(searchKeyword);
 
                     row.style.display = matchDate && matchStatus && matchKeyword ? '' : 'none';

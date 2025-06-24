@@ -28,6 +28,7 @@ class User extends Authenticatable
         'laporan_pkl',
         'nilai_pkl',
         'pkl_id',
+        'is_archived',
     ];
 
     /**

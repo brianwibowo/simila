@@ -11,10 +11,10 @@ class Kurikulum extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
-    
+    protected $guarded = ['id']; // Jika menggunakan guarded, pastikan semua kolom lain bisa diisi massal
+
     // Explicitly define fillable fields for clarity
-    protected $fillable = [
+    protected $fillable = [ // Ini sudah ada dan benar
         'nama_kurikulum',
         'pengirim_id',
         'perusahaan_id',
@@ -31,6 +31,7 @@ class Kurikulum extends Model
         parent::boot();
 
         static::deleting(function ($kurikulum) {
+            // Hapus file dari storage saat record dihapus
             if ($kurikulum->file_kurikulum) {
                 Storage::disk('public')->delete($kurikulum->file_kurikulum);
             }
@@ -40,5 +41,10 @@ class Kurikulum extends Model
     public function pengirim()
     {
         return $this->belongsTo(User::class, 'pengirim_id');
+    }
+
+    public function perusahaan()
+    {
+        return $this->belongsTo(User::class, 'perusahaan_id'); // Menambahkan relasi perusahaan
     }
 }

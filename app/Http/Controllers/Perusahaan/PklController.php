@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\PKL;
 use App\Models\User;
 use App\Models\Logbook;
+use Illuminate\Support\Facades\Auth;
 
 class PklController extends Controller
-{    public function index()
+{
+    public function index()
     {
         return view('perusahaan.pkl.index', [
-            'pkls' => auth()->user()->pklPerusahaan()->with('pembimbing')->get()
+            'pkls' => Auth::user()->pklPerusahaan()->with('pembimbing')->get()
         ]);
-    }public function show(PKL $pkl)
+    }
+    public function show(PKL $pkl)
     {
         $pkl->load(['pembimbing', 'siswas', 'perusahaan']);
         return view('perusahaan.pkl.show', [
@@ -38,7 +41,7 @@ class PklController extends Controller
 
         PKL::create([
             'nama' => $request->nama,
-            'perusahaan_id' => auth()->user()->id,
+            'perusahaan_id' => Auth::user()->id,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
             'status' => 'proses',
@@ -46,14 +49,15 @@ class PklController extends Controller
             'status_waka_humas' => 'proses'
         ]);
 
-        return redirect()->route('perusahaan-pkl-index');
+        return redirect()->route('perusahaan-pkl-index')->with('success', 'Kelompok PKL berhasil diajukan.');
     }
 
     public function edit(PKL $pkl){
         return view('perusahaan.pkl.edit', [
             'pkl' => $pkl
         ]);
-    }    public function update(Request $request, PKL $pkl){
+    }
+    public function update(Request $request, PKL $pkl){
         $request->validate([
             'nama' => 'required',
             'tanggal_mulai' => 'required|date',
@@ -62,74 +66,77 @@ class PklController extends Controller
             'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.'
         ]);
 
-        // Check if this PKL has enrolled students and dates are being changed significantly
         $hasEnrolledStudents = $pkl->siswas()->count() > 0;
         $isChangingDatesSignificantly = false;
-        
-        // Only perform this check if we have enrolled students
+
         if ($hasEnrolledStudents) {
             $newStartDate = \Carbon\Carbon::parse($request->tanggal_mulai);
             $newEndDate = \Carbon\Carbon::parse($request->tanggal_selesai);
             $oldStartDate = $pkl->tanggal_mulai;
             $oldEndDate = $pkl->tanggal_selesai;
-            
-            // If changing start date by more than 7 days or shortening the duration significantly
-            if ($newStartDate->diffInDays($oldStartDate) > 7 || 
+
+            if ($newStartDate->diffInDays($oldStartDate) > 7 ||
                 ($oldEndDate->diffInDays($oldStartDate) - $newEndDate->diffInDays($newStartDate) > 7)) {
                 $isChangingDatesSignificantly = true;
             }
         }
-        
-        // Update the PKL
+
         $pkl->update([
             'nama' => $request->nama,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai
         ]);
-        
-        // Provide appropriate success message
+
         if ($hasEnrolledStudents && $isChangingDatesSignificantly) {
             return redirect()->route('perusahaan-pkl-index')
                 ->with('warning', 'PKL berhasil diupdate, tetapi perubahan tanggal signifikan telah dilakukan. Mohon informasikan perubahan ini kepada siswa dan pembimbing.');
         }
-        
+
         return redirect()->route('perusahaan-pkl-index')
             ->with('success', 'PKL berhasil diupdate.');
-    }    public function destroy(PKL $pkl){
-        // Check if there are students enrolled in this PKL
+    }
+    public function destroy(PKL $pkl){
         $hasEnrolledStudents = $pkl->siswas()->count() > 0;
-        
+
         if ($hasEnrolledStudents) {
             return redirect()->route('perusahaan-pkl-index')
                     ->with('error', 'PKL tidak dapat dihapus karena sudah ada siswa yang terdaftar.');
         }
-        
+
         $pkl->delete();
         return redirect()->route('perusahaan-pkl-index')
                 ->with('success', 'PKL berhasil dihapus.');
-    }    public function list(){
-        $pkl_ids = PKL::where('perusahaan_id', '=', auth()->user()->id)->pluck('id')->toArray();
+    }
+    public function list(Request $request){
+        $pkl_ids = Auth::user()->pklPerusahaan()->pluck('id')->toArray();
 
-        $users = User::where('pkl_id', '!=', null)
-        ->whereIn('pkl_id', $pkl_ids)
-        ->with('pklSiswa.pembimbing')  // Eager load the PKL with pembimbing relationship
-        ->get();
+        $query = User::whereIn('pkl_id', $pkl_ids);
+
+        // Filter berdasarkan status arsip (tetap sama)
+        if ($request->has('archived') && $request->get('archived') == 'true') {
+            $query->where('is_archived', true);
+        } else {
+            $query->where('is_archived', false);
+            // Tambahkan filter untuk hanya menampilkan status yang relevan di daftar aktif
+            $query->whereIn('pkl_status', ['proses', 'disetujui', 'tidak_disetujui']);
+        }
+
+        $users = $query->with('pklSiswa.pembimbing')->get();
 
         return view('perusahaan.pkl.list', [
             'siswas' => $users
         ]);
-    }public function terima(User $user){
+    }
+    public function terima(User $user){
         $user->pkl_status = 'disetujui';
         $user->save();
 
-        // Create logbook for the student
         Logbook::create([
             'siswa_id' => $user->id,
             'pkl_id' => $user->pkl_id,
             'status' => 'proses',
         ]);
-        
-        // Update PKL status to 'berjalan' when student is approved
+
         $pkl = PKL::find($user->pkl_id);
         if ($pkl) {
             $pkl->status = 'berjalan';
@@ -141,17 +148,17 @@ class PklController extends Controller
 
     public function tolak(User $user){
         $user->pkl_status = 'tidak_disetujui';
-        
-        // Store the PKL ID before nulling it (for message display)
-        $pklId = $user->pkl_id;
-        $user->pkl_id = null;
+        $user->pkl_id = null; // Menolak berarti memutuskan hubungan PKL
         $user->save();
-        
+
+        // Hapus logbook terkait jika ada, karena tidak lagi PKL
+        Logbook::where('siswa_id', $user->id)->delete();
+
         return redirect()->route('perusahaan-pkl-list')->with('success', 'Siswa berhasil ditolak dari PKL');
-    }    public function siswa(User $user){
-        // Explicitly load the PKL relationship with pembimbing to ensure we have all data
+    }
+    public function siswa(User $user){
         $user->load(['pklSiswa.pembimbing', 'logbook']);
-        
+
         $logbooks = $user->logbook ? $user->logbook->logbookContents()->paginate(10) : collect();
         return view('perusahaan.pkl.siswa', [
             'user' => $user,
@@ -169,5 +176,55 @@ class PklController extends Controller
         ]);
 
         return redirect()->route('perusahaan-pkl-siswa', $user->id);
+    }
+
+    /**
+     * Menghapus pelamar dari daftar PKL perusahaan (mengatur pkl_id, pkl_status, dan is_archived menjadi NULL/false).
+     * Ini adalah aksi HAPUS PERMANEN dari daftar ini.
+     */
+    public function removeApplicant(User $user)
+    {
+        $perusahaanPklIds = Auth::user()->pklPerusahaan()->pluck('id');
+        if (!$perusahaanPklIds->contains($user->pkl_id)) {
+            return redirect()->route('perusahaan-pkl-list')
+                ->with('error', 'Anda tidak diizinkan menghapus pelamar ini.');
+        }
+
+        $user->pkl_id = null;
+        $user->pkl_status = null;
+        $user->is_archived = false; // Pastikan tidak diarsipkan jika dihapus permanen
+        $user->save();
+
+        // Hapus logbook terkait jika ada, karena user dihapus permanen dari PKL
+        Logbook::where('siswa_id', $user->id)->delete();
+
+        return redirect()->route('perusahaan-pkl-list')->with('success', 'Pelamar berhasil dihapus dari daftar.');
+    }
+
+    /**
+     * Mengarsipkan atau memulihkan pelamar dari daftar PKL perusahaan (mengatur is_archived menjadi true/false).
+     * Ini adalah aksi TOGGLE ARSIP/PULIHKAN.
+     */
+    public function archiveApplicant(User $user, Request $request)
+    {
+        $perusahaanPklIds = Auth::user()->pklPerusahaan()->pluck('id');
+        if (!$perusahaanPklIds->contains($user->pkl_id)) {
+            return redirect()->route('perusahaan-pkl-list')
+                ->with('error', 'Anda tidak diizinkan melakukan tindakan ini pada pelamar ini.');
+        }
+
+        // Tentukan apakah ini arsip atau pulihkan berdasarkan status is_archived saat ini
+        $newIsArchivedStatus = !$user->is_archived; // Toggle status arsip
+
+        $user->is_archived = $newIsArchivedStatus;
+        // Penting: Jangan ubah pkl_id atau pkl_status di sini
+        // karena ini adalah aksi arsip/pulihkan, bukan menolak/menghapus hubungan PKL
+        $user->save();
+
+        if ($newIsArchivedStatus) {
+            return redirect()->route('perusahaan-pkl-list', ['archived' => 'true'])->with('success', 'Pelamar berhasil diarsipkan.');
+        } else {
+            return redirect()->route('perusahaan-pkl-list')->with('success', 'Pelamar berhasil dipulihkan dari arsip.');
+        }
     }
 }

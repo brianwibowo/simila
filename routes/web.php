@@ -104,7 +104,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::prefix('pkl')->name('admin-pkl-')->group(function () {
             // Dashboard & Main PKL routes
             Route::get('/', [App\Http\Controllers\Admin\PklController::class, 'index'])->name('index');
-            
+
             // Company representation routes
             Route::get('/represent-company', [App\Http\Controllers\Admin\PklController::class, 'selectCompany'])->name('select-company');
             Route::post('/represent-company', [App\Http\Controllers\Admin\PklController::class, 'representCompany'])->name('represent-company');
@@ -117,13 +117,13 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::post('/company/{company}/student/{user}/approve', [App\Http\Controllers\Admin\PklController::class, 'approveStudentForCompany'])->name('approve-student-for-company');
             Route::post('/company/{company}/student/{user}/reject', [App\Http\Controllers\Admin\PklController::class, 'rejectStudentForCompany'])->name('reject-student-for-company');
             Route::post('/company/{company}/student/{user}/grade', [App\Http\Controllers\Admin\PklController::class, 'gradeStudentForCompany'])->name('grade-student-for-company');
-            
+
             // Guru representation routes
             Route::get('/represent-guru', [App\Http\Controllers\Admin\PklController::class, 'selectGuru'])->name('select-guru');
             Route::post('/represent-guru', [App\Http\Controllers\Admin\PklController::class, 'representGuru'])->name('represent-guru');
             Route::get('/guru/{guru}/siswa/{siswa}/logbook', [App\Http\Controllers\Admin\PklController::class, 'siswaLogbook'])->name('siswa-logbook');
             Route::post('/guru/{guru}/siswa/{siswa}/validate-report', [App\Http\Controllers\Admin\PklController::class, 'validateReportForGuru'])->name('validate-report-for-guru');
-            
+
             // Waka Humas like actions
             Route::get('/assign-pembimbing', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingList'])->name('assign-pembimbing-list');
             Route::get('/assign-pembimbing/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingForm'])->name('assign-pembimbing-form');
@@ -133,11 +133,11 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
 
         // PKL Pembimbing Assignment Routes
         Route::prefix('pkl/assign')->name('admin-pkl-assign-')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\PklAssignController::class, 'index'])->name('index');
-            Route::get('/{pkl}', [App\Http\Controllers\Admin\PklAssignController::class, 'show'])->name('show');
-            Route::get('/{pkl}/form', [App\Http\Controllers\Admin\PklAssignController::class, 'showAssignForm'])->name('form');
-            Route::post('/{pkl}', [App\Http\Controllers\Admin\PklAssignController::class, 'assignPembimbing'])->name('store');
-            Route::delete('/{pkl}', [App\Http\Controllers\Admin\PklAssignController::class, 'removePembimbing'])->name('remove');
+            Route::get('/', [App\Http\Controllers\Admin\PklController::class, 'index'])->name('index');
+            Route::get('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'show'])->name('show');
+            Route::get('/{pkl}/form', [App\Http\Controllers\Admin\PklController::class, 'showAssignForm'])->name('form');
+            Route::post('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbing'])->name('store');
+            Route::delete('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'removePembimbing'])->name('remove');
         });
 
         Route::resource('scouting', AdminScoutingController::class)->names([
@@ -223,6 +223,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/kurikulum/validasi', [PerusahaanKurikulumController::class, 'validasi'])->name('perusahaan-kurikulum-list-validasi');
         Route::put('/kurikulum/{kurikulum}/setuju', [PerusahaanKurikulumController::class, 'setuju'])->name('perusahaan-kurikulum-setuju');
         Route::put('/kurikulum/{kurikulum}/tolak', [PerusahaanKurikulumController::class, 'tolak'])->name('perusahaan-kurikulum-tolak');
+        Route::patch('/kurikulum/{kurikulum}/cancel-approval', [PerusahaanKurikulumController::class, 'cancelApproval'])->name('perusahaan-kurikulum-cancel-approval');
 
         Route::resource('project', PerusahaanProjectController::class)->names([
             'index' => 'perusahaan-project-index',
@@ -258,6 +259,8 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::post('/pkl/{user}/terima', [PerusahaanPklController::class, 'terima'])->name('perusahaan-pkl-terima');
         Route::post('/pkl/{user}/tolak', [PerusahaanPklController::class, 'tolak'])->name('perusahaan-pkl-tolak');
         Route::post('/pkl/{user}/nilai', [PerusahaanPklController::class, 'nilai'])->name('perusahaan-pkl-nilai');
+        Route::delete('/pkl/{user}/remove-applicant', [PerusahaanPklController::class, 'removeApplicant'])->name('perusahaan-pkl-remove-applicant');
+        Route::patch('/pkl/{user}/archive-applicant', [PerusahaanPklController::class, 'archiveApplicant'])->name('perusahaan-pkl-archive-applicant');        
 
         Route::resource('mooc', PerusahaanMoocController::class)->names([
             'index' => 'perusahaan-mooc-index',
@@ -384,7 +387,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         });
 
         Route::get('/mooc', [GuruMoocController::class, 'index'])->name('guru-mooc-index');
-          // PKL Routes
+        // PKL Routes
         Route::prefix('pkl')->name('guru-pkl-')->group(function () {
             Route::get('/', [GuruPklController::class, 'index'])->name('index');
             Route::get('/{pkl}', [GuruPklController::class, 'show'])->name('show');
@@ -455,7 +458,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::post('riset/{riset}/upload', [WakaHumasRisetController::class, 'dokumentasi'])->name('waka-humas-riset-dokumentasi');
         Route::get('pkl/logbook/validasi', [WakaHumasPklController::class, 'logbookValidationIndex'])->name('waka-humas-pkl-logbook-validation-index');
         Route::get('pkl/siswa/{siswa}/logbook', [WakaHumasPklController::class, 'siswaLogbook'])->name('waka-humas-pkl-siswa-logbook');
-        
+
         // PKL Pembimbing Assignment Routes - These also need to come before the resource routes
         Route::prefix('pkl/assign')->name('waka-humas-pkl-assign-')->group(function () {
             Route::get('/', [WakaHumasPklController::class, 'assignIndex'])->name('index');
@@ -464,7 +467,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::post('/{pkl}', [WakaHumasPklController::class, 'assignStore'])->name('store');
             Route::delete('/{pkl}', [WakaHumasPklController::class, 'assignRemove'])->name('remove');
         });
-        
+
         // General PKL Routes
         Route::resource('pkl', WakaHumasPklController::class)->only(['index', 'show'])->names([
             'index' => 'waka-humas-pkl-index',
