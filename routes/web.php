@@ -100,6 +100,37 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
         Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
 
+        // Admin PKL Routes - New Feature
+        Route::prefix('pkl')->name('admin-pkl-')->group(function () {
+            // Dashboard & Main PKL routes
+            Route::get('/', [App\Http\Controllers\Admin\PklController::class, 'index'])->name('index');
+            
+            // Company representation routes
+            Route::get('/represent-company', [App\Http\Controllers\Admin\PklController::class, 'selectCompany'])->name('select-company');
+            Route::post('/represent-company', [App\Http\Controllers\Admin\PklController::class, 'representCompany'])->name('represent-company');
+            Route::get('/company/{company}/create', [App\Http\Controllers\Admin\PklController::class, 'createForCompany'])->name('create-for-company');
+            Route::post('/company/{company}', [App\Http\Controllers\Admin\PklController::class, 'storeForCompany'])->name('store-for-company');
+            Route::get('/company/{company}/{pkl}/edit', [App\Http\Controllers\Admin\PklController::class, 'editForCompany'])->name('edit-for-company');
+            Route::put('/company/{company}/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'updateForCompany'])->name('update-for-company');
+            Route::delete('/company/{company}/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'destroyForCompany'])->name('destroy-for-company');
+            Route::get('/company/{company}/{pkl}/students', [App\Http\Controllers\Admin\PklController::class, 'studentsForCompany'])->name('students-for-company');
+            Route::post('/company/{company}/student/{user}/approve', [App\Http\Controllers\Admin\PklController::class, 'approveStudentForCompany'])->name('approve-student-for-company');
+            Route::post('/company/{company}/student/{user}/reject', [App\Http\Controllers\Admin\PklController::class, 'rejectStudentForCompany'])->name('reject-student-for-company');
+            Route::post('/company/{company}/student/{user}/grade', [App\Http\Controllers\Admin\PklController::class, 'gradeStudentForCompany'])->name('grade-student-for-company');
+            
+            // Guru representation routes
+            Route::get('/represent-guru', [App\Http\Controllers\Admin\PklController::class, 'selectGuru'])->name('select-guru');
+            Route::post('/represent-guru', [App\Http\Controllers\Admin\PklController::class, 'representGuru'])->name('represent-guru');
+            Route::get('/guru/{guru}/siswa/{siswa}/logbook', [App\Http\Controllers\Admin\PklController::class, 'siswaLogbook'])->name('siswa-logbook');
+            Route::post('/guru/{guru}/siswa/{siswa}/validate-report', [App\Http\Controllers\Admin\PklController::class, 'validateReportForGuru'])->name('validate-report-for-guru');
+            
+            // Waka Humas like actions
+            Route::get('/assign-pembimbing', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingList'])->name('assign-pembimbing-list');
+            Route::get('/assign-pembimbing/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingForm'])->name('assign-pembimbing-form');
+            Route::post('/assign-pembimbing/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingStore'])->name('assign-pembimbing-store');
+            Route::post('/validate-report/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'validateReport'])->name('validate-report');
+        });
+
         // PKL Pembimbing Assignment Routes
         Route::prefix('pkl/assign')->name('admin-pkl-assign-')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\PklAssignController::class, 'index'])->name('index');

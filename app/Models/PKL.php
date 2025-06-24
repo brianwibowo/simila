@@ -124,4 +124,20 @@ class PKL extends Model
             'status' => 'berlangsung'
         ];
     }
+
+    /**
+     * Get the user that created this PKL
+     */
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the company being represented by admin
+     */
+    public function representedCompany()
+    {
+        return $this->belongsTo(User::class, 'admin_representing');
+    }
 }

@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                @if (auth()->user()->logbook->logbookContents()->count() < 50)
+                @if (auth()->user()->logbook->logbookContents()->count() < 2)
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <h5>Upload Laporan Akhir</h5>

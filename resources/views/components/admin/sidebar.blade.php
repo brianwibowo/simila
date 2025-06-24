@@ -28,6 +28,46 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+                
+                {{-- PKL Admin --}}                <li class="nav-item {{ request()->routeIs('admin-pkl*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#pklAdminCollapse"
+                        aria-expanded="{{ request()->routeIs('admin-pkl*') ? 'true' : 'false' }}">
+                        <i class="fas fa-briefcase"></i>
+                        <p>Praktik Kerja Lapangan</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse {{ request()->routeIs('admin-pkl*') ? 'show' : '' }}"
+                        id="pklAdminCollapse">
+                        <ul class="nav nav-collapse">
+                            <li class="{{ Route::currentRouteName() == 'admin-pkl-index' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-index') }}">
+                                    <span class="sub-item">Dashboard PKL</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-pkl-select-company' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-select-company') }}">
+                                    <span class="sub-item">Mewakili Perusahaan</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-pkl-select-guru' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-select-guru') }}">
+                                    <span class="sub-item">Mewakili Guru</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-pkl-assign-pembimbing-list' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-assign-pembimbing-list') }}">
+                                    <span class="sub-item">Penugasan Pembimbing</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-pkl-penilaian' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-index') }}">
+                                    <span class="sub-item">Penilaian</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                
                 {{-- Kurikulum Bersama --}}
                 <li class="nav-item {{ request()->routeIs('admin-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#kurikulumAdminCollapse"
@@ -97,26 +137,7 @@
                             </li>
                         </ul>
                     </div>
-                </li>
-                {{-- PKL --}}
-                <li class="nav-item {{ request()->routeIs('admin-pkl*') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#pklAdminCollapse"
-                        aria-expanded="{{ request()->routeIs('admin-pkl*') ? 'true' : 'false' }}">
-                        <i class="fas fa-table"></i>
-                        <p>PKL</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse {{ request()->routeIs('admin-pkl*') ? 'show' : '' }}" id="pklAdminCollapse">
-                        <ul class="nav nav-collapse">
-                            {{-- Sesuaikan rute ini jika ada --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">Penilaian</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                </li>                {{-- PKL menu removed to prevent duplication - already defined above --}}
                 {{-- Talent Scouting (BARU untuk ADMIN, mengikuti pola perusahaan) --}}
                 <li class="nav-item {{ request()->routeIs('admin-scouting*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#scoutingAdminNewCollapse" {{-- ID baru agar unik --}}
