@@ -35,18 +35,15 @@ class RisetController extends Controller
             'tim_riset' => 'required|array',
             'tim_riset.*' => 'exists:users,id',
             'file_proposal' => 'required|file|mimes:pdf|max:10240', // max 10MB
-            'dokumentasi' => 'required|image|max:2048' // max 2MB
         ]);
 
         $proposalPath = $request->file('file_proposal')->store('public/riset/proposal');
-        $dokumentasiPath = $request->file('dokumentasi')->store('public/riset/dokumentasi');
 
         $riset = Riset::create([
             'topik' => $validated['topik'],
             'deskripsi' => $validated['deskripsi'],
             'tim_riset' => $validated['tim_riset'],
             'file_proposal' => $proposalPath,
-            'dokumentasi' => $dokumentasiPath,
         ]);
 
         foreach ($validated['tim_riset'] as $userId) {
@@ -86,7 +83,6 @@ class RisetController extends Controller
             'tim_riset' => 'required|array|min:1',
             'tim_riset.*' => 'exists:users,id',
             'file_proposal' => 'nullable|file|mimes:pdf|max:10240',
-            'dokumentasi' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($request->hasFile('file_proposal')) {
@@ -119,5 +115,20 @@ class RisetController extends Controller
         $riset->delete();
         return redirect()->route('waka-humas-riset-index')
             ->with('success', 'Riset berhasil dihapus');
+    }
+
+    public function dokumentasi(Riset $riset, Request $request)
+    {
+        $request->validate([
+            'dokumentasi' => 'required', // max 10MB
+        ]);
+
+        $dokumentasiPath = $request->file('dokumentasi')->store('public/riset/dokumentasi');
+
+        $riset->dokumentasi = $dokumentasiPath;
+        $riset->save();
+        
+        return redirect()->route('waka-humas-riset-show', $riset)
+            ->with('success', 'Dokumentasi berhasil diupload');
     }
 }

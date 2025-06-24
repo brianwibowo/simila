@@ -23,6 +23,7 @@ use App\HttpControllers\Perusahaan\MoocModuleController as PerusahaanMoocModuleC
 use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
 use App\Http\Controllers\Perusahaan\BeasiswaScoutingController as PerusahaanBeasiswaScoutingController;
 use App\Http\Controllers\Perusahaan\SertifikasiController as PerusahaanSertifikasiController; // <<< ADDED THIS LINE
+use App\Http\Controllers\Perusahaan\RisetController as PerusahaanRisetController; // <<< ADDED THIS LINE
 
 // Siswa Controllers
 use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScoutingController;
@@ -288,6 +289,11 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         });
 
         Route::post('mooc/{mooc}/sertifikat/{user}/upload', [PerusahaanMoocController::class, 'uploadSertifikat'])->name('perusahaan-mooc-sertifikat-upload');
+
+        Route::get('riset', [PerusahaanRisetController::class, 'index'])->name('perusahaan-riset-index');
+        Route::get('riset/results', [PerusahaanRisetController::class, 'results'])->name('perusahaan-riset-results');
+        Route::patch('riset/{riset}/terima', [PerusahaanRisetController::class, 'terima'])->name('perusahaan-riset-terima');
+        Route::patch('riset/{riset}/tolak', [PerusahaanRisetController::class, 'tolak'])->name('perusahaan-riset-tolak');
     });
 
     // Siswa Routes
@@ -408,6 +414,8 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             'update' => 'waka-humas-riset-update',
             'destroy' => 'waka-humas-riset-destroy',
         ]);        // PKL Logbook Routes - These need to come first to prevent conflict with {pkl} parameter routes
+
+        Route::post('riset/{riset}/upload', [WakaHumasRisetController::class, 'dokumentasi'])->name('waka-humas-riset-dokumentasi');
         Route::get('pkl/logbook/validasi', [WakaHumasPklController::class, 'logbookValidationIndex'])->name('waka-humas-pkl-logbook-validation-index');
         Route::get('pkl/siswa/{siswa}/logbook', [WakaHumasPklController::class, 'siswaLogbook'])->name('waka-humas-pkl-siswa-logbook');
         

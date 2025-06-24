@@ -197,14 +197,14 @@
                         id="risetInovasiCollapse">
                         <ul class="nav nav-collapse">
                             {{-- Pastikan kamu mendefinisikan rute ini nanti di web.php --}}
-                            <li>
-                                <a href="#">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-riset-index' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-riset-index') }}">
                                     <span class="sub-item">List Riset Inovasi</span>
                                 </a>
                             </li>
                             {{-- Pastikan kamu mendefinisikan rute ini nanti di web.php --}}
-                            <li>
-                                <a href="#">
+                            <li class="{{ Route::currentRouteName() == 'perusahaan-riset-results' ? 'active' : '' }}">
+                                <a href="{{ route('perusahaan-riset-results') }}">
                                     <span class="sub-item">Hasil Inovasi</span>
                                 </a>
                             </li>

@@ -19,7 +19,8 @@ class CreateRisetsTable extends Migration
             $table->string('deskripsi');
             $table->string('tim_riset');
             $table->text('file_proposal');
-            $table->text('dokumentasi');
+            $table->text('dokumentasi')->nullable();
+            $table->enum('status', ['proses', 'disetujui', 'ditolak'])->default('proses');
             $table->timestamps();
         });
     }

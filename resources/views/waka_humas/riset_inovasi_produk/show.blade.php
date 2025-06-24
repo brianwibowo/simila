@@ -30,13 +30,22 @@
                     <span class="text-muted">Tidak ada file</span>
                 @endif
             </p>
-            <p class="card-text"><strong>Dokumentasi:</strong>
-                @if($riset->dokumentasi)
-                    <a href="{{ Storage::url($riset->dokumentasi) }}" target="_blank">Lihat Dokumentasi</a>
-                @else
-                    <span class="text-muted">Tidak ada dokumentasi</span>
-                @endif
-            </p>
+            @if($riset->status === 'disetujui')
+                <p class="card-text"><strong>Dokumentasi:</strong>
+                    @if($riset->dokumentasi)
+                        <a href="{{ Storage::url($riset->dokumentasi) }}" target="_blank">Lihat Dokumentasi</a>
+                    @else
+                        <span class="text-muted">Tidak ada dokumentasi</span>
+                        <form action="{{ route('waka-humas-riset-dokumentasi', $riset) }}" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <input class = "form-control" type="file" name="dokumentasi" id="dokumentasi" required accept="image/png, image/jpeg, image/jpg">
+                            <button type="submit" class="btn btn-primary btn-sm mt-2">Unggah Dokumentasi</button>
+                        </form>
+                    @endif
+                </p>
+            @else
+                <p class="card-text"><strong>Status:</strong> {{ $riset->status }}</p>
+            @endif
         </div>
     </div>
 </div>
