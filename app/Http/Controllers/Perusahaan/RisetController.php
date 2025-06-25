@@ -23,14 +23,14 @@ class RisetController extends Controller
     {
         $riset->status = 'ditolak';
         $riset->save();
-        return redirect()->route('perusahaan.riset.index');
+        return redirect()->route('perusahaan-riset-index')->with('success', 'Riset berhasil ditolak.'); // Tambah flash message
     }
 
     public function terima(Riset $riset)
     {
         $riset->status = 'disetujui';
         $riset->save();
-        return redirect()->route('perusahaan-riset-index');
+        return redirect()->route('perusahaan-riset-index')->with('success', 'Riset berhasil disetujui.'); // Tambah flash message
     }
 
     public function results()

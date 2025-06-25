@@ -17,19 +17,19 @@
                 <i class="gg-more-vertical-alt"></i>
             </button>
         </div>
-    </div>
+        </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item {{ Route::currentRouteName() == 'admin-dashboard' ? 'active' : '' }}">
                     <a href="{{ route('admin-dashboard') }}" class="collapsed" aria-expanded="false">
-                        {{-- Tambah class collapsed dan aria-expanded --}}
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                
-                {{-- PKL Admin --}}                <li class="nav-item {{ request()->routeIs('admin-pkl*') ? 'active' : '' }}">
+
+                {{-- PKL Admin --}}
+                <li class="nav-item {{ request()->routeIs('admin-pkl*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#pklAdminCollapse"
                         aria-expanded="{{ request()->routeIs('admin-pkl*') ? 'true' : 'false' }}">
                         <i class="fas fa-briefcase"></i>
@@ -59,15 +59,16 @@
                                     <span class="sub-item">Penugasan Pembimbing</span>
                                 </a>
                             </li>
-                            <li class="{{ Route::currentRouteName() == 'admin-pkl-penilaian' ? 'active' : '' }}">
-                                <a href="{{ route('admin-pkl-index') }}">
+                            {{-- Jika ada halaman khusus penilaian PKL, sesuaikan rutenya --}}
+                            {{-- <li class="{{ Route::currentRouteName() == 'admin-pkl-penilaian' ? 'active' : '' }}">
+                                <a href="{{ route('admin-pkl-penilaian') }}">
                                     <span class="sub-item">Penilaian</span>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </div>
                 </li>
-                
+
                 {{-- Kurikulum Bersama --}}
                 <li class="nav-item {{ request()->routeIs('admin-kurikulum*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#kurikulumAdminCollapse"
@@ -137,12 +138,12 @@
                             </li>
                         </ul>
                     </div>
-                </li>                {{-- PKL menu removed to prevent duplication - already defined above --}}
-                {{-- Talent Scouting (BARU untuk ADMIN, mengikuti pola perusahaan) --}}
+                </li>
+                {{-- Talent Scouting (Admin) --}}
                 <li class="nav-item {{ request()->routeIs('admin-scouting*') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#scoutingAdminNewCollapse" {{-- ID baru agar unik --}}
+                    <a data-bs-toggle="collapse" href="#scoutingAdminNewCollapse"
                         aria-expanded="{{ request()->routeIs('admin-scouting*') ? 'true' : 'false' }}">
-                        <i class="fas fa-user-friends"></i> {{-- Mengubah ikon --}}
+                        <i class="fas fa-user-friends"></i>
                         <p>Talent Scouting</p>
                         <span class="caret"></span>
                     </a>
@@ -154,16 +155,10 @@
                                     <span class="sub-item">Manajemen Batch</span>
                                 </a>
                             </li>
-                            {{-- Jika ada List Pendaftar terpisah seperti di perusahaan --}}
-                            {{-- <li class="{{ Route::currentRouteName() == 'admin-scouting-list-pendaftar' ? 'active' : '' }}">
-                                <a href="{{ route('admin-scouting-list-pendaftar') }}">
-                                    <span class="sub-item">List Pendaftar</span>
-                                </a>
-                            </li> --}}
                         </ul>
                     </div>
                 </li>
-                {{-- MOOC --}}
+                {{-- MOOC (Admin) --}}
                 <li class="nav-item {{ request()->routeIs('admin-mooc*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#moocAdminCollapse"
                         aria-expanded="{{ request()->routeIs('admin-mooc*') ? 'true' : 'false' }}">
@@ -173,22 +168,15 @@
                     </a>
                     <div class="collapse {{ request()->routeIs('admin-mooc*') ? 'show' : '' }}" id="moocAdminCollapse">
                         <ul class="nav nav-collapse">
-                            {{-- Sesuaikan rute ini jika ada --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">Kelas</span>
-                                </a>
-                            </li>
-                            {{-- Sesuaikan rute ini jika ada --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">Ujian</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-mooc-index' ? 'active' : '' }}">
+                                <a href="{{ route('admin-mooc-index') }}">
+                                    <span class="sub-item">Manajemen Pelatihan</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                {{-- Riset & Inovasi Produk --}}
+                {{-- Riset & Inovasi Produk (Admin) --}}
                 <li class="nav-item {{ request()->routeIs('admin-riset*') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#risetAdminCollapse"
                         aria-expanded="{{ request()->routeIs('admin-riset*') ? 'true' : 'false' }}">
@@ -199,33 +187,36 @@
                     <div class="collapse {{ request()->routeIs('admin-riset*') ? 'show' : '' }}"
                         id="risetAdminCollapse">
                         <ul class="nav nav-collapse">
-                            {{-- Sesuaikan rute ini jika ada --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">List Riset Inovasi</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-riset-index' ? 'active' : '' }}">
+                                <a href="{{ route('admin-riset-index') }}">
+                                    <span class="sub-item">Daftar Riset</span>
                                 </a>
                             </li>
-                            {{-- Sesuaikan rute ini jika ada --}}
-                            <li>
-                                <a href="#">
-                                    <span class="sub-item">Hasil Inovasi</span>
+                            <li class="{{ Route::currentRouteName() == 'admin-riset-create' ? 'active' : '' }}">
+                                <a href="{{ route('admin-riset-create') }}">
+                                    <span class="sub-item">Ajukan Riset Baru</span>
+                                </a>
+                            </li>
+                            <li class="{{ Route::currentRouteName() == 'admin-riset-results' ? 'active' : '' }}">
+                                <a href="{{ route('admin-riset-results') }}">
+                                    <span class="sub-item">Hasil Riset</span>
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
-                {{-- Beasiswa Talent Scout --}}
-                <li class="nav-item {{ request()->routeIs('admin-beasiswa-*') ? 'active' : '' }}">
-                    <a data-bs-toggle="collapse" href="#beasiswaCollapse"
-                        aria-expanded="{{ request()->routeIs('admin-beasiswa-*') ? 'true' : 'false' }}">
-                        <i class="fas fa-medal"></i> {{-- Mengganti ikon beasiswa agar lebih relevan --}}
+                {{-- Beasiswa Talent Scout (Admin) --}}
+                <li class="nav-item {{ request()->routeIs('admin-beasiswa*') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#beasiswaAdminCollapse"
+                        aria-expanded="{{ request()->routeIs('admin-beasiswa*') ? 'true' : 'false' }}">
+                        <i class="fas fa-medal"></i>
                         <p>Beasiswa Talent Scout</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->routeIs('admin-beasiswa-*') ? 'show' : '' }}"
-                        id="beasiswaCollapse">
+                    <div class="collapse {{ request()->routeIs('admin-beasiswa*') ? 'show' : '' }}"
+                        id="beasiswaAdminCollapse">
                         <ul class="nav nav-collapse">
-                            <li class="{{ request()->routeIs('admin-beasiswa-*') ? 'active' : '' }}">
+                            <li class="{{ request()->routeIs('admin-beasiswa-index') ? 'active' : '' }}">
                                 <a href="{{ route('admin-beasiswa-index') }}">
                                     <span class="sub-item">Daftar Batch Beasiswa</span>
                                 </a>

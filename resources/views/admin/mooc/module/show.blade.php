@@ -7,7 +7,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a
-                        href="{{ route('perusahaan-mooc-show', ['mooc' => $module->mooc_id]) }}">{{ $module->mooc->judul_pelatihan }}</a>
+                        href="{{ route('admin-mooc-show', ['mooc' => $module->mooc_id]) }}">{{ $module->mooc->judul_pelatihan }}</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">Detail Modul</li>
             </ol>
@@ -16,11 +16,11 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Modul: {{ $module->module_name }}</h1>
             <div>
-                <a href="{{ route('perusahaan-module-edit', ['mooc' => $module->mooc_id, 'module' => $module->id]) }}"
+                <a href="{{ route('admin-module-edit', ['mooc' => $module->mooc_id, 'module' => $module->id]) }}"
                     class="btn btn-warning me-2">
                     <i class="bi bi-pencil"></i> Edit Modul
                 </a>
-                <a href="{{ route('perusahaan-mooc-show', $module->mooc_id) }}" class="btn btn-secondary">
+                <a href="{{ route('admin-mooc-show', $module->mooc_id) }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali ke Pelatihan
                 </a>
             </div>

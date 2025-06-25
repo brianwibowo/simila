@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Perusahaan;
+namespace App\Http\Controllers\Admin; // Namespace diubah ke Admin
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,7 +11,7 @@ use App\Models\MoocModule;
 class MoocModuleController extends Controller
 {
     public function create(Mooc $mooc){
-        return view('perusahaan.mooc.module.create', [
+        return view('admin.mooc.module.create', [ // Folder view diubah ke admin.mooc.module
             'mooc' => $mooc
         ]);
     }
@@ -20,17 +20,17 @@ class MoocModuleController extends Controller
         if ($module->mooc_id !== $mooc->id) {
             abort(404, 'Modul tidak ditemukan untuk pelatihan ini.');
         }
-        return view('perusahaan.mooc.module.edit', [
+        return view('admin.mooc.module.edit', [
             'module' => $module,
             'mooc' => $mooc
         ]);
     }
-    public function show(Mooc $mooc, MoocModule $module){ // <<< PERBAIKAN INI >>>
-        // Memastikan modul ini milik MOOC yang ada dan sesuai dengan parameter mooc
+
+    public function show(Mooc $mooc, MoocModule $module){ // Menerima $mooc juga
         if ($module->mooc_id !== $mooc->id) {
             abort(404, 'Modul tidak ditemukan untuk pelatihan ini.');
         }
-        return view('perusahaan.mooc.module.show', compact('module', 'mooc')); // <<< Tambah mooc ke compact
+        return view('admin.mooc.module.show', compact('module', 'mooc')); // Tambah mooc ke compact
     }
 
     public function store(Request $request){
@@ -55,7 +55,7 @@ class MoocModuleController extends Controller
             'mooc_id' => $request->mooc_id
         ]);
 
-        return redirect()->route('perusahaan-mooc-show', ['mooc' => $request->mooc_id])->with('success', 'Modul berhasil disimpan!');
+        return redirect()->route('admin-mooc-show', ['mooc' => $request->mooc_id])->with('success', 'Modul berhasil disimpan!');
     }
 
     public function destroy(MoocModule $module){
@@ -64,7 +64,7 @@ class MoocModuleController extends Controller
         }
         $moocId = $module->mooc_id; // Simpan ID MOOC sebelum modul dihapus
         $module->delete();
-        return redirect()->route('perusahaan-mooc-show', ['mooc' => $moocId])->with('success', 'Modul berhasil dihapus!'); // Redirect ke detail MOOC
+        return redirect()->route('admin-mooc-show', ['mooc' => $moocId])->with('success', 'Modul berhasil dihapus!');
     }
 
     public function update(Request $request, Mooc $mooc, MoocModule $module){
@@ -94,6 +94,6 @@ class MoocModuleController extends Controller
             'dokumen_materi' => $dokumenPath,
         ]);
 
-        return redirect()->route('perusahaan-mooc-show', ['mooc' => $mooc->id])->with('success', 'Modul berhasil diperbarui!'); // Redirect ke detail MOOC
+        return redirect()->route('admin-mooc-show', ['mooc' => $mooc->id])->with('success', 'Modul berhasil diperbarui!');
     }
 }

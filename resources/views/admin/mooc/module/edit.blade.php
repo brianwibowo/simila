@@ -7,7 +7,7 @@
                 <h1 class="h4 mb-0">Edit Modul: {{ $module->module_name }}</h1>
             </div>
             <div class="card-body">
-                <form action="{{ route('perusahaan-module-update', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
+                <form action="{{ route('admin-module-update', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        <a href="{{ route('perusahaan-mooc-show', $mooc->id) }}" class="btn btn-secondary me-2">
+                        <a href="{{ route('admin-mooc-show', $mooc->id) }}" class="btn btn-secondary me-2">
                             <i class="bi bi-x-circle"></i> Batal
                         </a>
                         <button type="submit" class="btn btn-primary">

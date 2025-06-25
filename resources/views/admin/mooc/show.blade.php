@@ -7,10 +7,10 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Detail Pelatihan MOOC: {{ $mooc->judul_pelatihan }}</h1>
             <div>
-                <a href="{{ route('perusahaan-mooc-edit', $mooc->id) }}" class="btn btn-warning me-2">
+                <a href="{{ route('admin-mooc-edit', $mooc->id) }}" class="btn btn-warning me-2">
                     <i class="bi bi-pencil"></i> Edit Pelatihan
                 </a>
-                <a href="{{ route('perusahaan-mooc-index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin-mooc-index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Kembali ke Daftar
                 </a>
             </div>
@@ -48,7 +48,7 @@
             <div class="card-header bg-white py-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-collection-play-fill me-2"></i>Daftar Modul</h5>
-                    <a href="{{ route('perusahaan-module-create', $mooc->id) }}" class="btn btn-primary">
+                    <a href="{{ route('admin-module-create', $mooc->id) }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Tambah Modul Baru
                     </a>
                 </div>
@@ -67,13 +67,13 @@
                                     @endif
                                 </div>
                                 <div class="d-flex align-items-center">
-                                    <a href="{{ route('perusahaan-module-edit', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
+                                    <a href="{{ route('admin-module-edit', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
                                         class="btn btn-sm btn-outline-warning me-2">Edit</a>
-                                    <a href="{{ route('perusahaan-module-show', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
+                                    <a href="{{ route('admin-module-show', ['mooc' => $mooc->id, 'module' => $module->id]) }}"
                                         class="btn btn-sm btn-outline-primary me-2">Detail</a>
                                 
                                     {{-- Form untuk tombol Hapus --}}
-                                    <form action="{{ route('perusahaan-module-destroy', ['module' => $module->id]) }}"
+                                    <form action="{{ route('admin-module-destroy', ['module' => $module->id]) }}"
                                         method="post"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus modul ini? Tindakan ini tidak dapat dibatalkan.')"
                                         class="mb-0"> {{-- Hapus 'd-inline' atau 'd-inline-block' dari sini --}}
@@ -222,7 +222,7 @@
                     const participantName = button.getAttribute('data-participant-name');
 
                     const formAction =
-                        "{{ route('perusahaan-mooc-sertifikat-upload', ['mooc' => $mooc->id, 'user' => 'USER_ID_PLACEHOLDER']) }}"
+                        "{{ route('admin-mooc-sertifikat-upload', ['mooc' => $mooc->id, 'user' => 'USER_ID_PLACEHOLDER']) }}"
                         .replace('USER_ID_PLACEHOLDER', participantUserId);
 
                     const modalTitle = uploadSertifikatModal.querySelector('.modal-title');

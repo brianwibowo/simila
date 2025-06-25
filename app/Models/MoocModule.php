@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Support\Facades\Storage;
+
 class MoocModule extends Model
 {
     use HasFactory;
 
     protected $table = 'mooc_modules';
 
-    protected $guarded = ['id'];
+    protected $guarded = ['id']; // Memastikan kolom baru 'deskripsi_modul' bisa diisi
 
     protected static function boot()
     {

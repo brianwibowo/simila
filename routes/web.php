@@ -11,7 +11,9 @@ use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\SertifikasiController as AdminSertifikasiController;
 use App\Http\Controllers\Admin\ScoutingController as AdminScoutingController;
 use App\Http\Controllers\Admin\BeasiswaScoutingController as AdminBeasiswaScoutingController;
-
+use App\Http\Controllers\Admin\MoocController as AdminMoocController;
+use App\Http\Controllers\Admin\MoocModuleController as AdminMoocModuleController;
+use App\Http\Controllers\Admin\RisetController as AdminRisetController; 
 
 // Perusahaan Controllers
 use App\Http\Controllers\Perusahaan\KurikulumController as PerusahaanKurikulumController;
@@ -19,7 +21,7 @@ use App\Http\Controllers\Perusahaan\ProjectController as PerusahaanProjectContro
 use App\Http\Controllers\Perusahaan\GuruTamuController as PerusahaanGuruTamuController;
 use App\Http\Controllers\Perusahaan\PklController as PerusahaanPklController;
 use App\Http\Controllers\Perusahaan\MoocController as PerusahaanMoocController;
-use App\HttpControllers\Perusahaan\MoocModuleController as PerusahaanMoocModuleController;
+use App\Http\Controllers\Perusahaan\MoocModuleController as PerusahaanMoocModuleController;
 use App\Http\Controllers\Perusahaan\ScoutingController as PerusahaanScoutingController;
 use App\Http\Controllers\Perusahaan\BeasiswaScoutingController as PerusahaanBeasiswaScoutingController;
 use App\Http\Controllers\Perusahaan\SertifikasiController as PerusahaanSertifikasiController; // <<< ADDED THIS LINE
@@ -100,6 +102,23 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/users', [AdminUserController::class, 'index'])->name('admin-users-index');
         Route::post('/users/{user}/update-role', [AdminUserController::class, 'updateRole'])->name('admin-users-update-role');
 
+        
+        // Riset & Inovasi Produk (Admin)
+        Route::resource('riset', AdminRisetController::class)->names([
+            'index' => 'admin-riset-index',
+            'create' => 'admin-riset-create',
+            'store' => 'admin-riset-store',
+            'show' => 'admin-riset-show',
+            'edit' => 'admin-riset-edit',
+            'update' => 'admin-riset-update',
+            'destroy' => 'admin-riset-destroy',
+        ]);
+
+        Route::post('riset/{riset}/dokumentasi', [AdminRisetController::class, 'dokumentasi'])->name('admin-riset-dokumentasi');
+        Route::patch('riset/{riset}/terima', [AdminRisetController::class, 'terima'])->name('admin-riset-terima');
+        Route::patch('riset/{riset}/tolak', [AdminRisetController::class, 'tolak'])->name('admin-riset-tolak');
+        Route::get('riset/results', [AdminRisetController::class, 'results'])->name('admin-riset-results');
+
         // Admin PKL Routes - New Feature
         Route::prefix('pkl')->name('admin-pkl-')->group(function () {
             // Dashboard & Main PKL routes
@@ -129,6 +148,28 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::get('/assign-pembimbing/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingForm'])->name('assign-pembimbing-form');
             Route::post('/assign-pembimbing/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbingStore'])->name('assign-pembimbing-store');
             Route::post('/validate-report/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'validateReport'])->name('validate-report');
+        });
+
+        // MOOC Routes (Admin)
+        Route::resource('mooc', AdminMoocController::class)->names([
+            'index' => 'admin-mooc-index',
+            'create' => 'admin-mooc-create',
+            'store' => 'admin-mooc-store',
+            'edit' => 'admin-mooc-edit',
+            'update' => 'admin-mooc-update',
+            'destroy' => 'admin-mooc-destroy',
+            'show' => 'admin-mooc-show',
+        ]);
+        Route::post('mooc/{mooc}/sertifikat/{user}/upload', [AdminMoocController::class, 'uploadSertifikat'])->name('admin-mooc-sertifikat-upload');
+
+        // MOOC Module Routes (Admin) - Didefinisikan secara eksplisit
+        Route::prefix('module')->name('admin-module-')->group(function () {
+            Route::get('/{mooc}/create', [AdminMoocModuleController::class, 'create'])->name('create');
+            Route::post('/{mooc}', [AdminMoocModuleController::class, 'store'])->name('store');
+            Route::get('/{mooc}/{module}', [AdminMoocModuleController::class, 'show'])->name('show');
+            Route::get('/{mooc}/{module}/edit', [AdminMoocModuleController::class, 'edit'])->name('edit');
+            Route::put('/{mooc}/{module}', [AdminMoocModuleController::class, 'update'])->name('update');
+            Route::delete('/{module}', [AdminMoocModuleController::class, 'destroy'])->name('destroy');
         });
 
         // PKL Pembimbing Assignment Routes
@@ -260,7 +301,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::post('/pkl/{user}/tolak', [PerusahaanPklController::class, 'tolak'])->name('perusahaan-pkl-tolak');
         Route::post('/pkl/{user}/nilai', [PerusahaanPklController::class, 'nilai'])->name('perusahaan-pkl-nilai');
         Route::delete('/pkl/{user}/remove-applicant', [PerusahaanPklController::class, 'removeApplicant'])->name('perusahaan-pkl-remove-applicant');
-        Route::patch('/pkl/{user}/archive-applicant', [PerusahaanPklController::class, 'archiveApplicant'])->name('perusahaan-pkl-archive-applicant');        
+        Route::patch('/pkl/{user}/archive-applicant', [PerusahaanPklController::class, 'archiveApplicant'])->name('perusahaan-pkl-archive-applicant');
 
         Route::resource('mooc', PerusahaanMoocController::class)->names([
             'index' => 'perusahaan-mooc-index',
@@ -272,21 +313,14 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             'show' => 'perusahaan-mooc-show',
         ]);
 
-        Route::resource('module', PerusahaanMoocModuleController::class)->names([
-            'store' => 'perusahaan-module-store',
-            'update' => 'perusahaan-module-update',
-            'destroy' => 'perusahaan-module-destroy',
-            'show' => 'perusahaan-module-show',
-        ])->except(['create', 'index', 'edit']);
-
-        Route::get('/module/{mooc}/create', [PerusahaanMoocModuleController::class, 'create'])->name('perusahaan-module-create');
-        Route::get('/module/{mooc}/{module}/edit', [PerusahaanMoocModuleController::class, 'edit'])->name('perusahaan-module-edit');
-
-        Route::get('{mooc}/quiz/create', [PerusahaanMoocController::class, 'createQuiz'])->name('perusahaan-quiz-create');
-        Route::post('quiz', [PerusahaanMoocController::class, 'storeQuiz'])->name('perusahaan-quiz-store');
-        Route::get('quiz/{quiz}/edit', [PerusahaanMoocController::class, 'editQuiz'])->name('perusahaan-quiz-edit');
-        Route::put('quiz/{quiz}', [PerusahaanMoocController::class, 'updateQuiz'])->name('perusahaan-quiz-update');
-        Route::delete('quiz/{quiz}', [PerusahaanMoocController::class, 'destroyQuiz'])->name('perusahaan-quiz-destroy');
+        Route::prefix('module')->name('perusahaan-module-')->group(function () {
+            Route::get('/{mooc}/create', [PerusahaanMoocModuleController::class, 'create'])->name('create');
+            Route::post('/{mooc}', [PerusahaanMoocModuleController::class, 'store'])->name('store'); // Store harusnya ke mooc_id
+            Route::get('/{mooc}/{module}', [PerusahaanMoocModuleController::class, 'show'])->name('show'); // show dengan 2 parameter
+            Route::get('/{mooc}/{module}/edit', [PerusahaanMoocModuleController::class, 'edit'])->name('edit'); // edit dengan 2 parameter
+            Route::put('/{mooc}/{module}', [PerusahaanMoocModuleController::class, 'update'])->name('update'); // update dengan 2 parameter
+            Route::delete('/{module}', [PerusahaanMoocModuleController::class, 'destroy'])->name('destroy'); // destroy masih 1 parameter {module}
+        });
 
         Route::resource('beasiswa', PerusahaanBeasiswaScoutingController::class)->names([
             'index'   => 'perusahaan-beasiswa-index',

@@ -12,6 +12,7 @@
                 <h5 class="card-title">Selamat datang di SIMILA!</h5>
                 <p class="card-text">Saat ini Anda Login sebagai <strong>{{ Auth::user()->name }}</strong> dan
                     <strong>{{ Auth::user()->getRoleNames()->first() }}</strong>.</p>
+                    <p class="card-text">Semua Role Anda: <strong>{{ Auth::user()->getRoleNames() }}</strong></p> {{-- <<< TAMBAH BARIS INI --}}
                 <h5>Manajemen User Baru</h5>
                 <a href="{{ route('admin-users-index') }}" class="btn btn-primary">
                     Kelola User Baru

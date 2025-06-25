@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\WakaHumas;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Riset;
@@ -8,34 +8,34 @@ use App\Models\Anggota_Riset;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class RisetController extends Controller
 {
+    // Admin bisa melihat semua riset (dari siapa pun)
     public function index()
     {
         $risets = Riset::with('anggota.user')
                      ->latest()
                      ->paginate(10);
-        return view('waka_humas.riset_inovasi_produk.index', compact('risets'));
+        return view('admin.riset.index', compact('risets')); // Folder views baru
     }
 
+    // Admin bisa mengajukan riset (seperti Waka Humas)
     public function create()
     {
-        // Mendapatkan semua user kecuali admin, atau yang tidak punya role
-        // Pastikan role 'admin' adalah role yang tidak boleh jadi anggota riset
         $users = User::whereDoesntHave('roles', function($query) {
             $query->where('name', 'admin');
         })->get();
-        
-        // Memastikan setiap user memiliki role untuk ditampilkan
         $users = $users->map(function ($user) {
             $user->role = $user->getRoleNames()->first() ?? 'Tidak ada role';
             return $user;
         });
 
-        return view('waka_humas.riset_inovasi_produk.create', compact('users'));
+        return view('admin.riset.create', compact('users')); // Folder views baru
     }
 
+    // Admin bisa menyimpan pengajuan riset (seperti Waka Humas)
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -43,18 +43,18 @@ class RisetController extends Controller
             'deskripsi' => 'required|string',
             'tim_riset' => 'required|array',
             'tim_riset.*' => 'exists:users,id',
-            'file_proposal' => 'required|file|mimes:pdf|max:10240', // max 10MB
+            'file_proposal' => 'required|file|mimes:pdf|max:10240',
         ]);
 
-        $proposalPath = $request->file('file_proposal')->store('riset/proposal', 'public'); // Simpan di public
+        $proposalPath = $request->file('file_proposal')->store('riset/proposal', 'public');
 
         $riset = Riset::create([
             'topik' => $validated['topik'],
             'deskripsi' => $validated['deskripsi'],
-            'tim_riset' => $validated['tim_riset'], // Akan disimpan sebagai JSON oleh Laravel
+            'tim_riset' => $validated['tim_riset'],
             'file_proposal' => $proposalPath,
-            'status' => 'proses', // <<< PASTIKAN STATUS AWAL 'proses'
-            'dokumentasi' => null, // Pastikan kolom dokumentasi defaultnya null
+            'status' => 'proses',
+            'dokumentasi' => null,
         ]);
 
         foreach ($validated['tim_riset'] as $userId) {
@@ -64,16 +64,18 @@ class RisetController extends Controller
             ]);
         }
 
-        return redirect()->route('waka-humas-riset-index')
+        return redirect()->route('admin-riset-index')
             ->with('success', 'Riset berhasil diajukan');
     }
 
+    // Admin bisa melihat detail riset (seperti Waka Humas)
     public function show(Riset $riset)
     {
         $riset->load('anggota.user');
-        return view('waka_humas.riset_inovasi_produk.show', compact('riset'));
+        return view('admin.riset.show', compact('riset')); // Folder views baru
     }
 
+    // Admin bisa mengedit riset (seperti Waka Humas)
     public function edit(Riset $riset)
     {
         $users = User::whereDoesntHave('roles', function($query) {
@@ -87,10 +89,10 @@ class RisetController extends Controller
         
         $selectedMembers = $riset->anggota->pluck('user_id')->toArray();
         
-        return view('waka_humas.riset_inovasi_produk.edit', 
-                   compact('riset', 'users', 'selectedMembers'));
+        return view('admin.riset.edit', compact('riset', 'users', 'selectedMembers')); // Folder views baru
     }
 
+    // Admin bisa update riset (seperti Waka Humas)
     public function update(Request $request, Riset $riset)
     {
         $validated = $request->validate([
@@ -99,8 +101,6 @@ class RisetController extends Controller
             'tim_riset' => 'required|array|min:1',
             'tim_riset.*' => 'exists:users,id',
             'file_proposal' => 'nullable|file|mimes:pdf|max:10240',
-            // 'dokumentasi' tidak divalidasi di sini karena punya metode upload sendiri
-            // 'status' tidak divalidasi di sini karena ini form pengajuan/edit, bukan validasi
         ]);
 
         $updateData = [
@@ -116,18 +116,9 @@ class RisetController extends Controller
             $updateData['file_proposal'] = $request->file('file_proposal')->store('riset/proposal', 'public');
         }
 
-        // Hapus dokumentasi dari validasi request karena punya metode terpisah.
-        // if ($request->hasFile('dokumentasi')) {
-        //     if ($riset->dokumentasi) {
-        //         Storage::disk('public')->delete($riset->dokumentasi);
-        //     }
-        //     $updateData['dokumentasi'] = $request->file('dokumentasi')->store('public/riset/dokumentasi');
-        // }
-
         $riset->update($updateData);
 
-        // Update anggota tim riset
-        $riset->anggota()->delete(); // Hapus semua anggota lama
+        $riset->anggota()->delete();
         foreach ($validated['tim_riset'] as $userId) {
             Anggota_Riset::create([
                 'id_risets' => $riset->id,
@@ -135,13 +126,13 @@ class RisetController extends Controller
             ]);
         }
 
-        return redirect()->route('waka-humas-riset-show', $riset)
+        return redirect()->route('admin-riset-show', $riset)
             ->with('success', 'Riset berhasil diperbarui');
     }
 
+    // Admin bisa menghapus riset (seperti Waka Humas)
     public function destroy(Riset $riset)
     {
-        // Hapus file proposal dan dokumentasi jika ada
         if ($riset->file_proposal) {
             Storage::disk('public')->delete($riset->file_proposal);
         }
@@ -149,18 +140,19 @@ class RisetController extends Controller
             Storage::disk('public')->delete($riset->dokumentasi);
         }
         
-        $riset->delete(); // Ini akan menghapus Anggota_Riset karena cascade
-        return redirect()->route('waka-humas-riset-index')
+        $riset->delete();
+        return redirect()->route('admin-riset-index')
             ->with('success', 'Riset berhasil dihapus');
     }
 
+    // Admin bisa mengupload dokumentasi (seperti Waka Humas)
     public function dokumentasi(Riset $riset, Request $request)
     {
         $request->validate([
-            'dokumentasi' => 'required|file|image|max:2048', // validasi image, max 2MB
+            'dokumentasi' => 'required|file|image|max:2048',
         ]);
 
-        if ($riset->dokumentasi) { // Hapus dokumentasi lama jika ada
+        if ($riset->dokumentasi) {
             Storage::disk('public')->delete($riset->dokumentasi);
         }
         $dokumentasiPath = $request->file('dokumentasi')->store('riset/dokumentasi', 'public');
@@ -168,7 +160,32 @@ class RisetController extends Controller
         $riset->dokumentasi = $dokumentasiPath;
         $riset->save();
         
-        return redirect()->route('waka-humas-riset-show', $riset)
+        return redirect()->route('admin-riset-show', $riset)
             ->with('success', 'Dokumentasi berhasil diunggah!');
+    }
+
+    // Admin bisa menyetujui riset (seperti Perusahaan)
+    public function terima(Riset $riset)
+    {
+        $riset->status = 'disetujui';
+        $riset->save();
+        return redirect()->route('admin-riset-index')->with('success', 'Riset berhasil disetujui.');
+    }
+
+    // Admin bisa menolak riset (seperti Perusahaan)
+    public function tolak(Riset $riset)
+    {
+        $riset->status = 'ditolak';
+        $riset->save();
+        return redirect()->route('admin-riset-index')->with('success', 'Riset berhasil ditolak.');
+    }
+
+    // Admin bisa melihat hasil (seperti Perusahaan)
+    public function results()
+    {
+        $risets = Riset::with('anggota.user')
+                     ->latest()
+                     ->paginate(10);
+        return view('admin-riset-results', compact('risets')); // Folder views baru
     }
 }
