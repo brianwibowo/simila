@@ -436,6 +436,8 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/mooc/{mooc}', [GuruMoocController::class, 'show'])->name('guru-mooc-show');
         Route::get('/mooc/{mooc}/eval', [GuruMoocController::class, 'eval'])->name('guru-mooc-eval');
         Route::post('/mooc/{mooc}/nilai', [GuruMoocController::class, 'nilai'])->name('guru-mooc-nilai');
+
+        Route::post('/mooc/{mooc}/reflection', [GuruMoocController::class, 'reflection'])->name('guru-reflection-store');
     });
 
     // Waka Kurikulum Routes

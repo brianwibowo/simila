@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Mooc;
 use App\Models\MoocScore;
 use App\Models\Mooc_Eval;
+use App\Models\MoocReflection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,15 +24,7 @@ class MoocController extends Controller
         return view('guru.mooc.show', [
             'mooc' => $mooc,
             'modules' => $mooc->modules()->get(),
-            'quizzes' => $mooc->quizzes()->get(),
             'nilai' => $mooc->nilai()->where('user_id', auth()->user()->id)->latest()->first()
-        ]);
-    }
-
-    public function eval(Mooc $mooc){
-        return view('guru.mooc.eval', [
-            'mooc' => $mooc,
-            'quizzes' => $mooc->quizzes()->get()
         ]);
     }
 
@@ -71,6 +64,21 @@ class MoocController extends Controller
             'user_id' => auth()->user()->id,
             'mooc_id' => $mooc->id,
             'score' => $finalScore
+        ]);
+
+        return redirect()->route('guru-mooc-show', $mooc);
+    }
+
+    public function reflection(MOOC $mooc, Request $request){
+
+        $request->validate([
+            'reflection_text' => 'required'
+        ]);
+
+        MoocReflection::create([
+            'mooc_id' => $mooc->id,
+            'reflection' => $request->reflection_text,
+            'user_id' => auth()->user()->id
         ]);
 
         return redirect()->route('guru-mooc-show', $mooc);

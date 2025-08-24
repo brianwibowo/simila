@@ -64,14 +64,14 @@
                         <td>
                             {{-- Tombol Aksi "Terima" dan "Tolak" --}}
                             <div class="d-flex gap-2">
-                                <form action="{{ route('perusahaan-riset-terima', $riset->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin MENERIMA riset ini?')">
+                                <form action="{{ route('admin-riset-terima', $riset->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin MENERIMA riset ini?')">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-sm btn-success {{ $riset->status !== 'proses' ? 'disabled' : '' }}">
                                         <i class="fas fa-check me-1"></i> Terima
                                     </button>
                                 </form>
-                                <form action="{{ route('perusahaan-riset-tolak', $riset->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin MENOLAK riset ini?')">
+                                <form action="{{ route('admin-riset-tolak', $riset->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin MENOLAK riset ini?')">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-sm btn-danger {{ $riset->status !== 'proses' ? 'disabled' : '' }}">

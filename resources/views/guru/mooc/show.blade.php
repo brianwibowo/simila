@@ -135,16 +135,16 @@
                     <h4 class="card-title mb-3">Informasi Pelatihan</h4>
                     <p class="mb-1"><strong class="d-block text-muted">Penyelenggara:</strong> {{ $mooc->user->name ?? 'Tidak diketahui' }}</p>
                     <hr>
-                    <div class="mt-4 pt-2">
+                    {{-- <div class="mt-4 pt-2">
                         <div class="card border-primary">
                             <div class="card-body text-center">
                                 <h5 class="card-title">Evaluasi Akhir</h5>
-                                <a href="{{ route('guru-mooc-eval', $mooc->id) }}" class="btn btn-primary w-100 fw-bold">
+                                <a href="{{ $mooc->evaluasi }}" class="btn btn-primary w-100 fw-bold">
                                     <i class="bi bi-pencil-square me-2"></i>Mulai Kuis Akhir
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
