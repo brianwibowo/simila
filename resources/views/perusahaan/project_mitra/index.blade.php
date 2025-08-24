@@ -4,7 +4,7 @@
     <div class="container mt-4">    
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h4 mb-0">Daftar Project</h1>
-            <a href="{{ route('perusahaan-project-create') }}" class="btn btn-success">
+            <a href="{{ route('perusahaan-project-create') }}" class="btn btn-primary">
                 + Ajukan Project
             </a>
         </div>
@@ -21,11 +21,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-
-        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
-            <i class="bi bi-info-circle-fill"></i> Anda dapat menambahkan project yang sudah berjalan atau selesai dari tahun kapanpun. Gunakan tanggal yang sesuai dengan timeline project sebenarnya, termasuk untuk project-project lama atau terdahulu.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
 
         <div class="row mb-4">
             <div class="col-md-4">

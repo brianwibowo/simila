@@ -81,7 +81,7 @@
                         id="kurikulumAdminCollapse">
                         <ul class="nav nav-collapse">
                             <li
-                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' || (request()->routeIs('admin-kurikulum-show') && request()->query('source') !== 'validasi' && request()->query('source') !== 'validasi-sekolah') ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' || request()->routeIs('admin-kurikulum-create-for-school') || request()->routeIs('admin-kurikulum-create-for-company') || request()->routeIs('admin-kurikulum-edit') || (request()->routeIs('admin-kurikulum-show') && request()->query('source') !== 'validasi' && request()->query('source') !== 'validasi-sekolah') ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>

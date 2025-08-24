@@ -102,11 +102,6 @@
             const startDateInput = document.getElementById('tanggal_mulai');
             const endDateInput = document.getElementById('tanggal_selesai');
 
-            // Set min date for tanggal_mulai to today
-            const today = new Date();
-            const formattedToday = today.toISOString().split('T')[0];
-            startDateInput.setAttribute('min', formattedToday);
-
             // Update min date for tanggal_selesai when tanggal_mulai changes
             startDateInput.addEventListener('change', function() {
                 if (startDateInput.value) {

@@ -39,16 +39,14 @@
                       class="form-control @error('deskripsi') is-invalid @enderror"
                       placeholder="Masukkan detail project"
                       required></textarea>
-        </div>        <div class="mb-3">
+        </div>        
+        <div class="mb-3">
             <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
             <input type="date"
                    name="tanggal_mulai"
                    id="tanggal_mulai"
                    class="form-control @error('tanggal_mulai') is-invalid @enderror"
                    required>
-            <div class="form-text">
-                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, termasuk project lama atau terdahulu.</small>
-            </div>
         </div>
 
         <div class="mb-3">
@@ -58,9 +56,6 @@
                    id="tanggal_selesai"
                    class="form-control @error('tanggal_selesai') is-invalid @enderror"
                    required>
-            <div class="form-text">
-                <small class="text-muted"><i class="bi bi-info-circle"></i> Anda dapat memilih tanggal project dari tahun kapanpun, pastikan tanggal selesai setelah tanggal mulai.</small>
-            </div>
         </div>
 
         {{-- Elemen ini dikontrol oleh JavaScript dan akan muncul jika tanggal valid --}}
@@ -88,121 +83,88 @@
     </form>
 </div>
 
-{{-- SCRIPT DAN STYLE TETAP SAMA, TIDAK PERLU DIUBAH --}}
 <script>
- // Date validation and duration calculation
- document.addEventListener('DOMContentLoaded', function() {
-     const startDateInput = document.getElementById('tanggal_mulai');
-     const endDateInput = document.getElementById('tanggal_selesai');
-     const durationInfo = document.getElementById('duration-info');
-     const durationText = document.getElementById('duration-text');
-     const form = document.getElementById('projectForm');
-     const submitBtn = document.getElementById('submitBtn');     function calculateDuration() {
-         const startDate = new Date(startDateInput.value);
-         const endDate = new Date(endDateInput.value);
-         
-         if (startDate && endDate && startDate < endDate) {
-             const diffTime = Math.abs(endDate - startDate);
-             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-             
-             durationText.textContent = `${diffDays} hari`;
-             durationInfo.classList.remove('d-none');
-             
-             // We won't update end date minimum anymore to allow any date in current year
-             // endDateInput.min = startDateInput.value;
-         } else {
-             durationInfo.classList.add('d-none');
-         }
-     }
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('tanggal_mulai');
+        const endDateInput = document.getElementById('tanggal_selesai');
+        const durationInfo = document.getElementById('duration-info');
+        const durationText = document.getElementById('duration-text');
+        const form = document.getElementById('projectForm');
+        const submitBtn = document.getElementById('submitBtn');
 
-     function validateDates() {
-         const startDate = new Date(startDateInput.value);
-         const endDate = new Date(endDateInput.value);
-         
-         if (startDate && endDate && startDate >= endDate) {
-             endDateInput.setCustomValidity('Tanggal selesai harus setelah tanggal mulai');
-         } else {
-             endDateInput.setCustomValidity('');
-         }
-     }
+        function calculateDuration() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (startDate && endDate && startDate < endDate) {
+                const diffTime = Math.abs(endDate - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                durationText.textContent = `${diffDays} hari`;
+                durationInfo.classList.remove('d-none');
+            } else {
+                durationInfo.classList.add('d-none');
+            }
+        }
 
-     // Event listeners
-     startDateInput.addEventListener('change', function() {
-         calculateDuration();
-         validateDates();
-     });
+        function validateDates() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
 
-     endDateInput.addEventListener('change', function() {
-         calculateDuration();
-         validateDates();
-     });
+            if (startDate) {
+                endDateInput.setAttribute('min', startDate);
+            } else {
+                endDateInput.removeAttribute('min');
+            }
 
-     // Form submission
-     form.addEventListener('submit', function(e) {
-         submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengajukan...';
-         submitBtn.disabled = true;
-     });
+            if (startDate && endDate && endDate <= startDate) {
+                endDateInput.setCustomValidity('Tanggal selesai harus setelah tanggal mulai');
+            } else {
+                endDateInput.setCustomValidity('');
+            }
+        }
 
-     // File size validation
-     document.getElementById('file_brief').addEventListener('change', function() {
-         const file = this.files[0];
-         if (file && file.size > 10 * 1024 * 1024) { // 10MB
-             alert('Ukuran file terlalu besar. Maksimal 10MB.');
-             this.value = '';
-         }
-     });
+        // Event listeners
+        startDateInput.addEventListener('change', function() {
+            calculateDuration();
+            validateDates();
+        });
 
-     // Character counter for description
-     const deskripsiTextarea = document.getElementById('deskripsi');
-     const charCounter = document.createElement('div');
-     charCounter.className = 'form-text text-end';
-     charCounter.style.marginTop = '5px';
-     deskripsiTextarea.parentNode.appendChild(charCounter);
+        endDateInput.addEventListener('change', function() {
+            calculateDuration();
+            validateDates();
+        });
 
-     function updateCharCounter() {
-         const currentLength = deskripsiTextarea.value.length;
-         charCounter.innerHTML = `<small class="text-muted">${currentLength} karakter</small>`;
-     }
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Mengajukan...';
+            submitBtn.disabled = true;
+        });
 
-     deskripsiTextarea.addEventListener('input', updateCharCounter);
-     updateCharCounter(); // Initial count
- });
+        // File size validation
+        document.getElementById('file_brief').addEventListener('change', function() {
+            const file = this.files[0];
+            if (file && file.size > 10 * 1024 * 1024) { // 10MB
+                alert('Ukuran file terlalu besar. Maksimal 10MB.');
+                this.value = '';
+            }
+        });
 
- // Auto-save draft (optional feature)
- function saveDraft() {
-     const formData = {
-         judul: document.getElementById('judul').value,
-         deskripsi: document.getElementById('deskripsi').value,
-         tanggal_mulai: document.getElementById('tanggal_mulai').value,
-         tanggal_selesai: document.getElementById('tanggal_selesai').value
-     };
-     
-     localStorage.setItem('project_draft', JSON.stringify(formData));
- }
+        // Character counter for description
+        const deskripsiTextarea = document.getElementById('deskripsi');
+        const charCounter = document.createElement('div');
+        charCounter.className = 'form-text text-end';
+        charCounter.style.marginTop = '5px';
+        deskripsiTextarea.parentNode.appendChild(charCounter);
 
- function loadDraft() {
-     const draft = localStorage.getItem('project_draft');
-     if (draft) {
-         const data = JSON.parse(draft);
-         if (confirm('Ditemukan draft yang belum disimpan. Muat draft?')) {
-             document.getElementById('judul').value = data.judul || '';
-             document.getElementById('deskripsi').value = data.deskripsi || '';
-             document.getElementById('tanggal_mulai').value = data.tanggal_mulai || '';
-             document.getElementById('tanggal_selesai').value = data.tanggal_selesai || '';
-         }
-     }
- }
+        function updateCharCounter() {
+            const currentLength = deskripsiTextarea.value.length;
+            charCounter.innerHTML = `<small class="text-muted">${currentLength} karakter</small>`;
+        }
 
- // Load draft on page load
- window.addEventListener('load', loadDraft);
-
- // Save draft periodically
- setInterval(saveDraft, 30000); // Every 30 seconds
-
- // Clear draft on successful submission
- document.getElementById('projectForm').addEventListener('submit', function() {
-     localStorage.removeItem('project_draft');
- });
+        deskripsiTextarea.addEventListener('input', updateCharCounter);
+        updateCharCounter();
+    });
 </script>
 
 <style>
