@@ -227,11 +227,13 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/kurikulum/create-for-school', [AdminKurikulumController::class, 'createForSchool'])->name('admin-kurikulum-create-for-school');
         Route::get('/kurikulum/create-for-company', [AdminKurikulumController::class, 'createForCompany'])->name('admin-kurikulum-create-for-company');
         Route::post('/kurikulum', [AdminKurikulumController::class, 'store'])->name('admin-kurikulum-store');
+        Route::get('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'show'])->name('admin-kurikulum-show');
         Route::get('/kurikulum/{kurikulum}/edit', [AdminKurikulumController::class, 'edit'])->name('admin-kurikulum-edit');
         Route::put('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'update'])->name('admin-kurikulum-update');
         Route::delete('/kurikulum/{kurikulum}', [AdminKurikulumController::class, 'destroy'])->name('admin-kurikulum-destroy');
         Route::patch('/kurikulum/{kurikulum}/setuju', [AdminKurikulumController::class, 'setuju'])->name('admin-kurikulum-setuju');
         Route::patch('/kurikulum/{kurikulum}/tolak', [AdminKurikulumController::class, 'tolak'])->name('admin-kurikulum-tolak');
+        Route::patch('/kurikulum/{kurikulum}/batal-validasi', [AdminKurikulumController::class, 'batalValidasi'])->name('admin-kurikulum-batal-validasi');
 
         // Guru Tamu Admin Routes
         Route::resource('guru-tamu', AdminGuruTamuController::class)->names([
