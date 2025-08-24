@@ -40,13 +40,13 @@
                         id="kurikulumCollapse">
                         <ul class="nav nav-collapse">
                             <li
-                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-diajukan' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-diajukan' || (request()->routeIs('perusahaan-kurikulum-show') && request()->query('source') === 'diajukan') ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}">
-                                    <span class="sub-item">Kurikulum diajukan</span>
+                                    <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
                             </li>
                             <li
-                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-validasi' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'perusahaan-kurikulum-list-validasi' || (request()->routeIs('perusahaan-kurikulum-show') && request()->query('source') === 'validasi') ? 'active' : '' }}">
                                 <a href="{{ route('perusahaan-kurikulum-list-validasi') }}">
                                     <span class="sub-item">Kurikulum Sekolah</span>
                                 </a>

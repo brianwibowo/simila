@@ -31,7 +31,7 @@ use App\Models\User;
                                 <h1 class="h4 mb-1">Daftar Kurikulum Diajukan</h1>
                                 <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan</p>
                             </div>
-                            <a href="{{ route('waka-kurikulum-create') }}" class="btn btn-success d-flex align-items-center">
+                            <a href="{{ route('waka-kurikulum-create') }}" class="btn btn-primary d-flex align-items-center">
                                 + Ajukan Kurikulum
                             </a>
                         </div>
@@ -63,7 +63,7 @@ use App\Models\User;
                                     <span class="input-group-text bg-light">
                                         <i class="bi bi-search"></i>
                                     </span>
-                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan judul project...">
+                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan nama">
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@ use App\Models\User;
                                         <th class="border-0">Perusahaan Tujuan</th>
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
-                                        <th class="border-0">Tanggal Pengajuan</th>
+                                        <th class="border-0">Tanggal Update</th>
                                         <th class="border-0">Status Validasi</th>
                                         <th class="border-0">Aksi</th>
                                         <th class="border-0">Komentar</th>
@@ -106,7 +106,7 @@ use App\Models\User;
                                                     <i class="bi bi-download me-1"></i> Unduh
                                                 </a>
                                             </td>
-                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td>
+                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td> {{-- Tanggal pengajuan atau update terbaru --}}
                                             <td>
                                                 @if($kurikulum->validasi_perusahaan == 'disetujui')
                                                     <span class="badge bg-success">Disetujui</span>
@@ -118,11 +118,24 @@ use App\Models\User;
                                             </td>
                                             <td>
                                                 @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
-                                                    <span class="text-muted">Tidak dapat diubah</span>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('waka-kurikulum-show', $kurikulum) }}" 
+                                                        class="btn btn-sm btn-outline-primary" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                    </div>
                                                 @else
                                                     <div class="btn-group" role="group">
+                                                        <a href="{{ route('waka-kurikulum-show', $kurikulum) }}" 
+                                                        class="btn btn-sm btn-outline-primary me-1" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
                                                         <a href="{{ route('waka-kurikulum-edit', $kurikulum) }}" 
-                                                        class="btn btn-sm btn-outline-warning" 
+                                                        class="btn btn-sm btn-outline-warning me-1" 
                                                         data-bs-toggle="tooltip" 
                                                         title="Edit">
                                                             <i class="bi bi-pencil"></i>

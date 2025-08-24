@@ -18,7 +18,11 @@ class KurikulumController extends Controller
             'file' => 'required | mimes:pdf',
         ]);
 
-        $path = $request->file('file')->store('kurikulum/', 'public');
+        // Store file in a more structured way
+        // For perusahaan, store in kurikulum/perusahaan directory
+        $folderPath = 'kurikulum/perusahaan';
+        $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+        $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
 
         Kurikulum::create([
             'nama_kurikulum' => $request->nama,
@@ -120,8 +124,12 @@ class KurikulumController extends Controller
             if ($kurikulum->file_kurikulum && Storage::disk('public')->exists($kurikulum->file_kurikulum)) {
                 Storage::disk('public')->delete($kurikulum->file_kurikulum);
             }
-            $filename = uniqid() . '_' . $request->file('file')->getClientOriginalName();
-            $path = $request->file('file')->storeAs('kurikulum', $filename, 'public');
+            
+            // Store file in structured way - for perusahaan in perusahaan directory
+            $folderPath = 'kurikulum/perusahaan';
+            $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+            $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
+            
             $kurikulum->file_kurikulum = $path;
         }
 
@@ -131,7 +139,7 @@ class KurikulumController extends Controller
             'deskripsi' => $request->deskripsi,
             'validasi_sekolah' => 'proses', // Kembali ke 'proses' jika diupdate
             'validasi_perusahaan' => 'disetujui', // Status validasi perusahaan tetap 'disetujui' karena ini diajukan perusahaan sendiri
-            'komentar' => null, // Reset komentar jika diupdate
+            // Tidak reset komentar jika masih 'proses', agar komentar penolakan tetap terlihat
         ]);
 
         return redirect()->route('perusahaan-kurikulum-list-diajukan')
@@ -147,7 +155,8 @@ class KurikulumController extends Controller
         }
 
         $kurikulum->update([
-            'validasi_perusahaan' => 'disetujui'
+            'validasi_perusahaan' => 'disetujui',
+            'komentar' => null, // Reset komentar ketika disetujui setelah penolakan
         ]);
         return redirect()->route('perusahaan-kurikulum-list-validasi')
             ->with('success', 'Kurikulum berhasil disetujui');
@@ -174,6 +183,19 @@ class KurikulumController extends Controller
             ->with('success', 'Kurikulum berhasil ditolak');
     }
 
+    /**
+     * Menampilkan detail kurikulum untuk perusahaan.
+     */
+    public function show(Kurikulum $kurikulum, Request $request)
+    {
+        $source = $request->query('source', 'diajukan');
+        
+        return view('perusahaan.kurikulum.show', [
+            'kurikulum' => $kurikulum,
+            'source' => $source
+        ]);
+    }
+    
     /**
      * Membatalkan persetujuan kurikulum oleh perusahaan (sebagai pengirim).
      * Ini hanya relevan jika perusahaan ingin mengubah kurikulum yang sudah mereka setujui (versi mereka).

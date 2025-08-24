@@ -66,11 +66,12 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-          <div class="d-flex justify-content-end mt-4">
-            <a href="{{ route('waka-kurikulum-list-diajukan') }}" class="btn btn-light me-2">Batal</a>
-            <button type="submit" class="btn btn-primary">Ajukan Kurikulum</button>
-        </div>
-    </form>
+                        
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{{ route('waka-kurikulum-list-diajukan') }}" class="btn btn-light me-2">Batal</a>
+                            <button type="submit" class="btn btn-primary">Ajukan Kurikulum</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

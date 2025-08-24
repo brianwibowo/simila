@@ -81,19 +81,19 @@
                         id="kurikulumAdminCollapse">
                         <ul class="nav nav-collapse">
                             <li
-                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-diajukan' || (request()->routeIs('admin-kurikulum-show') && request()->query('source') !== 'validasi' && request()->query('source') !== 'validasi-sekolah') ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
                             </li>
                             <li
-                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi' || (request()->routeIs('admin-kurikulum-show') && request()->query('source') === 'validasi') ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-validasi') }}">
                                     <span class="sub-item">Validasi Kurikulum Perusahaan</span>
                                 </a>
                             </li>
                             <li
-                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi-sekolah' ? 'active' : '' }}">
+                                class="{{ Route::currentRouteName() == 'admin-kurikulum-list-validasi-sekolah' || (request()->routeIs('admin-kurikulum-show') && request()->query('source') === 'validasi-sekolah') ? 'active' : '' }}">
                                 <a href="{{ route('admin-kurikulum-list-validasi-sekolah') }}">
                                     <span class="sub-item">Validasi Kurikulum Sekolah</span>
                                 </a>

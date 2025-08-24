@@ -61,7 +61,7 @@
 
                         <div class="d-flex justify-content-end mt-4">
                             <a href="{{ route('perusahaan-kurikulum-list-diajukan') }}" class="btn btn-light me-2">Batal</a>
-                            <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                         </div>
                     </form>
                 </div>

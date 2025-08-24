@@ -93,6 +93,33 @@ class KurikulumController extends Controller
         ]);
     }
     
+    /**
+     * Menampilkan detail kurikulum.
+     */
+    public function show(Kurikulum $kurikulum, Request $request)
+    {
+        $source = $request->query('source', 'diajukan');
+        
+        // Mendapatkan informasi perusahaan jika kurikulum milik sekolah
+        $perusahaan = null;
+        if ($kurikulum->perusahaan_id) {
+            $perusahaan = User::find($kurikulum->perusahaan_id);
+        }
+        
+        // Mendapatkan informasi pengirim perusahaan jika kurikulum milik perusahaan
+        $pengirimPerusahaan = null;
+        if ($kurikulum->pengirim->hasRole('perusahaan')) {
+            $pengirimPerusahaan = $kurikulum->pengirim;
+        }
+        
+        return view('admin.kurikulum.show', [
+            'kurikulum' => $kurikulum,
+            'source' => $source,
+            'perusahaan' => $perusahaan,
+            'pengirimPerusahaan' => $pengirimPerusahaan
+        ]);
+    }
+    
     // Method removed as per requirements
     /*
     public function monitorWakaKurikulum()
@@ -140,7 +167,19 @@ class KurikulumController extends Controller
             'company_submitter_id' => 'required_if:submission_type,company|nullable|exists:users,id',
         ]);
 
-        $path = $request->file('file')->store('kurikulum/', 'public');
+        // Determine folder path based on submission type
+        $folderPath = 'kurikulum/admin';
+        
+        if ($request->submission_type == 'school') {
+            $folderPath = 'kurikulum/sekolah';
+        } 
+        elseif ($request->submission_type == 'company') {
+            $folderPath = 'kurikulum/perusahaan';
+        }
+        
+        // Store file with structured path and unique name
+        $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+        $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
 
         // Determine validation status based on submission type
         if ($request->submission_type == 'school') {
@@ -185,28 +224,49 @@ class KurikulumController extends Controller
 
     public function edit(Kurikulum $kurikulum)
     {
-        if ($kurikulum->pengirim_id !== auth()->id()) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
-                ->with('error', 'Anda tidak diizinkan mengedit kurikulum ini');
-        }
+        // Admin dapat mengedit kurikulum siapapun
+        // Tidak perlu pengecekan pengirim_id
         
         return view('admin.kurikulum.edit', [
             'kurikulum' => $kurikulum
         ]);
     }    public function update(Request $request, Kurikulum $kurikulum)
     {
-        if ($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui' && !auth()->user()->hasRole('admin')) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
-                ->with('error', 'Kurikulum yang telah disetujui tidak dapat diubah');
-        }        $request->validate([
+        // Admin dapat mengubah kurikulum apa saja, termasuk yang sudah disetujui
+        
+        $request->validate([
             'nama' => 'required|string',
             'tahun' => 'required|string',
             'deskripsi' => 'required|string',
             'file' => 'nullable|mimes:pdf',
-        ]);if ($request->hasFile('file')) {
-            // Generate a unique filename to avoid overwriting existing files
-            $filename = uniqid() . '_' . $request->file('file')->getClientOriginalName();
-            $path = $request->file('file')->storeAs('kurikulum', $filename, 'public');
+        ]);
+        
+        if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($kurikulum->file_kurikulum && Storage::disk('public')->exists($kurikulum->file_kurikulum)) {
+                Storage::disk('public')->delete($kurikulum->file_kurikulum);
+            }
+            
+            // Determine the appropriate folder based on who submitted the kurikulum
+            $pengirim = User::find($kurikulum->pengirim_id);
+            $folderPath = 'kurikulum/admin'; // Default
+            
+            if ($pengirim && $pengirim->hasRole('perusahaan')) {
+                $folderPath = 'kurikulum/perusahaan';
+            } elseif ($pengirim && $pengirim->hasRole('waka_kurikulum')) {
+                $folderPath = 'kurikulum/sekolah';
+            } elseif ($pengirim && $pengirim->hasRole('admin') && $kurikulum->perusahaan_id) {
+                // Admin on behalf of school (has perusahaan_id)
+                $folderPath = 'kurikulum/sekolah';
+            } elseif ($pengirim && $pengirim->hasRole('admin') && !$kurikulum->perusahaan_id) {
+                // Admin on behalf of company (no perusahaan_id)
+                $folderPath = 'kurikulum/perusahaan';
+            }
+            
+            // Store file with structured path and unique name
+            $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+            $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
+            
             $kurikulum->update([
                 'file_kurikulum' => $path
             ]);
@@ -222,6 +282,7 @@ class KurikulumController extends Controller
                 'tahun_ajaran' => $request->tahun,
                 'deskripsi' => $request->deskripsi,
                 'validasi_sekolah' => 'proses',
+                // Tidak reset komentar jika masih 'proses', agar komentar penolakan tetap terlihat
             ]);
             $message = 'Kurikulum perusahaan berhasil diperbarui. Status validasi sekolah direset.';
         } else {
@@ -231,6 +292,7 @@ class KurikulumController extends Controller
                 'tahun_ajaran' => $request->tahun,
                 'deskripsi' => $request->deskripsi,
                 'validasi_perusahaan' => 'proses',
+                // Tidak reset komentar jika masih 'proses', agar komentar penolakan tetap terlihat
             ]);
             $message = 'Kurikulum sekolah berhasil diperbarui. Status validasi perusahaan direset.';
         }
@@ -241,11 +303,12 @@ class KurikulumController extends Controller
 
     public function destroy(Kurikulum $kurikulum)
     {
-        if ($kurikulum->pengirim_id !== auth()->id()) {
-            return redirect()->route('admin-kurikulum-list-diajukan')
-                ->with('error', 'Anda tidak diizinkan menghapus kurikulum ini');
+        // Admin bisa menghapus kurikulum dari siapa pun (tidak perlu pengecekan pengirim_id)
+        // Hapus file kurikulum jika ada
+        if ($kurikulum->file_kurikulum && Storage::disk('public')->exists($kurikulum->file_kurikulum)) {
+            Storage::disk('public')->delete($kurikulum->file_kurikulum);
         }
-
+        
         $kurikulum->delete();
         return redirect()->route('admin-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil dihapus');
@@ -267,6 +330,7 @@ class KurikulumController extends Controller
             
             $kurikulum->update([
                 'validasi_sekolah' => 'disetujui',
+                'komentar' => null, // Reset komentar ketika disetujui setelah penolakan
             ]);
             
             return redirect()->route('admin-kurikulum-list-validasi')
@@ -280,12 +344,58 @@ class KurikulumController extends Controller
             
             $kurikulum->update([
                 'validasi_perusahaan' => 'disetujui',
+                'komentar' => null, // Reset komentar ketika disetujui setelah penolakan
             ]);
             
             return redirect()->route('admin-kurikulum-list-validasi-sekolah')
                 ->with('success', 'Kurikulum berhasil disetujui');
         }
-    }    public function tolak(Request $request, Kurikulum $kurikulum)
+    }
+    
+    /**
+     * Membatalkan validasi kurikulum (mengembalikan status ke proses/menunggu)
+     */
+    public function batalValidasi(Kurikulum $kurikulum)
+    {
+        // Get the route that requested the validation
+        $route = request()->route()->getName();
+        $referrer = request()->headers->get('referer');
+        
+        // Determine which validation page called this method
+        $isFromValidasiPerusahaan = $route === 'admin-kurikulum-batal-validasi' && strpos($referrer, 'validasi-sekolah') === false;
+        
+        if ($isFromValidasiPerusahaan) {
+            // This is for canceling validation of perusahaan curriculum
+            if (!$kurikulum->pengirim->hasRole('perusahaan')) {
+                return redirect()->route('admin-kurikulum-list-validasi')
+                    ->with('error', 'Halaman ini untuk kurikulum dari perusahaan');
+            }
+            
+            $kurikulum->update([
+                'validasi_sekolah' => 'proses',
+                // Tidak reset komentar
+            ]);
+            
+            return redirect()->route('admin-kurikulum-list-validasi')
+                ->with('success', 'Validasi kurikulum berhasil dibatalkan');
+        } else {
+            // This is for canceling validation of sekolah curriculum
+            if (!($kurikulum->pengirim->hasRole('waka_kurikulum') || $kurikulum->pengirim->hasRole('admin'))) {
+                return redirect()->route('admin-kurikulum-list-validasi-sekolah')
+                    ->with('error', 'Halaman ini untuk kurikulum dari sekolah');
+            }
+            
+            $kurikulum->update([
+                'validasi_perusahaan' => 'proses',
+                // Tidak reset komentar
+            ]);
+            
+            return redirect()->route('admin-kurikulum-list-validasi-sekolah')
+                ->with('success', 'Validasi kurikulum berhasil dibatalkan');
+        }
+    }
+    
+    public function tolak(Request $request, Kurikulum $kurikulum)
     {
         $request->validate([
             'komentar' => 'required|string',

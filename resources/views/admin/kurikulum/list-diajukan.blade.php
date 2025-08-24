@@ -90,7 +90,7 @@
                                                 <th class="border-0">Perusahaan Tujuan</th>
                                                 <th class="border-0">Tahun Ajaran</th>
                                                 <th class="border-0">File</th>
-                                                <th class="border-0">Tanggal Pengajuan</th>
+                                                <th class="border-0">Tanggal Update</th>
                                                 <th class="border-0">Status Validasi</th>
                                                 <th class="border-0">Aksi</th>
                                                 <th class="border-0">Komentar</th>
@@ -145,22 +145,24 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
-                                                    <span class="text-muted">Tidak dapat diubah</span>
-                                                @else
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('admin-kurikulum-edit', $kurikulum) }}" class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" title="Edit">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin-kurikulum-destroy', $kurikulum) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')" class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @endif
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ route('admin-kurikulum-show', ['kurikulum' => $kurikulum->id, 'source' => 'diajukan']) }}" 
+                                                       class="btn btn-sm btn-outline-primary me-1" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="Lihat">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin-kurikulum-edit', $kurikulum) }}" class="btn btn-sm btn-outline-warning me-1" data-bs-toggle="tooltip" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin-kurikulum-destroy', $kurikulum) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)
@@ -195,7 +197,7 @@
                                         <th class="border-0">Perusahaan Pengaju</th>
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
-                                        <th class="border-0">Tanggal Pengajuan</th>
+                                        <th class="border-0">Tanggal Update</th>
                                         <th class="border-0">Status Validasi</th>
                                         <th class="border-0">Aksi</th>
                                         <th class="border-0">Komentar</th>
@@ -237,28 +239,30 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
-                                                    <span class="text-muted">Tidak dapat diubah</span>
-                                                @else
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('admin-kurikulum-edit', $kurikulum) }}" 
-                                                        class="btn btn-sm btn-outline-warning" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="Edit">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin-kurikulum-destroy', $kurikulum) }}" 
-                                                            method="POST" 
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
-                                                            class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                @endif
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ route('admin-kurikulum-show', ['kurikulum' => $kurikulum->id, 'source' => 'diajukan']) }}" 
+                                                       class="btn btn-sm btn-outline-primary me-1" 
+                                                       data-bs-toggle="tooltip" 
+                                                       title="Lihat">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin-kurikulum-edit', $kurikulum) }}" 
+                                                    class="btn btn-sm btn-outline-warning me-1" 
+                                                    data-bs-toggle="tooltip" 
+                                                    title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin-kurikulum-destroy', $kurikulum) }}" 
+                                                        method="POST" 
+                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" title="Hapus">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)
@@ -347,3 +351,4 @@
         });
     </script>
 @endsection
+

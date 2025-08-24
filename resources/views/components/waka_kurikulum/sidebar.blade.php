@@ -30,25 +30,25 @@
                     </a>
                 </li>
                 <li
-                    class="nav-item {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') ? 'active' : '' }}">
+                    class="nav-item {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') || request()->routeIs('waka-kurikulum-show') ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Kurikulum Bersama</p>
                         <span class="caret"></span>
                     </a>
-                    <div class="collapse {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') ? 'show' : '' }}"
+                    <div class="collapse {{ request()->routeIs('waka-kurikulum-list*') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || request()->routeIs('waka-kurikulum-setuju') || request()->routeIs('waka-kurikulum-tolak') || request()->routeIs('waka-kurikulum-show') ? 'show' : '' }}"
                         id="base">
                         <ul class="nav nav-collapse">
                             <li
-                                class="{{ Route::currentRouteName() == 'waka-kurikulum-list-diajukan' ? 'active' : '' }}">
+                                class="{{ request()->routeIs('waka-kurikulum-list-diajukan') || request()->routeIs('waka-kurikulum-create') || request()->routeIs('waka-kurikulum-edit') || request()->routeIs('waka-kurikulum-store') || request()->routeIs('waka-kurikulum-update') || request()->routeIs('waka-kurikulum-destroy') || (request()->routeIs('waka-kurikulum-show') && request()->query('source') !== 'validasi') ? 'active' : '' }}">
                                 <a href="{{ route('waka-kurikulum-list-diajukan') }}">
                                     <span class="sub-item">Kurikulum Diajukan</span>
                                 </a>
                             </li>
                             <li
-                                class="{{ Route::currentRouteName() == 'waka-kurikulum-list-validasi' ? 'active' : '' }}">
+                                class="{{ request()->routeIs('waka-kurikulum-list-validasi') || (request()->routeIs('waka-kurikulum-show') && request()->query('source') === 'validasi') ? 'active' : '' }}">
                                 <a href="{{ route('waka-kurikulum-list-validasi') }}">
-                                    <span class="sub-item">Validasi Kurikulum Perusahaan</span>
+                                    <span class="sub-item">Kurikulum Perusahaan</span>
                                 </a>
                             </li>
                         </ul>

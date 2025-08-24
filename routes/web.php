@@ -264,6 +264,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             'create' => 'perusahaan-kurikulum-create',
         ])->except('show');
         Route::get('/kurikulum/validasi', [PerusahaanKurikulumController::class, 'validasi'])->name('perusahaan-kurikulum-list-validasi');
+        Route::get('/kurikulum/{kurikulum}', [PerusahaanKurikulumController::class, 'show'])->name('perusahaan-kurikulum-show');
         Route::put('/kurikulum/{kurikulum}/setuju', [PerusahaanKurikulumController::class, 'setuju'])->name('perusahaan-kurikulum-setuju');
         Route::put('/kurikulum/{kurikulum}/tolak', [PerusahaanKurikulumController::class, 'tolak'])->name('perusahaan-kurikulum-tolak');
         Route::patch('/kurikulum/{kurikulum}/cancel-approval', [PerusahaanKurikulumController::class, 'cancelApproval'])->name('perusahaan-kurikulum-cancel-approval');
@@ -449,8 +450,11 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::get('/kurikulum/create', [WakaKurikulumController::class, 'create'])->name('waka-kurikulum-create');
         Route::post('/kurikulum', [WakaKurikulumController::class, 'store'])->name('waka-kurikulum-store');
         Route::get('/kurikulum/{kurikulum}/edit', [WakaKurikulumController::class, 'edit'])->name('waka-kurikulum-edit');
+        Route::get('/kurikulum/{kurikulum}', [WakaKurikulumController::class, 'show'])->name('waka-kurikulum-show');
         Route::put('/kurikulum/{kurikulum}', [WakaKurikulumController::class, 'update'])->name('waka-kurikulum-update');
         Route::delete('/kurikulum/{kurikulum}', [WakaKurikulumController::class, 'destroy'])->name('waka-kurikulum-destroy');
+        Route::patch('/kurikulum/{kurikulum}/setuju', [WakaKurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
+        Route::patch('/kurikulum/{kurikulum}/tolak', [WakaKurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
         Route::patch('/kurikulum/{kurikulum}/setuju', [WakaKurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
         Route::patch('/kurikulum/{kurikulum}/tolak', [WakaKurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
 

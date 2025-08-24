@@ -11,7 +11,7 @@
                                 <h1 class="h4 mb-1">Daftar Kurikulum Diajukan</h1>
                                 <p class="text-muted mb-0">Kelola kurikulum yang telah diajukan oleh Anda</p>
                             </div>
-                            <a href="{{ route('perusahaan-kurikulum-create') }}" class="btn btn-success d-flex align-items-center">
+                            <a href="{{ route('perusahaan-kurikulum-create') }}" class="btn btn-primary d-flex align-items-center">
                                 + Ajukan Kurikulum
                             </a>
                         </div>
@@ -55,7 +55,7 @@
                                         <i class="bi bi-tag"></i>
                                     </span>
                                     <select id="filter-status" class="form-control">
-                                        <option value="">Semua Status Validasi Sekolah</option>
+                                        <option value="">Semua Status</option>
                                         <option value="proses">Menunggu</option>
                                         <option value="disetujui">Disetujui</option>
                                         <option value="tidak_disetujui">Ditolak</option>
@@ -67,7 +67,7 @@
                                     <span class="input-group-text bg-light">
                                         <i class="bi bi-search"></i>
                                     </span>
-                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan nama kurikulum...">
+                                    <input type="text" id="search-title" class="form-control" placeholder="Cari berdasarkan nama">
                                 </div>
                             </div>
                         </div>
@@ -79,10 +79,10 @@
                                         <th class="border-0">Nama Kurikulum</th>
                                         <th class="border-0">Tahun Ajaran</th>
                                         <th class="border-0">File</th>
-                                        <th class="border-0">Tanggal Pengajuan</th>
-                                        <th class="border-0">Status Validasi Sekolah</th> {{-- Hanya menampilkan validasi_sekolah --}}
+                                        <th class="border-0">Tanggal Update</th>
+                                        <th class="border-0">Status Validasi Sekolah</th>
                                         <th class="border-0">Aksi</th>
-                                        <th class="border-0">Komentar Sekolah</th> {{-- Ubah nama kolom --}}
+                                        <th class="border-0">Komentar Sekolah</th> 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -95,7 +95,7 @@
                                                     <i class="bi bi-download me-1"></i> Unduh
                                                 </a>
                                             </td>
-                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->created_at)->format('Y-m-d') }}</td> {{-- Tanggal pengajuan --}}
+                                            <td class="created-date">{{ \Carbon\Carbon::parse($kurikulum->updated_at)->format('Y-m-d') }}</td> {{-- Tanggal pengajuan atau update terbaru --}}
                                             <td>
                                                 @if($kurikulum->validasi_sekolah == 'disetujui')
                                                     <span class="badge bg-success">Disetujui</span>
@@ -106,45 +106,44 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <div class="btn-group" role="group">
-                                                    {{-- Tombol Edit selalu ada karena bisa direset statusnya --}}
-                                                    <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}"
-                                                    class="btn btn-sm btn-outline-warning"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Edit">
-                                                        <i class="bi bi-pencil"></i>
-                                                    </a>
-                                                    {{-- Tombol Hapus selalu ada --}}
-                                                    <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
-                                                        class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                                class="btn btn-sm btn-outline-danger"
-                                                                data-bs-toggle="tooltip"
-                                                                title="Hapus">
-                                                            <i class="bi bi-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                    {{-- Tombol Batalkan Persetujuan (Cancel) hanya jika validasi perusahaan adalah 'disetujui' --}}
-                                                    @if($kurikulum->validasi_perusahaan == 'disetujui')
-                                                        <form action="{{ route('perusahaan-kurikulum-cancel-approval', ['kurikulum' => $kurikulum->id]) }}"
+                                                @if ($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('perusahaan-kurikulum-show', ['kurikulum' => $kurikulum->id, 'source' => 'diajukan']) }}" 
+                                                           class="btn btn-sm btn-outline-primary" 
+                                                           data-bs-toggle="tooltip" 
+                                                           title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                    </div>
+                                                @else
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ route('perusahaan-kurikulum-show', ['kurikulum' => $kurikulum->id, 'source' => 'diajukan']) }}" 
+                                                        class="btn btn-sm btn-outline-primary me-1" 
+                                                        data-bs-toggle="tooltip" 
+                                                        title="View">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="{{ route('perusahaan-kurikulum-edit', ['kurikulum' => $kurikulum->id]) }}"
+                                                        class="btn btn-sm btn-outline-warning me-1"
+                                                        data-bs-toggle="tooltip"
+                                                        title="Edit">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <form action="{{ route('perusahaan-kurikulum-destroy', ['kurikulum' => $kurikulum->id]) }}"
                                                             method="POST"
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pengajuan kurikulum ini? Status akan direset untuk validasi ulang.')"
+                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
                                                             class="d-inline">
                                                             @csrf
-                                                            @method('PATCH')
+                                                            @method('DELETE')
                                                             <button type="submit"
-                                                                    class="btn btn-sm btn-outline-info"
+                                                                    class="btn btn-sm btn-outline-danger"
                                                                     data-bs-toggle="tooltip"
-                                                                    title="Batalkan Pengajuan">
-                                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                                    title="Hapus">
+                                                                <i class="bi bi-trash"></i>
                                                             </button>
                                                         </form>
-                                                    @endif
-                                                </div>
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if($kurikulum->komentar)

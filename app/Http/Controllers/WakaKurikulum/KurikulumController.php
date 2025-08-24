@@ -12,7 +12,8 @@ class KurikulumController extends Controller
 {
     /**
      * Display a listing of kurikulums submitted by the waka kurikulum
-     */    public function index()
+     */    
+    public function index()
     {
         return view('waka_kurikulum.kurikulum.list-diajukan', [
             'kurikulums' => Kurikulum::where(function($query) {
@@ -32,7 +33,8 @@ class KurikulumController extends Controller
     
     /**
      * Display a listing of kurikulums submitted by perusahaan for review
-     */    public function validasi()
+     */    
+    public function validasi()
     {
         // Get all kurikulums submitted by perusahaan users or admin on behalf of perusahaan,
         // regardless of validation status
@@ -53,7 +55,8 @@ class KurikulumController extends Controller
               ->orderBy('created_at', 'desc')
               ->get()
         ]);
-    }    /**
+    }    
+    /**
      * Show the form for creating a new kurikulum
      */
     public function create()
@@ -66,7 +69,8 @@ class KurikulumController extends Controller
 
     /**
      * Store a newly created kurikulum
-     */    public function store(Request $request)
+     */    
+    public function store(Request $request)
     {
         $request->validate([
             'nama' => 'required|string',
@@ -76,7 +80,11 @@ class KurikulumController extends Controller
             'perusahaan_id' => 'required|exists:users,id',
         ]);
 
-        $path = $request->file('file')->store('kurikulum/', 'public');
+        // Store file in a more structured way
+        // For waka_kurikulum, store in kurikulum/sekolah directory
+        $folderPath = 'kurikulum/sekolah';
+        $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+        $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
 
         // Create kurikulum that will be validated by perusahaan
         Kurikulum::create([
@@ -96,7 +104,8 @@ class KurikulumController extends Controller
     
     /**
      * Show the form for editing the specified kurikulum
-     */    public function edit(Kurikulum $kurikulum)
+     */
+    public function edit(Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to edit this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
@@ -113,7 +122,8 @@ class KurikulumController extends Controller
 
     /**
      * Update the specified kurikulum
-     */    public function update(Request $request, Kurikulum $kurikulum)
+     */
+    public function update(Request $request, Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to update this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
@@ -131,11 +141,19 @@ class KurikulumController extends Controller
             'deskripsi' => 'required|string',
             'file' => 'nullable|mimes:pdf',
             'perusahaan_id' => 'required|exists:users,id',
-        ]);        // Update file if needed
+        ]);        
+        // Update file if needed
         if ($request->hasFile('file')) {
-            // Generate a unique filename to avoid overwriting existing files
-            $filename = uniqid() . '_' . $request->file('file')->getClientOriginalName();
-            $path = $request->file('file')->storeAs('kurikulum', $filename, 'public');
+            // Hapus file lama dari storage jika ada
+            if ($kurikulum->file_kurikulum) {
+                Storage::disk('public')->delete($kurikulum->file_kurikulum);
+            }
+            
+            // Store file in structured way - for waka_kurikulum in sekolah directory
+            $folderPath = 'kurikulum/sekolah';
+            $fileName = time() . '_' . $request->file('file')->getClientOriginalName();
+            $path = $request->file('file')->storeAs($folderPath, $fileName, 'public');
+            
             $kurikulum->update([
                 'file_kurikulum' => $path
             ]);
@@ -146,6 +164,7 @@ class KurikulumController extends Controller
             'deskripsi' => $request->deskripsi,
             'perusahaan_id' => $request->perusahaan_id,
             'validasi_perusahaan' => 'proses', // Reset validation status as it's been modified
+            // Note: Not resetting komentar here to keep rejection comments visible while in 'proses' state
         ]);
 
         return redirect()->route('waka-kurikulum-list-diajukan')
@@ -154,7 +173,8 @@ class KurikulumController extends Controller
     
     /**
      * Remove the specified kurikulum
-     */    public function destroy(Kurikulum $kurikulum)
+     */
+    public function destroy(Kurikulum $kurikulum)
     {
         // Make sure the user is authorized to delete this kurikulum
         if ($kurikulum->pengirim_id !== auth()->id()) {
@@ -172,6 +192,34 @@ class KurikulumController extends Controller
         return redirect()->route('waka-kurikulum-list-diajukan')
             ->with('success', 'Kurikulum berhasil dihapus');
     }
+    
+    /**
+     * Display the specified kurikulum
+     */
+    public function show(Kurikulum $kurikulum, Request $request)
+    {
+        // Get perusahaan information
+        $perusahaan = null;
+        if($kurikulum->perusahaan_id) {
+            $perusahaan = User::find($kurikulum->perusahaan_id);
+        }
+        
+        // Determine the source of the request - from validation menu or from submitted menu
+        $fromValidation = $request->query('source') === 'validasi';
+        
+        // Get pengirim information if from validation menu
+        $pengirimPerusahaan = null;
+        if($fromValidation && $kurikulum->pengirim_id) {
+            $pengirimPerusahaan = User::find($kurikulum->pengirim_id);
+        }
+        
+        return view('waka_kurikulum.kurikulum.show', [
+            'kurikulum' => $kurikulum,
+            'perusahaan' => $perusahaan,
+            'pengirimPerusahaan' => $pengirimPerusahaan,
+            'fromValidation' => $fromValidation
+        ]);
+    }
 
     /**
      * Approve a kurikulum
@@ -186,6 +234,7 @@ class KurikulumController extends Controller
         
         $kurikulum->update([
             'validasi_sekolah' => 'disetujui',
+            'komentar' => null, // Reset komentar ketika disetujui setelah penolakan
         ]);
         
         return redirect()->route('waka-kurikulum-list-validasi')

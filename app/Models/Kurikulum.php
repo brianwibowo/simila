@@ -11,10 +11,13 @@ class Kurikulum extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id']; // Jika menggunakan guarded, pastikan semua kolom lain bisa diisi massal
+    protected $guarded = ['id'];
+    
+    // Make sure timestamps are enabled
+    public $timestamps = true;
 
     // Explicitly define fillable fields for clarity
-    protected $fillable = [ // Ini sudah ada dan benar
+    protected $fillable = [
         'nama_kurikulum',
         'pengirim_id',
         'perusahaan_id',
@@ -45,6 +48,6 @@ class Kurikulum extends Model
 
     public function perusahaan()
     {
-        return $this->belongsTo(User::class, 'perusahaan_id'); // Menambahkan relasi perusahaan
+        return $this->belongsTo(User::class, 'perusahaan_id');
     }
 }
