@@ -186,6 +186,6 @@ class RisetController extends Controller
         $risets = Riset::with('anggota.user')
                      ->latest()
                      ->paginate(10);
-        return view('admin-riset-results', compact('risets')); // Folder views baru
+        return view('admin.riset.results', compact('risets')); // Folder views baru
     }
 }

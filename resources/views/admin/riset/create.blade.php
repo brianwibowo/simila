@@ -12,7 +12,7 @@
             </ul>
         </div>
     @endif
-    <form action="{{ route('waka-humas-riset-store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin-riset-store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label for="topik" class="form-label">Topik Riset</label>
