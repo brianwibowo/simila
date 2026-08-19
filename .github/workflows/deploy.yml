@@ -81,7 +81,6 @@ jobs:
 
             # Create or update docker-compose.yml
             cat << 'EOF' > docker-compose.yml
-            version: '3.8'
             services:
               app:
                 container_name: simila-app
@@ -100,10 +99,32 @@ jobs:
                   - simila_storage:/var/www/html/storage/app/public
                 networks:
                   - simila_network
+                depends_on:
+                  db:
+                    condition: service_healthy
+
+              db:
+                container_name: simila-db
+                image: mysql:8.0
+                restart: unless-stopped
+                environment:
+                  MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-passwordBaru123}
+                  MYSQL_DATABASE: ${DB_DATABASE:-simila}
+                volumes:
+                  - simila_dbdata:/var/lib/mysql
+                networks:
+                  - simila_network
+                healthcheck:
+                  test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-passwordBaru123}"]
+                  interval: 5s
+                  timeout: 5s
+                  retries: 10
 
             volumes:
               simila_storage:
                 name: simila_storage
+              simila_dbdata:
+                name: simila_dbdata
 
             networks:
               simila_network:
