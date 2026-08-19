@@ -14,7 +14,9 @@ class AddFinalStatusToCertificationExamsStatus extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE `certification_exams` CHANGE `status_ujian` `status_ujian` ENUM('draft','published','archived','final') NOT NULL DEFAULT 'draft'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE `certification_exams` CHANGE `status_ujian` `status_ujian` ENUM('draft','published','archived','final') NOT NULL DEFAULT 'draft'");
+        }
     }
 
     /**
@@ -24,7 +26,8 @@ class AddFinalStatusToCertificationExamsStatus extends Migration
      */
     public function down()
     {
-        // Revert to original enum values
-        DB::statement("ALTER TABLE `certification_exams` CHANGE `status_ujian` `status_ujian` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE `certification_exams` CHANGE `status_ujian` `status_ujian` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft'");
+        }
     }
 }

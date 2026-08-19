@@ -15,7 +15,7 @@ class CleanUpMoocQuizAndModules extends Migration
     public function up()
     {
         // Temporarily disable foreign key checks for aggressive cleanup
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // 1. Drop the mooc_evals table (quiz table)
         Schema::dropIfExists('mooc_evals');
@@ -56,7 +56,7 @@ class CleanUpMoocQuizAndModules extends Migration
         //    (Your MoocScore model only has file_sertifikat, so it's fine)
 
         // Re-enable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -67,7 +67,7 @@ class CleanUpMoocQuizAndModules extends Migration
     public function down()
     {
         // Temporarily disable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // 1. Re-create mooc_evals table (if needed for rollback)
         Schema::create('mooc_evals', function (Blueprint $table) {
@@ -100,6 +100,6 @@ class CleanUpMoocQuizAndModules extends Migration
         });
 
         // Re-enable foreign key checks
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 }

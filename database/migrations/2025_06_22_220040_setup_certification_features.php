@@ -15,7 +15,7 @@ class SetupCertificationFeatures extends Migration
     public function up()
     {
         // TEMPORARILY DISABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // Drop existing tables if they exist to recreate them with correct structure and FKs
         // This is safe because we just did a migrate:fresh
@@ -108,7 +108,7 @@ class SetupCertificationFeatures extends Migration
         });
 
         // RE-ENABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -119,7 +119,7 @@ class SetupCertificationFeatures extends Migration
     public function down()
     {
         // TEMPORARILY DISABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // Drop tables in reverse order of creation
         Schema::table('users', function (Blueprint $table) {
@@ -136,6 +136,6 @@ class SetupCertificationFeatures extends Migration
         Schema::dropIfExists('certification_exams');
 
         // RE-ENABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 }

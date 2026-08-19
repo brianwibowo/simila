@@ -32,3 +32,6 @@
 
 <!-- Sweet Alert -->
 <script src="{{ asset('template/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+
+<!-- Kaiadmin JS (sidebar toggle, mobile menu, scrollbars) -->
+<script src="{{ asset('template/assets/js/kaiadmin.min.js') }}"></script>

@@ -15,7 +15,7 @@ class ReviseCertificationFeaturesSchema extends Migration
     public function up()
     {
         // TEMPORARILY DISABLE FOREIGN KEY CHECKS - Safety net
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // 1. Drop columns from certification_exams table
         Schema::table('certification_exams', function (Blueprint $table) {
@@ -43,7 +43,7 @@ class ReviseCertificationFeaturesSchema extends Migration
         });
 
         // RE-ENABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
@@ -54,14 +54,17 @@ class ReviseCertificationFeaturesSchema extends Migration
     public function down()
     {
         // TEMPORARILY DISABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        Schema::disableForeignKeyConstraints();
 
         // 1. Re-add columns to certification_exams (with default values)
         Schema::table('certification_exams', function (Blueprint $table) {
             $table->integer('durasi_menit')->nullable()->after('pembuat_user_id');
             $table->integer('nilai_minimum_lulus')->after('durasi_menit')->default(0);
-            // Re-add status_ujian with old ENUM values
-            DB::statement("ALTER TABLE `certification_exams` ADD `status_ujian` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft' AFTER `nilai_minimum_lulus`");
+            if (DB::getDriverName() === 'mysql') {
+                DB::statement("ALTER TABLE `certification_exams` ADD `status_ujian` ENUM('draft','published','archived') NOT NULL DEFAULT 'draft' AFTER `nilai_minimum_lulus`");
+            } else {
+                $table->string('status_ujian')->default('draft')->after('nilai_minimum_lulus');
+            }
         });
 
         // 2. Re-create the tables
@@ -87,6 +90,6 @@ class ReviseCertificationFeaturesSchema extends Migration
         });
 
         // RE-ENABLE FOREIGN KEY CHECKS
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+        Schema::enableForeignKeyConstraints();
     }
 }

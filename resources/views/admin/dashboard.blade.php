@@ -294,7 +294,7 @@
         <div class="card-body px-4 py-4">
             <div class="row g-3">
                 <div class="col-6 col-md-3">
-                    <a href="{{ route('admin-kurikulum-index') }}" class="card card-body h-100 text-decoration-none border shadow-none bg-light hover-shadow text-center p-3 rounded-3">
+                    <a href="{{ route('admin-kurikulum-list-diajukan') }}" class="card card-body h-100 text-decoration-none border shadow-none bg-light hover-shadow text-center p-3 rounded-3">
                         <div class="text-primary mb-2"><i class="fas fa-book-open fa-2x"></i></div>
                         <h6 class="fw-bold text-dark mb-1" style="font-size: 0.88rem;">Kurikulum Bersama</h6>
                         <span class="text-muted" style="font-size: 0.75rem;">{{ $stats['total_kurikulum'] ?? 0 }} Kurikulum</span>
