@@ -6,7 +6,14 @@
   <body>
     <div class="wrapper">
       <!-- Sidebar -->
-      @include('components.' . Auth::user()->getRoleNames()->first() . '.sidebar')
+      @php
+          $currentRole = (Auth::check() && Auth::user()->getRoleNames()->isNotEmpty()) ? Auth::user()->getRoleNames()->first() : 'admin';
+      @endphp
+      @if(view()->exists('components.' . $currentRole . '.sidebar'))
+          @include('components.' . $currentRole . '.sidebar')
+      @else
+          @include('components.admin.sidebar')
+      @endif
       <!-- End Sidebar -->
 
       <div class="main-panel">
