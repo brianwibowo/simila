@@ -80,7 +80,25 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
     // Admin Routes
     Route::middleware(['role:admin'])->prefix('admin')->group(function () {
         Route::get('/', function () {
-            return view('admin.dashboard');
+            $stats = [
+                'total_users' => \App\Models\User::count(),
+                'total_siswa' => \App\Models\User::role('siswa')->count(),
+                'total_guru' => \App\Models\User::role('guru')->count(),
+                'total_perusahaan' => \App\Models\User::role('perusahaan')->count(),
+                'total_waka' => \App\Models\User::role(['waka_kurikulum', 'waka_humas'])->count(),
+                'total_alumni' => \App\Models\User::role('alumni')->count(),
+                'total_lsp' => \App\Models\User::role('lsp')->count(),
+                'total_pkl' => \App\Models\PKL::count(),
+                'total_kurikulum' => \App\Models\Kurikulum::count(),
+                'total_project' => \App\Models\Project::count(),
+                'total_mooc' => \App\Models\MOOC::count(),
+                'total_beasiswa' => \App\Models\Beasiswa::count(),
+                'total_scouting' => \App\Models\Talent_Scouting::count(),
+                'total_sertifikasi' => \App\Models\CertificationExam::count(),
+                'total_riset' => \App\Models\Riset::count(),
+                'recent_users' => \App\Models\User::with('roles')->latest()->take(6)->get(),
+            ];
+            return view('admin.dashboard', compact('stats'));
         })->name('admin-dashboard');
 
         // START: Rute Baru untuk Sertifikasi Kompetensi oleh Admin

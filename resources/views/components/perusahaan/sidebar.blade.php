@@ -1,8 +1,10 @@
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <div class="logo-header d-flex align-items-center justify-content-between px-3" data-background-color="dark">
-            <a href="{{ route('perusahaan-dashboard') }}" class="text-white text-decoration-none">
-                <h3 class="m-0 fw-bold text-uppercase" style="letter-spacing: 1px;">SIMILA</h3>
+            <a href="{{ route('perusahaan-dashboard') }}" class="logo d-flex align-items-center text-decoration-none">
+                <span class="rounded-circle bg-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px; min-width: 36px; border: 2px solid rgba(255,255,255,0.25);">
+                    <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" alt="SIMILA" style="width: 22px; height: 22px; object-fit: contain;" />
+                </span>
             </a>
             {{-- Toggle untuk sidebar, ini biasanya di luar logo-header atau punya parent div sendiri --}}
             {{-- Jika ada elemen toggle untuk sidebar global, pastikan ada di sini atau di layout utama --}}
