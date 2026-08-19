@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   app:
     container_name: simila-app
@@ -20,12 +18,14 @@ services:
     volumes:
       - simila-storage:/var/www/html/storage/app/public
     networks:
-      - simila-network
+      - bapenda-network
 
 volumes:
   simila-storage:
     name: simila_storage
 
 networks:
-  simila-network:
-    name: simila_network
+  bapenda-network:
+    external: true
+    name: audirasite_bapenda-network
+
