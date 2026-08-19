@@ -28,25 +28,23 @@ class SetupCertificationFeatures extends Migration
 
         // Drop the pkl_id foreign key from users table if it exists
         // This ensures no conflict when recreating tables if users has a FK to pkls
-        Schema::table('users', function (Blueprint $table) {
-            // Check if the foreign key exists by its typical name
-            $fkName = 'users_pkl_id_foreign'; // Common Laravel FK name
-            $hasFk = false;
-            $foreignKeys = Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys('users');
-            foreach ($foreignKeys as $fk) {
-                if ($fk->getName() === $fkName) {
-                    $hasFk = true;
-                    break;
-                }
+        if (Schema::hasColumn('users', 'pkl_id')) {
+            try {
+                Schema::table('users', function (Blueprint $table) {
+                    $table->dropForeign(['pkl_id']);
+                });
+            } catch (\Throwable $e) {
+                // Ignore if FK does not exist
             }
 
-            if ($hasFk) {
-                $table->dropForeign($fkName);
+            try {
+                Schema::table('users', function (Blueprint $table) {
+                    $table->dropColumn('pkl_id');
+                });
+            } catch (\Throwable $e) {
+                // Ignore
             }
-            if (Schema::hasColumn('users', 'pkl_id')) {
-                $table->dropColumn('pkl_id');
-            }
-        });
+        }
 
 
         // 1. Create certification_exams table (the parent/master table for exams)

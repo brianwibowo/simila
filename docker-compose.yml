@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: simila-app
+    image: ghcr.io/brianwibowo/simila:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8086:80"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://simila.my.id
+      - RUN_MIGRATIONS=true
+    env_file:
+      - .env
+    volumes:
+      - simila-storage:/var/www/html/storage/app/public
+    networks:
+      - simila-network
+
+volumes:
+  simila-storage:
+    name: simila_storage
+
+networks:
+  simila-network:
+    name: simila_network

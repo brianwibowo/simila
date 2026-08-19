@@ -1,0 +1,10 @@
+node_modules
+vendor
+.git
+.github
+tests
+.phpunit.result.cache
+*.log
+.env
+simila.zip
+simila.sql

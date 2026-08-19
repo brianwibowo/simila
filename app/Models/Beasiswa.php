@@ -33,6 +33,8 @@ class Beasiswa extends Model
         'surat_rekomendasi' => 'string',
         'surat_motivasi' => 'string',
         'portofolio' => 'string',
+        'direkomendasikan' => 'boolean',
+        'tanggal_rekomendasi' => 'datetime',
     ];
 
     /**

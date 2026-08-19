@@ -23,6 +23,19 @@ class PKL extends Model
      */
     protected $guarded = ['id'];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($pkl) {
+            User::where('pkl_id', $pkl->id)->update([
+                'pkl_id' => null,
+                'pkl_status' => null
+            ]);
+            Logbook::where('pkl_id', $pkl->id)->delete();
+        });
+    }
+
     /**
      * The attributes that should be cast.
      *
