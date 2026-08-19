@@ -18,14 +18,34 @@ services:
     volumes:
       - simila-storage:/var/www/html/storage/app/public
     networks:
-      - bapenda-network
+      - simila-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: simila-db
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-similaPass123}
+      MYSQL_DATABASE: ${DB_DATABASE:-simila}
+    volumes:
+      - simila-dbdata:/var/lib/mysql
+    networks:
+      - simila-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-similaPass123}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   simila-storage:
     name: simila_storage
+  simila-dbdata:
+    name: simila_dbdata
 
 networks:
-  bapenda-network:
-    external: true
-    name: audirasite_bapenda-network
-
+  simila-network:
+    name: simila_network
