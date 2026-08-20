@@ -23,7 +23,7 @@
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
-                <li class="nav-item {{ Route::currentRouteName() == 'perusahaan-dashboard' ? 'active' : '' }}">
+                <li class="nav-item {{ Route::currentRouteName() == 'alumni-dashboard' ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
@@ -57,20 +57,4 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle untuk menu Riset & Inovasi Produk
-        document.querySelector('a[href="#chart"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            const submenu = document.getElementById('submenu');
-            submenu.classList.toggle('show');
-        });
-
-        // Toggle untuk menu Beasiswa Talent Scout
-        document.querySelector('a[href="#char"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            const subnav2 = document.getElementById('subnav2');
-            subnav2.classList.toggle('show');
-        });
-    });
-</script>
+{{-- Sub-menu collapses handled by Bootstrap data-bs-toggle="collapse" --}}

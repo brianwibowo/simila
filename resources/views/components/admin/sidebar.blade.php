@@ -250,6 +250,13 @@
                         </ul>
                     </div>
                 </li>
+                {{-- Manajemen User --}}
+                <li class="nav-item {{ request()->routeIs('admin-users*') ? 'active' : '' }}">
+                    <a href="{{ route('admin-users-index') }}" class="collapsed" aria-expanded="false">
+                        <i class="fas fa-users-cog"></i>
+                        <p>Manajemen User</p>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

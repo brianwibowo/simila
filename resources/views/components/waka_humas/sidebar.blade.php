@@ -94,21 +94,4 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Toggle untuk menu Riset & Inovasi Produk
-        document.querySelector('a[href="#chart"]').addEventListener('click', function (e) {
-            e.preventDefault();
-            const submenu = document.getElementById('submenu');
-            submenu.classList.toggle('show');
-        });
-
-        // Toggle untuk menu Beasiswa Talent Scout
-        document.querySelector('a[href="#char"]').addEventListener('click', function (e) {
-            e.preventDefault();
-            const subnav2 = document.getElementById('subnav2');
-            subnav2.classList.toggle('show');
-        });
-    });
-</script>
-
+{{-- Sub-menu collapses handled by Bootstrap data-bs-toggle="collapse" --}}

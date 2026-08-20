@@ -24,6 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'nis',
+        'kompetensi_keahlian',
         'sekolah_id', // Pastikan ini ada di fillable jika kamu punya kolom ini di tabel users
         'jenis_guru', // Pastikan ini ada di fillable
         'pkl_status',
