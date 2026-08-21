@@ -136,10 +136,7 @@ class KurikulumController extends Controller
     
     public function create()
     {
-        $perusahaanUsers = User::role('perusahaan')->get();
-        return view('admin.kurikulum.create', [
-            'perusahaanUsers' => $perusahaanUsers
-        ]);
+        return redirect()->route('admin-kurikulum-create-for-school');
     }
     
     public function createForSchool()

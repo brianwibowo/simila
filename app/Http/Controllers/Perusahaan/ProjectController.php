@@ -49,7 +49,7 @@ class ProjectController extends Controller
 
     public function show()
     {
-        return view('perusahaan.project_mitra.show');
+        return redirect()->route('perusahaan-project-index');
     }
 
     public function edit(Project $project)

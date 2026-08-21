@@ -90,7 +90,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
                 'total_lsp' => \App\Models\User::role('lsp')->count(),
                 'total_pkl' => \App\Models\PKL::count(),
                 'total_kurikulum' => \App\Models\Kurikulum::count(),
-                'total_project' => \App\Models\Project::count(),
+                'total_project' => Project::count(),
                 'total_mooc' => \App\Models\MOOC::count(),
                 'total_beasiswa' => \App\Models\Beasiswa::count(),
                 'total_scouting' => \App\Models\Talent_Scouting::count(),
@@ -190,14 +190,8 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::delete('/{module}', [AdminMoocModuleController::class, 'destroy'])->name('destroy');
         });
 
-        // PKL Pembimbing Assignment Routes
-        Route::prefix('pkl/assign')->name('admin-pkl-assign-')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\PklController::class, 'index'])->name('index');
-            Route::get('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'show'])->name('show');
-            Route::get('/{pkl}/form', [App\Http\Controllers\Admin\PklController::class, 'showAssignForm'])->name('form');
-            Route::post('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'assignPembimbing'])->name('store');
-            Route::delete('/{pkl}', [App\Http\Controllers\Admin\PklController::class, 'removePembimbing'])->name('remove');
-        });
+        // NOTE: PKL Pembimbing Assignment routes sudah ada di prefix group admin-pkl- (baris 141-169)
+        // Tidak perlu didaftarkan ulang di sini
 
         Route::resource('scouting', AdminScoutingController::class)->names([
             'index' => 'admin-scouting-index',
@@ -452,9 +446,6 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             Route::post('/siswa/{siswa}/validasi-laporan', [GuruPklController::class, 'validateFinalReport'])->name('validate-report');
         });
         Route::get('/mooc/{mooc}', [GuruMoocController::class, 'show'])->name('guru-mooc-show');
-        Route::get('/mooc/{mooc}/eval', [GuruMoocController::class, 'eval'])->name('guru-mooc-eval');
-        Route::post('/mooc/{mooc}/nilai', [GuruMoocController::class, 'nilai'])->name('guru-mooc-nilai');
-
         Route::post('/mooc/{mooc}/reflection', [GuruMoocController::class, 'reflection'])->name('guru-reflection-store');
     });
 
@@ -475,8 +466,6 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         Route::delete('/kurikulum/{kurikulum}', [WakaKurikulumController::class, 'destroy'])->name('waka-kurikulum-destroy');
         Route::patch('/kurikulum/{kurikulum}/setuju', [WakaKurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
         Route::patch('/kurikulum/{kurikulum}/tolak', [WakaKurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
-        Route::patch('/kurikulum/{kurikulum}/setuju', [WakaKurikulumController::class, 'setuju'])->name('waka-kurikulum-setuju');
-        Route::patch('/kurikulum/{kurikulum}/tolak', [WakaKurikulumController::class, 'tolak'])->name('waka-kurikulum-tolak');
 
         // Beasiswa Rekomendasi
         Route::get('/beasiswa', [WakaKurikulumBeasiswaRekomendasiController::class, 'index'])->name('waka_kurikulum.beasiswas.index');
@@ -493,14 +482,9 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             return view('waka_humas.dashboard');
         })->name('waka-humas-dashboard');
 
-        Route::resource('guru-tamu', WakaHumasGuruTamuController::class)->names([
+        Route::resource('guru-tamu', WakaHumasGuruTamuController::class)->only(['index', 'show'])->names([
             'index' => 'waka-humas-guru-tamu-index',
-            'create' => 'waka-humas-guru-tamu-create',
-            'store' => 'waka-humas-guru-tamu-store',
             'show' => 'waka-humas-guru-tamu-show',
-            'edit' => 'waka-humas-guru-tamu-edit',
-            'update' => 'waka-humas-guru-tamu-update',
-            'destroy' => 'waka-humas-guru-tamu-destroy',
         ]);
         Route::put('guru-tamu/{guru_tamu}/approve', [WakaHumasGuruTamuController::class, 'approve'])->where('guru_tamu', '[0-9]+')->name('waka-humas-guru-tamu-approve');
         Route::put('guru-tamu/{guru_tamu}/reject', [WakaHumasGuruTamuController::class, 'reject'])->where('guru_tamu', '[0-9]+')->name('waka-humas-guru-tamu-reject');
@@ -566,16 +550,10 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
         })->name('alumni-dashboard');
 
         Route::get('scouting/', [AlumniScoutingController::class, 'index'])->name('alumni-scouting-index');
+        // Status route HARUS di atas wildcard {scouting} agar tidak tertangkap sebagai parameter
+        Route::get('scouting/status/riwayat', [AlumniScoutingController::class, 'status'])->name('alumni-scouting-status');
         Route::get('scouting/{scouting}', [AlumniScoutingController::class, 'registration'])->name('alumni-scouting-register');
         Route::post('scouting/{scouting}/apply', [AlumniScoutingController::class, 'apply'])->name('alumni-scouting-apply');
-        Route::get('scouting/status/riwayat', [AlumniScoutingController::class, 'status'])->name('alumni-scouting-status');
-    });
-
-    // LSP Routes
-    Route::middleware(['role:lsp'])->prefix('lsp')->group(function () {
-        Route::get('/', function () {
-            return view('lsp.dashboard');
-        })->name('lsp-dashboard');
     });
 }); // End of main 'auth' middleware group
 
