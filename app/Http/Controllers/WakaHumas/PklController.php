@@ -3,19 +3,26 @@
 namespace App\Http\Controllers\WakaHumas;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pkl;
+use App\Models\PKL;
 use App\Models\Logbook;
 use App\Models\User;
 use App\Models\LogbookContent;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
 
 class PklController extends Controller
-{    /**
+{
+    /**
      * Display a listing of the PKL reports.
-     */    public function index(Request $request)
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function index(Request $request): View
     {
-        $query = Pkl::with(['siswas', 'pembimbing', 'perusahaan']);
+        $query = PKL::with(['siswas', 'pembimbing', 'perusahaan']);
         
         $pkls = $query->latest()->paginate(10);
         
@@ -24,15 +31,24 @@ class PklController extends Controller
 
     /**
      * Display the specified PKL report.
+     *
+     * @param PKL $pkl
+     * @return View
      */
-    public function show(Pkl $pkl)
+    public function show(PKL $pkl): View
     {
         $pkl->load(['siswas', 'pembimbing', 'perusahaan']);
         return view('waka_humas.pkl.show', compact('pkl'));
-    }/**
+    }
+
+    /**
      * Validate the PKL report.
+     *
+     * @param Request $request
+     * @param PKL $pkl
+     * @return RedirectResponse
      */
-    public function validateReport(Request $request, Pkl $pkl)
+    public function validateReport(Request $request, PKL $pkl): RedirectResponse
     {
         $validated = $request->validate([
             'status' => 'required|in:disetujui,ditolak',
@@ -47,9 +63,15 @@ class PklController extends Controller
 
         return redirect()->route('waka-humas-pkl-show', $pkl)
             ->with('success', 'Laporan PKL berhasil divalidasi');
-    }    /**
+    }
+
+    /**
      * Download the PKL report file.
-     */    public function downloadReport(Pkl $pkl)
+     *
+     * @param PKL $pkl
+     * @return RedirectResponse
+     */
+    public function downloadReport(PKL $pkl): RedirectResponse
     {
         $siswa = $pkl->siswas->first();
         if (!$siswa) {
@@ -65,75 +87,12 @@ class PklController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showId($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }    /**
      * Show student logbook for validation.
      *
-     * @param  \App\Models\User  $siswa
-     * @return \Illuminate\Http\Response
-     */    public function siswaLogbook(User $siswa)
+     * @param User $siswa
+     * @return View|RedirectResponse
+     */
+    public function siswaLogbook(User $siswa)
     {
         $logbook = Logbook::where('siswa_id', $siswa->id)->first();
         
@@ -145,14 +104,14 @@ class PklController extends Controller
         $logbookContents = $logbook->logbookContents()->orderBy('tanggal', 'desc')->paginate(10);
         
         return view('waka_humas.pkl.siswa_logbook', compact('siswa', 'logbook', 'logbookContents'));
-    }// Validation methods removed as per requirement - only final reports need validation
+    }
 
     /**
      * Display a listing of the PKL programs for assignment.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function assignIndex()
+    public function assignIndex(): View
     {
         $pkls = PKL::with(['perusahaan', 'pembimbing'])->paginate(10);
         return view('waka_humas.pkl.assign.index', compact('pkls'));
@@ -161,9 +120,10 @@ class PklController extends Controller
     /**
      * Show the form for assigning a pembimbing to PKL.
      *
-     * @param  \App\Models\PKL  $pkl
-     * @return \Illuminate\Http\Response
-     */    public function assignForm(PKL $pkl)
+     * @param PKL $pkl
+     * @return View
+     */
+    public function assignForm(PKL $pkl): View
     {
         // Get all users with guru role and jenis_guru = 'guru pembimbing'
         $pembimbings = User::role('guru')
@@ -176,11 +136,11 @@ class PklController extends Controller
     /**
      * Assign a pembimbing to the PKL.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\PKL  $pkl
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param PKL $pkl
+     * @return RedirectResponse
      */
-    public function assignStore(Request $request, PKL $pkl)
+    public function assignStore(Request $request, PKL $pkl): RedirectResponse
     {
         $request->validate([
             'pembimbing_id' => 'required|exists:users,id'
@@ -197,10 +157,10 @@ class PklController extends Controller
     /**
      * Show the PKL details with assigned pembimbing.
      *
-     * @param  \App\Models\PKL  $pkl
-     * @return \Illuminate\Http\Response
+     * @param PKL $pkl
+     * @return View
      */
-    public function assignShow(PKL $pkl)
+    public function assignShow(PKL $pkl): View
     {
         $pkl->load(['perusahaan', 'pembimbing', 'siswas']);
         return view('waka_humas.pkl.assign.show', compact('pkl'));
@@ -209,10 +169,10 @@ class PklController extends Controller
     /**
      * Remove the assignment of pembimbing from PKL.
      *
-     * @param  \App\Models\PKL  $pkl
-     * @return \Illuminate\Http\Response
+     * @param PKL $pkl
+     * @return RedirectResponse
      */
-    public function assignRemove(PKL $pkl)
+    public function assignRemove(PKL $pkl): RedirectResponse
     {
         $pkl->update([
             'pembimbing_id' => null
@@ -220,11 +180,14 @@ class PklController extends Controller
 
         return redirect()->route('waka-humas-pkl-assign-index')
             ->with('success', 'Pembimbing berhasil dihapus dari program PKL.');
-    }    /**
+    }
+
+    /**
      * Display logbooks that need validation.
      *
-     * @return \Illuminate\Http\Response
-     */    public function logbookValidationIndex()
+     * @return View
+     */
+    public function logbookValidationIndex(): View
     {
         // Get all logbooks with their relationships
         $logbooks = Logbook::with(['siswa', 'pkl'])->paginate(10);

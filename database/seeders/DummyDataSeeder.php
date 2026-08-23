@@ -10,7 +10,7 @@ use App\Models\Logbook;
 use App\Models\LogbookContent;
 use App\Models\GuruTamu;
 use App\Models\Project;
-use App\Models\MOOC;
+use App\Models\Mooc;
 use App\Models\MoocModule;
 use App\Models\MoocScore;
 use App\Models\MoocReflection;
@@ -236,7 +236,7 @@ class DummyDataSeeder extends Seeder
         // -------------------------------------------------------------
         // 6. Modul MOOC & Pelatihan Mandiri Guru
         // -------------------------------------------------------------
-        $mooc1 = MOOC::firstOrCreate([
+        $mooc1 = Mooc::firstOrCreate([
             'judul_pelatihan' => 'Mastering Modern Fullstack Web Architecture & Cloud Native',
         ], [
             'deskripsi' => 'Pelatihan komprehensif bagi pendidik vokasi untuk menguasai arsitektur Laravel modern, RESTful API, Docker, dan DevOps.',

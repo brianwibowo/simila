@@ -32,6 +32,12 @@ use App\Http\Controllers\Siswa\BeasiswaScoutingController as SiswaBeasiswaScouti
 use App\Http\Controllers\Siswa\PklController as SiswaPklController;
 use App\Http\Controllers\Siswa\LogbookController as SiswaLogbookController;
 use App\Http\Controllers\Siswa\SertifikasiController as SiswaSertifikasiController;
+use App\Http\Controllers\Siswa\KurikulumController as SiswaKurikulumController;
+use App\Http\Controllers\Siswa\GuruTamuController as SiswaGuruTamuController;
+use App\Http\Controllers\Siswa\ProjectController as SiswaProjectController;
+use App\Http\Controllers\Siswa\MoocController as SiswaMoocController;
+use App\Http\Controllers\Siswa\ScoutingController as SiswaScoutingController;
+use App\Http\Controllers\Siswa\RisetController as SiswaRisetController;
 
 // Alumni Controllers
 use App\Http\Controllers\Alumni\ScoutingController as AlumniScoutingController;
@@ -91,7 +97,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
                 'total_pkl' => \App\Models\PKL::count(),
                 'total_kurikulum' => \App\Models\Kurikulum::count(),
                 'total_project' => Project::count(),
-                'total_mooc' => \App\Models\MOOC::count(),
+                'total_mooc' => \App\Models\Mooc::count(),
                 'total_beasiswa' => \App\Models\Beasiswa::count(),
                 'total_scouting' => \App\Models\Talent_Scouting::count(),
                 'total_sertifikasi' => \App\Models\CertificationExam::count(),
@@ -122,6 +128,10 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
 
         
         // Riset & Inovasi Produk (Admin)
+        Route::get('riset/results', [AdminRisetController::class, 'results'])->name('admin-riset-results');
+        Route::post('riset/{riset}/dokumentasi', [AdminRisetController::class, 'dokumentasi'])->name('admin-riset-dokumentasi');
+        Route::patch('riset/{riset}/terima', [AdminRisetController::class, 'terima'])->name('admin-riset-terima');
+        Route::patch('riset/{riset}/tolak', [AdminRisetController::class, 'tolak'])->name('admin-riset-tolak');
         Route::resource('riset', AdminRisetController::class)->names([
             'index' => 'admin-riset-index',
             'create' => 'admin-riset-create',
@@ -131,11 +141,6 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             'update' => 'admin-riset-update',
             'destroy' => 'admin-riset-destroy',
         ]);
-
-        Route::post('riset/{riset}/dokumentasi', [AdminRisetController::class, 'dokumentasi'])->name('admin-riset-dokumentasi');
-        Route::patch('riset/{riset}/terima', [AdminRisetController::class, 'terima'])->name('admin-riset-terima');
-        Route::patch('riset/{riset}/tolak', [AdminRisetController::class, 'tolak'])->name('admin-riset-tolak');
-        Route::get('riset/results', [AdminRisetController::class, 'results'])->name('admin-riset-results');
 
         // Admin PKL Routes - New Feature
         Route::prefix('pkl')->name('admin-pkl-')->group(function () {
@@ -388,9 +393,27 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
     // Siswa Routes
     Route::middleware(['role:siswa'])->prefix('siswa')->group(function () {
         Route::get('/', function () {
-            return view('siswa.dashboard');
+            $user = auth()->user();
+            $userId = $user->id;
+            $stats = [
+                'total_kurikulum' => \App\Models\Kurikulum::count(),
+                'total_pkl' => $user->pkl_id ? 1 : 0,
+                'total_guru_tamu' => \App\Models\GuruTamu::count(),
+                'total_project' => Project::count(),
+                'total_mooc' => \App\Models\Mooc::count(),
+                'total_beasiswa' => \App\Models\Beasiswa::where('user_id', $userId)->count(),
+                'total_scouting' => \App\Models\Talent_Scouting::where('user_id', $userId)->count(),
+                'total_sertifikasi' => \App\Models\Sertifikasi::where('user_id', $userId)->count(),
+                'total_riset' => \App\Models\Riset::count(),
+            ];
+            return view('siswa.dashboard', compact('stats'));
         })->name('siswa-dashboard');
 
+        // 1. Kurikulum Bersama
+        Route::get('/kurikulum', [SiswaKurikulumController::class, 'index'])->name('siswa-kurikulum-index');
+        Route::get('/kurikulum/{kurikulum}', [SiswaKurikulumController::class, 'show'])->name('siswa-kurikulum-show');
+
+        // 2. PKL & Logbook
         Route::get('/pkl', [SiswaPklController::class, 'index'])->name('siswa-pkl-index');
         Route::post('/pkl/{pkl}/register', [SiswaPklController::class, 'register'])->name('siswa-pkl-register');
         Route::get('/pkl/show', [SiswaPklController::class, 'show'])->name('siswa-pkl-show');
@@ -406,19 +429,43 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
             'destroy' => 'siswa-logbook-destroy',
         ])->except('show');
 
+        // 3. Guru Tamu Industri
+        Route::get('/guru-tamu', [SiswaGuruTamuController::class, 'index'])->name('siswa-guru-tamu-index');
+        Route::get('/guru-tamu/{guru_tamu}', [SiswaGuruTamuController::class, 'show'])->name('siswa-guru-tamu-show');
+
+        // 4. Project Mitra (PBL / TeFa)
+        Route::get('/project', [SiswaProjectController::class, 'index'])->name('siswa-project-index');
+        Route::get('/project/{project}', [SiswaProjectController::class, 'show'])->name('siswa-project-show');
+
+        // 5. Modul Belajar (MOOC)
+        Route::get('/mooc', [SiswaMoocController::class, 'index'])->name('siswa-mooc-index');
+        Route::get('/mooc/{mooc}', [SiswaMoocController::class, 'show'])->name('siswa-mooc-show');
+        Route::post('/mooc/{mooc}/nilai', [SiswaMoocController::class, 'nilai'])->name('siswa-mooc-nilai');
+        Route::post('/mooc/{mooc}/reflection', [SiswaMoocController::class, 'reflection'])->name('siswa-mooc-reflection');
+
+        // 6. Beasiswa & Talent Scouting
         Route::get('beasiswa', [SiswaBeasiswaScoutingController::class, 'index'])->name('siswa-beasiswa-index');
         Route::get('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'register'])->name('siswa-beasiswa-register');
         Route::post('beasiswa/daftar/{beasiswa}', [SiswaBeasiswaScoutingController::class, 'apply'])->name('siswa-beasiswa-apply');
         Route::get('beasiswa/status', [SiswaBeasiswaScoutingController::class, 'status'])->name('siswa-beasiswa-status');
 
-        // START: Rute Baru untuk Sertifikasi Kompetensi oleh Siswa
+        Route::get('/talent-scouting', [SiswaScoutingController::class, 'index'])->name('siswa-scouting-index');
+        Route::get('/talent-scouting/daftar/{scouting}', [SiswaScoutingController::class, 'registration'])->name('siswa-scouting-register');
+        Route::post('/talent-scouting/daftar/{scouting}', [SiswaScoutingController::class, 'apply'])->name('siswa-scouting-apply');
+        Route::get('/talent-scouting/status', [SiswaScoutingController::class, 'status'])->name('siswa-scouting-status');
+
+        // 7. Sertifikasi Kompetensi (LSP)
         Route::prefix('sertifikasi')->name('siswa-sertifikasi-')->group(function () {
-            Route::get('/', [SiswaSertifikasiController::class, 'index'])->name('index'); // Daftar sertifikasi & pendaftaran saya
-            Route::get('/register/{certificationExam}', [SiswaSertifikasiController::class, 'registerForm'])->name('register'); // Form pendaftaran
-            Route::post('/register/{certificationExam}', [SiswaSertifikasiController::class, 'storeRegistration'])->name('store_registration'); // Simpan pendaftaran
-            Route::get('/status', [SiswaSertifikasiController::class, 'showStatus'])->name('status'); // Status pendaftaran saya
-            Route::get('/{registration}/download-certificate', [SiswaSertifikasiController::class, 'downloadCertificate'])->name('download_certificate'); // Unduh sertifikat
+            Route::get('/', [SiswaSertifikasiController::class, 'index'])->name('index');
+            Route::get('/register/{certificationExam}', [SiswaSertifikasiController::class, 'registerForm'])->name('register');
+            Route::post('/register/{certificationExam}', [SiswaSertifikasiController::class, 'storeRegistration'])->name('store_registration');
+            Route::get('/status', [SiswaSertifikasiController::class, 'showStatus'])->name('status');
+            Route::get('/{registration}/download-certificate', [SiswaSertifikasiController::class, 'downloadCertificate'])->name('download_certificate');
         });
+
+        // 8. Riset Terapan & Inovasi Produk
+        Route::get('/riset', [SiswaRisetController::class, 'index'])->name('siswa-riset-index');
+        Route::get('/riset/{riset}', [SiswaRisetController::class, 'show'])->name('siswa-riset-show');
     });
 
 

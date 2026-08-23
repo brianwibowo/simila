@@ -69,7 +69,7 @@ class MoocController extends Controller
         return redirect()->route('guru-mooc-show', $mooc);
     }
 
-    public function reflection(MOOC $mooc, Request $request){
+    public function reflection(Mooc $mooc, Request $request){
 
         $request->validate([
             'reflection_text' => 'required'
