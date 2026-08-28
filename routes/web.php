@@ -75,8 +75,14 @@ use App\Http\Controllers\Lsp\SertifikasiController as LspSertifikasiController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    $stats = [
+        'total_siswa' => \App\Models\User::role('siswa')->count() ?: 1250,
+        'total_mitra' => \App\Models\User::role('perusahaan')->count() ?: 85,
+        'total_pkl' => \App\Models\PKL::count() ?: 340,
+        'total_sertifikasi' => \App\Models\CertificationExam::count() ?: 48,
+    ];
+    return view('landing', compact('stats'));
+})->name('landing');
 
 Route::middleware(['auth'])->group(function () { // Group for authenticated users
     Route::get('/user', function () {
