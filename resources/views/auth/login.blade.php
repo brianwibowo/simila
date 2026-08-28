@@ -6,7 +6,7 @@
   <title>Login - SIMILA</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #0284c7;
@@ -24,7 +24,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Poppins', sans-serif !important;
     }
 
     body {
@@ -35,14 +35,15 @@
     }
 
     .left-panel {
-      flex: 1;
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      flex: 1.1;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(30, 58, 138, 0.9) 55%, rgba(2, 132, 199, 0.85) 100%),
+                  url('https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=1200&auto=format&fit=crop') center center / cover no-repeat;
       color: white;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px;
+      padding: 50px 40px;
       position: relative;
       overflow: hidden;
     }
@@ -50,33 +51,61 @@
     .left-panel::before {
       content: '';
       position: absolute;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
-      top: -50px;
-      left: -50px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+      top: -60px;
+      left: -60px;
       border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .btn-back-home {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.25s ease;
+      z-index: 10;
+    }
+
+    .btn-back-home:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transform: translateX(-2px);
     }
 
     .brand-logo-container {
       background: white;
-      padding: 16px;
-      border-radius: 20px;
+      padding: 14px;
+      border-radius: 18px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
     }
 
-    .left-panel img {
-      width: 110px;
-      height: auto;
+    .left-panel img.logo-img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
       display: block;
     }
 
     .brand-title {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       letter-spacing: 0.5px;
       color: #ffffff;
@@ -85,11 +114,55 @@
     }
 
     .brand-subtitle {
-      font-size: 13px;
-      color: #94a3b8;
-      max-width: 320px;
+      font-size: 13.5px;
+      color: #cbd5e1;
+      max-width: 360px;
       text-align: center;
-      line-height: 1.5;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .left-feature-box {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 14px;
+      padding: 14px 18px;
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .left-feature-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(2, 132, 199, 0.3);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .left-feature-text h6 {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .left-feature-text p {
+      font-size: 11.5px;
+      color: #94a3b8;
+      margin: 0;
+      line-height: 1.4;
     }
 
     .right-panel {
@@ -281,12 +354,59 @@
 
   <!-- Left Side: Brand Panel -->
   <div class="left-panel">
+    <a href="{{ url('/') }}" class="btn-back-home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      <span>Kembali ke Beranda</span>
+    </a>
+
     <div class="brand-logo-container">
-      <img src="{{ asset('img/logo.jpg') }}" alt="Logo SIMILA">
+      <img src="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" class="logo-img" alt="Logo SIMILA">
     </div>
     <div class="brand-title">SIMILA</div>
     <div class="brand-subtitle">
-      Sistem Informasi Kemitraan Industri dan Penyelarasan Kejuruan
+      Sistem Informasi Kemitraan Industri &amp; Penyelarasan Vokasi 8+i
+    </div>
+
+    <!-- Frosted Glass Feature Highlights -->
+    <div class="left-feature-box">
+      <div class="left-feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg>
+      </div>
+      <div class="left-feature-text">
+        <h6>Praktik Kerja Lapangan (PKL)</h6>
+        <p>E-Logbook, absensi presensi &amp; monitoring digital</p>
+      </div>
+    </div>
+
+    <div class="left-feature-box">
+      <div class="left-feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      </div>
+      <div class="left-feature-text">
+        <h6>Penyelarasan Kurikulum</h6>
+        <p>Sinkronisasi kompetensi bersama mitra DUDI</p>
+      </div>
+    </div>
+
+    <div class="left-feature-box">
+      <div class="left-feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="7"/>
+          <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+        </svg>
+      </div>
+      <div class="left-feature-text">
+        <h6>Sertifikasi LSP / BNSP</h6>
+        <p>Uji kompetensi online &amp; sertifikat terstandar</p>
+      </div>
     </div>
   </div>
 
