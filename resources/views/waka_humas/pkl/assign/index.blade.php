@@ -21,7 +21,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-hover align-middle">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -30,7 +30,7 @@
                             <th>Tanggal</th>
                             <th>Pembimbing</th>
                             <th>Jumlah Siswa</th>
-                            <th>Aksi</th>
+                            <th class="text-center" style="width: 160px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,16 +51,31 @@
                                     @endif
                                 </td>
                                 <td>{{ $pkl->siswas->count() }} siswa</td>
-                                <td>
-                                    <a href="{{ route('waka-humas-pkl-assign-show', $pkl->id) }}" class="btn btn-sm btn-info">Detail</a>
-                                    <a href="{{ route('waka-humas-pkl-assign-form', $pkl->id) }}" class="btn btn-sm btn-primary">{{ $pkl->pembimbing ? 'Ganti Pembimbing' : 'Tugaskan Pembimbing' }}</a>
-                                    @if($pkl->pembimbing)
-                                        <form action="{{ route('waka-humas-pkl-assign-remove', $pkl->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Anda yakin ingin menghapus penugasan pembimbing ini?')">Hapus Penugasan</button>
-                                        </form>
-                                    @endif
+                                <td class="text-center" style="white-space: nowrap;">
+                                    <div class="d-flex align-items-center justify-content-center gap-1">
+                                        <a href="{{ route('waka-humas-pkl-assign-show', $pkl->id) }}"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Detail">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ route('waka-humas-pkl-assign-form', $pkl->id) }}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="{{ $pkl->pembimbing ? 'Ganti Pembimbing' : 'Tugaskan Pembimbing' }}">
+                                            <i class="bi bi-person-fill-add"></i>
+                                        </a>
+                                        @if($pkl->pembimbing)
+                                            <form action="{{ route('waka-humas-pkl-assign-remove', $pkl->id) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        title="Hapus Penugasan"
+                                                        onclick="return confirm('Anda yakin ingin menghapus penugasan pembimbing ini?')">
+                                                    <i class="bi bi-person-dash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @empty

@@ -116,44 +116,18 @@ use App\Models\User;
                                                     <span class="badge bg-warning">Menunggu</span>
                                                 @endif
                                             </td>
-                                            <td>
+                                            <td class="text-center">
                                                 @if($kurikulum->validasi_sekolah == 'disetujui' && $kurikulum->validasi_perusahaan == 'disetujui')
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('waka-kurikulum-show', $kurikulum) }}" 
-                                                        class="btn btn-sm btn-outline-primary" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="View">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-                                                    </div>
+                                                    <x-table-actions
+                                                        :viewRoute="route('waka-kurikulum-show', $kurikulum)"
+                                                    />
                                                 @else
-                                                    <div class="btn-group" role="group">
-                                                        <a href="{{ route('waka-kurikulum-show', $kurikulum) }}" 
-                                                        class="btn btn-sm btn-outline-primary me-1" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="View">
-                                                            <i class="bi bi-eye"></i>
-                                                        </a>
-                                                        <a href="{{ route('waka-kurikulum-edit', $kurikulum) }}" 
-                                                        class="btn btn-sm btn-outline-warning me-1" 
-                                                        data-bs-toggle="tooltip" 
-                                                        title="Edit">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form action="{{ route('waka-kurikulum-destroy', $kurikulum) }}" 
-                                                            method="POST" 
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus kurikulum ini?')"
-                                                            class="d-inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" 
-                                                                    class="btn btn-sm btn-outline-danger" 
-                                                                    data-bs-toggle="tooltip" 
-                                                                    title="Hapus">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                                                    <x-table-actions
+                                                        :viewRoute="route('waka-kurikulum-show', $kurikulum)"
+                                                        :editRoute="route('waka-kurikulum-edit', $kurikulum)"
+                                                        :deleteRoute="route('waka-kurikulum-destroy', $kurikulum)"
+                                                        deleteMessage="Apakah Anda yakin ingin menghapus kurikulum ini?"
+                                                    />
                                                 @endif
                                             </td>
                                             <td>

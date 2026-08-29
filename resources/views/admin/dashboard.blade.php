@@ -8,7 +8,7 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                 <div class="mb-3 mb-md-0">
                     <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge bg-white text-primary fw-bold px-3 py-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-25 fw-bold px-3 py-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
                             <i class="fas fa-shield-alt me-1"></i> Administrator Panel
                         </span>
                         <span class="text-white-50" style="font-size: 0.85rem;">
@@ -21,7 +21,7 @@
                     </p>
                 </div>
                 <div>
-                    <a href="{{ route('admin-users-index') }}" class="btn btn-light btn-round fw-bold px-4 py-2 shadow-sm text-primary">
+                    <a href="{{ route('admin-users-index') }}" class="btn btn-light btn-round fw-bold px-4 py-2 shadow-sm">
                         <i class="fas fa-users-cog me-2"></i> Kelola Pengguna & Role
                     </a>
                 </div>

@@ -182,7 +182,7 @@
                     <h5 class="modal-title" id="tolakModalLabel">Tolak Kurikulum</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="" method="POST" id="tolakForm">
+                <form action="{{ route('waka-kurikulum-tolak', $kurikulum) }}" method="POST" id="tolakForm">
                     @csrf
                     @method('PATCH')
                     <div class="modal-body">
@@ -203,15 +203,17 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Configure the reject modal
         const tolakModal = document.getElementById('tolakModal');
-        const tolakForm = document.getElementById('tolakForm');
-
-        tolakModal.addEventListener('show.bs.modal', function (event) {
-            const button = event.relatedTarget;
-            const kurikulumId = button.getAttribute('data-kurikulum-id');
-            tolakForm.action = `{{ route('waka-kurikulum-tolak', '') }}/${kurikulumId}`;
-        });
+        if (tolakModal) {
+            const tolakForm = document.getElementById('tolakForm');
+            tolakModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (button && button.hasAttribute('data-kurikulum-id')) {
+                    const kurikulumId = button.getAttribute('data-kurikulum-id');
+                    tolakForm.action = `/waka_kurikulum/kurikulum/${kurikulumId}/tolak`;
+                }
+            });
+        }
     });
     </script>
     @endif

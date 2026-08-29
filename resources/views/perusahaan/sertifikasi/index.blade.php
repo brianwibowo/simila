@@ -32,14 +32,13 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $exam->nama_ujian }}</td>
                                 <td>{{ $exam->kompetensi_terkait ?? '-' }}</td>
-                                <td>
-                                    <a href="{{ route('perusahaan-sertifikasi-show', $exam->id) }}" class="btn btn-sm btn-info">Detail & Soal</a>
-                                    <a href="{{ route('perusahaan-sertifikasi-edit', $exam->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('perusahaan-sertifikasi-destroy', $exam->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus ujian ini? Ini juga akan menghapus semua soal dan pendaftaran terkait.')">Hapus</button>
-                                    </form>
+                                <td class="text-center">
+                                    <x-table-actions
+                                        :viewRoute="route('perusahaan-sertifikasi-show', $exam->id)"
+                                        :editRoute="route('perusahaan-sertifikasi-edit', $exam->id)"
+                                        :deleteRoute="route('perusahaan-sertifikasi-destroy', $exam->id)"
+                                        deleteMessage="Yakin ingin menghapus sertifikasi ini? Ini juga akan menghapus semua pendaftaran terkait."
+                                    />
                                 </td>
                             </tr>
                         @empty

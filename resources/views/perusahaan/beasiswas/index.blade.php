@@ -48,20 +48,12 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ route('perusahaan-beasiswa-show', $b->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-info-circle"></i> Detail
-                                    </a>
-                                    <a href="{{ route('perusahaan-beasiswa-edit', $b->id) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('perusahaan-beasiswa-destroy', $b->id) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Yakin ingin menghapus batch ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                    <x-table-actions
+                                        :viewRoute="route('perusahaan-beasiswa-show', $b->id)"
+                                        :editRoute="route('perusahaan-beasiswa-edit', $b->id)"
+                                        :deleteRoute="route('perusahaan-beasiswa-destroy', $b->id)"
+                                        deleteMessage="Yakin ingin menghapus batch ini?"
+                                    />
                                 </td>
                             </tr>
                         @empty

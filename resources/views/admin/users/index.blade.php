@@ -76,11 +76,11 @@
                 <a href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}"
                    class="card h-100 text-decoration-none border shadow-none role-kpi-card p-3 rounded-3 {{ $isActive ? 'active-role-card' : '' }}"
                    style="background-color: {{ $meta['bg'] }}; border-color: {{ $isActive ? $meta['text'] : $meta['border'] }} !important;">
-                    <div class="d-flex align-items-center justify-content-between mb-1">
-                        <span class="small fw-bold text-truncate" style="color: {{ $meta['text'] }}; font-size: 0.75rem; max-width: 85px;" title="{{ $meta['title'] }}">
+                    <div class="d-flex align-items-center justify-content-between mb-1 gap-1">
+                        <span class="small fw-bold text-truncate" style="color: {{ $meta['text'] }}; font-size: 0.72rem;" title="{{ $meta['title'] }}">
                             {{ strtoupper(str_replace('_', ' ', $r->name)) }}
                         </span>
-                        <i class="fas {{ $meta['icon'] }}" style="color: {{ $meta['text'] }};"></i>
+                        <i class="fas {{ $meta['icon'] }} flex-shrink-0" style="color: {{ $meta['text'] }};"></i>
                     </div>
                     <div class="h4 mb-0 fw-bold" style="color: {{ $meta['text'] }};">{{ $count }}</div>
                     <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">{{ $meta['title'] }}</small>
@@ -247,17 +247,15 @@
                                         <span class="text-muted small">-</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     @if($user->id == auth()->id())
-                                        <div class="text-center">
-                                            <span class="badge bg-info text-white px-3 py-2 rounded-pill">
-                                                <i class="fas fa-user-shield me-1"></i> Akun Anda (Aktif)
-                                            </span>
-                                        </div>
+                                        <span class="badge bg-info text-white px-3 py-2 rounded-pill">
+                                            <i class="fas fa-user-shield me-1"></i> Akun Anda (Aktif)
+                                        </span>
                                     @else
-                                        <form action="{{ route('admin-users-update-role', $user) }}" method="POST" class="d-flex flex-wrap gap-1 justify-content-center">
+                                        <form action="{{ route('admin-users-update-role', $user) }}" method="POST" class="d-inline-flex align-items-center justify-content-center gap-2">
                                             @csrf
-                                            <select name="role" class="form-select form-select-sm role-select" data-user-id="{{ $user->id }}" style="width: 125px;">
+                                            <select name="role" class="form-select form-select-sm role-select" data-user-id="{{ $user->id }}" style="min-width: 140px; width: auto;">
                                                 @foreach($roles as $role)
                                                     <option value="{{ $role->name }}" {{ $currentRole == $role->name ? 'selected' : '' }}>
                                                         {{ ucwords(str_replace('_', ' ', $role->name)) }}
@@ -265,15 +263,15 @@
                                                 @endforeach
                                             </select>
 
-                                            <div id="jenis-guru-options-{{ $user->id }}" class="jenis-guru-options" style="{{ $user->hasRole('guru') ? 'display: block;' : 'display: none;' }}">
-                                                <select name="jenis_guru" class="form-select form-select-sm" style="width: 115px;">
+                                            <div id="jenis-guru-options-{{ $user->id }}" class="jenis-guru-options" style="{{ $user->hasRole('guru') ? 'display: inline-block;' : 'display: none;' }}">
+                                                <select name="jenis_guru" class="form-select form-select-sm" style="min-width: 110px; width: auto;">
                                                     <option value="">Pilih Jenis</option>
                                                     <option value="guru pembimbing" {{ $user->jenis_guru == 'guru pembimbing' ? 'selected' : '' }}>Pembimbing</option>
                                                     <option value="guru produktif" {{ $user->jenis_guru == 'guru produktif' ? 'selected' : '' }}>Produktif</option>
                                                 </select>
                                             </div>
 
-                                            <button type="submit" class="btn btn-sm btn-primary" title="Simpan Perubahan Role">
+                                            <button type="submit" class="btn btn-action btn-primary" title="Simpan Perubahan Role">
                                                 <i class="fas fa-save"></i>
                                             </button>
                                         </form>
@@ -305,11 +303,12 @@
 
         {{-- Card Footer: Pagination --}}
         @if($users->hasPages() || $users->total() > 0)
-            <div class="card-footer bg-white py-3 px-4 border-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div class="small text-muted">
-                    Menampilkan <strong>{{ $users->firstItem() ?? 0 }}</strong> - <strong>{{ $users->lastItem() ?? 0 }}</strong> dari <strong>{{ $users->total() }}</strong> akun
+            <div class="card-footer py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="small text-muted d-flex align-items-center gap-1">
+                    <i class="fas fa-list-ol text-primary opacity-75"></i>
+                    <span>Menampilkan <strong>{{ $users->firstItem() ?? 0 }}</strong> - <strong>{{ $users->lastItem() ?? 0 }}</strong> dari <strong>{{ $users->total() }}</strong> pengguna</span>
                     @if($selectedRole !== 'all')
-                        (Filter: <strong>{{ strtoupper(str_replace('_', ' ', $selectedRole)) }}</strong>)
+                        <span class="badge bg-light text-primary border ms-1">{{ strtoupper(str_replace('_', ' ', $selectedRole)) }}</span>
                     @endif
                 </div>
                 <div>
@@ -348,13 +347,6 @@
 }
 .table > :not(caption) > * > * {
     padding: 0.85rem 0.75rem;
-}
-.pagination {
-    margin-bottom: 0;
-}
-.page-item.active .page-link {
-    background-color: #2563eb;
-    border-color: #2563eb;
 }
 </style>
 

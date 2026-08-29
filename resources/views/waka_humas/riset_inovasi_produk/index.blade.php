@@ -14,13 +14,16 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
+    <div class="card">
+    <div class="card-body">
+    <div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
             <tr>
                 <th>Topik</th>
                 <th>Deskripsi</th>
                 <th>Anggota</th>
-                <th>Aksi</th>
+                <th class="text-center" style="width: 120px;">Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -33,14 +36,13 @@
                             <span class="badge bg-secondary">{{ $anggota->user->name }}</span>
                         @endforeach
                     </td>
-                    <td>
-                        <a href="{{ route('waka-humas-riset-show', $riset) }}" class="btn btn-sm btn-info">Lihat</a>
-                        <a href="{{ route('waka-humas-riset-edit', $riset) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('waka-humas-riset-destroy', $riset) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                        </form>
+                    <td class="text-center">
+                        <x-table-actions
+                            :viewRoute="route('waka-humas-riset-show', $riset)"
+                            :editRoute="route('waka-humas-riset-edit', $riset)"
+                            :deleteRoute="route('waka-humas-riset-destroy', $riset)"
+                            deleteMessage="Yakin ingin menghapus riset ini?"
+                        />
                     </td>
                 </tr>
             @empty
@@ -50,10 +52,11 @@
             @endforelse
         </tbody>
     </table>
-    @if($risets->hasPages())
-        <div class="mt-3">
-            {{ $risets->links() }}
-        </div>
-    @endif
+    </div>
+    </div>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+        {{ $risets->links() }}
+    </div>
 </div>
 @endsection

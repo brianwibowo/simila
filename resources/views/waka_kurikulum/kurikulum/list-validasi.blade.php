@@ -102,31 +102,29 @@
                                                 <span class="badge bg-warning">Menunggu</span>
                                             @endif
                                         </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
+                                        <td class="text-center">
+                                            <div class="action-group">
                                                 <a href="{{ route('waka-kurikulum-show', ['kurikulum' => $kurikulum, 'source' => 'validasi']) }}" 
-                                                   class="btn btn-sm btn-outline-primary me-1" 
-                                                   data-bs-toggle="tooltip" 
-                                                   title="View">
-                                                    <i class="bi bi-eye"></i>
+                                                   class="btn btn-action btn-info" 
+                                                   title="Lihat Detail">
+                                                    <i class="fa fa-eye"></i>
                                                 </a>
                                                 
                                                 @if($kurikulum->validasi_sekolah == 'proses')
-                                                    <form action="{{ route('waka-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('waka-kurikulum-setuju', $kurikulum) }}" method="POST" class="d-inline m-0 p-0">
                                                         @csrf
                                                         @method('PATCH')
-                                                        <button type="submit" class="btn btn-sm btn-outline-success me-1" data-bs-toggle="tooltip" title="Setuju">
-                                                            <i class="bi bi-check-lg"></i>
+                                                        <button type="submit" class="btn btn-action btn-success" title="Setujui">
+                                                            <i class="fa fa-check"></i>
                                                         </button>
                                                     </form>
                                                     <button type="button" 
-                                                        class="btn btn-sm btn-outline-danger" 
+                                                        class="btn btn-action btn-danger" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#tolakModal" 
                                                         data-kurikulum-id="{{ $kurikulum->id }}"
-                                                        data-bs-toggle="tooltip"
                                                         title="Tolak">
-                                                        <i class="bi bi-x-lg"></i>
+                                                        <i class="fa fa-times"></i>
                                                     </button>
                                                 @endif
                                             </div>

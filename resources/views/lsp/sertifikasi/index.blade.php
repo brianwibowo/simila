@@ -41,20 +41,12 @@
                                 <td>{{ $exam->nama_ujian }}</td>
                                 <td>{{ $exam->kompetensi_terkait ?? '-' }}</td>
                                 <td class="text-center">
-                                    <a href="{{ route('lsp-sertifikasi-show', $exam->id) }}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-info-circle"></i> Detail & Pendaftar
-                                    </a>
-                                    <a href="{{ route('lsp-sertifikasi-edit', $exam->id) }}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <form action="{{ route('lsp-sertifikasi-destroy', $exam->id) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Yakin ingin menghapus sertifikasi ini? Ini juga akan menghapus semua pendaftaran terkait.')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Hapus
-                                        </button>
-                                    </form>
+                                    <x-table-actions
+                                        :viewRoute="route('lsp-sertifikasi-show', $exam->id)"
+                                        :editRoute="route('lsp-sertifikasi-edit', $exam->id)"
+                                        :deleteRoute="route('lsp-sertifikasi-destroy', $exam->id)"
+                                        deleteMessage="Yakin ingin menghapus sertifikasi ini? Ini juga akan menghapus semua pendaftaran terkait."
+                                    />
                                 </td>
                             </tr>
                         @empty

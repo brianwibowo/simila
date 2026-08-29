@@ -14,6 +14,20 @@
                     </form>
                 </ul>
             </li>
+            
+            {{-- Theme Switcher (Light / Dark Mode) --}}
+            <li class="nav-item me-3">
+                <button type="button" 
+                        class="btn btn-icon btn-round btn-theme-toggle shadow-sm" 
+                        id="themeToggleBtn"
+                        data-toggle-theme 
+                        title="Beralih Mode Tema" 
+                        aria-label="Toggle Theme">
+                    <i class="bi bi-moon-stars-fill theme-icon-moon"></i>
+                    <i class="bi bi-sun-fill theme-icon-sun d-none"></i>
+                </button>
+            </li>
+
             <li class="nav-item topbar-user dropdown hidden-caret">
                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                     aria-expanded="false">
@@ -37,20 +51,28 @@
                                 <div class="u-text">
                                     <h4>{{ Auth::user()->name ?? 'Admin' }}</h4>
                                     <p class="text-muted">{{ Auth::user()->email ?? 'hello@example.com' }}</p>
-                                    <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                    <a href="{{ route('profile.show') }}" class="btn btn-xs btn-primary btn-sm">Lihat Profil</a>
                                 </div>
                             </div>
                         </li>
                         <li>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">My Profile</a>
-                            <a class="dropdown-item" href="#">My Balance</a>
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                <i class="fas fa-user me-2 text-primary"></i> Profil Saya
+                            </a>
+                            <a class="dropdown-item" href="{{ route('profile.balance') }}">
+                                <i class="fas fa-wallet me-2 text-warning"></i> Ringkasan & Aktivitas
+                            </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Account Setting</a>
+                            <a class="dropdown-item" href="{{ route('profile.settings') }}">
+                                <i class="fas fa-cog me-2 text-info"></i> Pengaturan Akun
+                            </a>
                             <div class="dropdown-divider"></div>
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf
-                                <button class="dropdown-item" type="submit">Logout</button>
+                                <button class="dropdown-item text-danger" type="submit">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                </button>
                             </form>
                         </li>
                     </div>

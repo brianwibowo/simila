@@ -60,11 +60,11 @@ use App\Http\Controllers\Guru\ReflectionController as GuruReflectionController;
 // LSP Controllers
 use App\Http\Controllers\Lsp\SertifikasiController as LspSertifikasiController;
 
-
+// Profile & Account Settings Controller
+use App\Http\Controllers\ProfileController;
 
 /*
-|----------------------
-----------------------------------------------------
+|--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
@@ -88,6 +88,13 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
     Route::get('/user', function () {
         return view('user');
     })->name('user');
+
+    // Profile & Account Settings Routes
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/settings', [ProfileController::class, 'settings'])->name('profile.settings');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/profile/balance', [ProfileController::class, 'balance'])->name('profile.balance');
 
     // Admin Routes
     Route::middleware(['role:admin'])->prefix('admin')->group(function () {

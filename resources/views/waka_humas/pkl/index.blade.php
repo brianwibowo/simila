@@ -13,7 +13,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-hover align-middle">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -23,7 +23,7 @@
                             <th>Status Pembimbing</th>
                             <th>Status Waka Humas</th>
                             <th>Nilai</th>
-                            <th>Aksi</th>
+                            <th class="text-center" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,9 +44,10 @@
                                 </span>
                             </td>
                             <td>{{ $pkl->nilai ?? '-' }}</td>
-                            <td>                                <a href="{{ route('waka-humas-pkl-show', $pkl) }}" class="btn btn-sm btn-info">
-                                    <i class="bi bi-eye"></i> Detail
-                                </a>
+                            <td class="text-center">
+                                <x-table-actions
+                                    :viewRoute="route('waka-humas-pkl-show', $pkl)"
+                                />
                             </td>
                         </tr>
                         @empty
