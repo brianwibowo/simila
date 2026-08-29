@@ -1,0 +1,429 @@
+/* ============================================
+   LIGHT THEME (Default)
+   ============================================ */
+:root,
+[data-theme="light"] {
+    --color-primary: #4a90e2;
+    --color-primary-dark: #357abd;
+    --color-primary-light: #6fa3f0;
+    
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+    
+    /* Background colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #f1f3f5;
+    --bg-hover: #e9ecef;
+    
+    /* Text colors */
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-tertiary: #999999;
+    
+    /* Border colors */
+    --border-color: #dee2e6;
+    --border-color-light: #e9ecef;
+    
+    /* Card styling */
+    --card-bg: #ffffff;
+    --card-border: #dee2e6;
+    --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    
+    /* Navbar */
+    --navbar-bg: #ffffff;
+    --navbar-text: #212529;
+    --navbar-border: #dee2e6;
+    
+    /* Sidebar */
+    --sidebar-bg: #f8f9fa;
+    --sidebar-text: #212529;
+    --sidebar-hover: #e9ecef;
+    --sidebar-active: #4a90e2;
+    
+    /* Table styling */
+    --table-bg: #ffffff;
+    --table-striped-bg: #f8f9fa;
+    --table-border: #dee2e6;
+    --table-hover-bg: #f1f3f5;
+    --table-header-bg: #f8f9fa;
+    --table-header-text: #212529;
+}
+
+/* ============================================
+   DARK THEME
+   ============================================ */
+[data-theme="dark"] {
+    --color-primary: #5a9eff;
+    --color-primary-dark: #3d7dd6;
+    --color-primary-light: #7bb5ff;
+    
+    --color-secondary: #adb5bd;
+    --color-success: #28a745;
+    --color-danger: #f8585c;
+    --color-warning: #ffc107;
+    --color-info: #20c997;
+    
+    /* Background colors */
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #3d3d3d;
+    --bg-hover: #4d4d4d;
+    
+    /* Text colors */
+    --text-primary: #e8e8e8;
+    --text-secondary: #adb5bd;
+    --text-tertiary: #6c757d;
+    
+    /* Border colors */
+    --border-color: #404040;
+    --border-color-light: #3d3d3d;
+    
+    /* Card styling */
+    --card-bg: #2d2d2d;
+    --card-border: #404040;
+    --card-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+    
+    /* Navbar */
+    --navbar-bg: #2d2d2d;
+    --navbar-text: #e8e8e8;
+    --navbar-border: #404040;
+    
+    /* Sidebar */
+    --sidebar-bg: #2d2d2d;
+    --sidebar-text: #e8e8e8;
+    --sidebar-hover: #3d3d3d;
+    --sidebar-active: #5a9eff;
+    
+    /* Table styling */
+    --table-bg: #2d2d2d;
+    --table-striped-bg: #383838;
+    --table-border: #404040;
+    --table-hover-bg: #3d3d3d;
+    --table-header-bg: #3d3d3d;
+    --table-header-text: #e8e8e8;
+}
+
+/* ============================================
+   APPLY THEME TO ELEMENTS
+   ============================================ */
+
+/* Body & General */
+body {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Navbar */
+.navbar,
+.navbar-header {
+    background-color: var(--navbar-bg) !important;
+    border-color: var(--navbar-border) !important;
+    color: var(--navbar-text) !important;
+}
+
+.navbar-header-transparent {
+    background-color: var(--navbar-bg) !important;
+}
+
+.navbar-nav .nav-link,
+.navbar-nav .profile-pic .profile-username {
+    color: var(--navbar-text) !important;
+}
+
+/* Cards */
+.card {
+    background-color: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-primary) !important;
+    box-shadow: var(--card-shadow) !important;
+}
+
+.card-header {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.card-body {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Table */
+.table {
+    color: var(--text-primary) !important;
+    border-color: var(--table-border) !important;
+}
+
+.table-striped > tbody > tr:nth-child(odd) {
+    background-color: var(--table-striped-bg) !important;
+}
+
+.table > thead > tr {
+    background-color: var(--table-header-bg) !important;
+    color: var(--table-header-text) !important;
+}
+
+.table-light {
+    background-color: var(--table-header-bg) !important;
+    color: var(--table-header-text) !important;
+}
+
+.table > tbody > tr:hover {
+    background-color: var(--table-hover-bg) !important;
+}
+
+.table-bordered,
+.table-bordered > thead > tr,
+.table-bordered > tbody > tr,
+.table-bordered > tfoot > tr {
+    border-color: var(--table-border) !important;
+}
+
+/* Buttons */
+.btn-secondary {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+}
+
+.btn-outline-secondary {
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--bg-hover) !important;
+    border-color: var(--text-primary) !important;
+}
+
+/* Sidebar */
+.sidebar,
+.sidebar-background {
+    background-color: var(--sidebar-bg) !important;
+}
+
+.nav-item .nav-link {
+    color: var(--sidebar-text) !important;
+}
+
+.nav-item .nav-link:hover {
+    background-color: var(--sidebar-hover) !important;
+}
+
+.nav-item .nav-link.active {
+    background-color: var(--sidebar-active) !important;
+    color: #ffffff !important;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+.dropdown-menu .dropdown-item {
+    color: var(--text-primary) !important;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+.dropdown-menu .dropdown-divider {
+    border-color: var(--border-color) !important;
+}
+
+/* Form elements */
+.form-control,
+.form-select {
+    background-color: var(--bg-primary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--bg-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+}
+
+/* Alert */
+.alert {
+    border-color: var(--border-color) !important;
+}
+
+/* Badge */
+.badge {
+    background-color: var(--color-primary) !important;
+}
+
+/* Wrapper & Main Panel */
+.wrapper {
+    background-color: var(--bg-secondary) !important;
+}
+
+.main-panel {
+    background-color: var(--bg-secondary) !important;
+}
+
+.container,
+.page-inner {
+    background-color: transparent;
+}
+
+/* Pagination */
+.pagination .page-link {
+    background-color: var(--bg-primary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--bg-hover) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Text utilities */
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Border utilities */
+.border {
+    border-color: var(--border-color) !important;
+}
+
+.border-bottom,
+.border-top {
+    border-color: var(--border-color) !important;
+}
+
+/* ============================================
+   TABLE ACTION BUTTONS - IMPROVED SPACING
+   ============================================ */
+
+/* Table action cell styling */
+td.action-cell {
+    vertical-align: middle;
+}
+
+/* Action button group with improved spacing */
+.btn-group.action-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-group.action-group .btn {
+    margin: 0 !important;
+    flex: 0 0 auto;
+}
+
+/* Individual action buttons in table */
+.table .btn-action {
+    padding: 0.35rem 0.6rem !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin: 0.25rem !important;
+    transition: all 0.2s ease;
+}
+
+.table .btn-action i {
+    margin: 0 !important;
+    font-size: 0.9em;
+}
+
+.table .btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive action button container */
+.table-responsive .btn-action {
+    margin: 0.15rem 0.25rem !important;
+}
+
+/* Better button group alignment */
+.btn-group.btn-group-sm {
+    gap: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.btn-group.btn-group-sm .btn {
+    margin: 0.25rem 0 !important;
+}
+
+/* Action cell wrapper for flex layout */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.action-buttons.compact {
+    gap: 0.25rem;
+}
+
+.action-buttons.vertical {
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+/* Inline form styling (for delete/approve buttons) */
+.table form.d-inline {
+    display: inline-block !important;
+    margin: 0;
+}
+
+.table form.d-inline .btn {
+    margin: 0.25rem !important;
+}
+
+/* Better small button styling */
+.btn-sm {
+    padding: 0.4rem 0.8rem !important;
+}
+
+.btn-sm i {
+    margin-right: 0.25rem;
+}
+
+/* Icon-only buttons */
+.btn-icon {
+    width: 2rem;
+    height: 2rem;
+    padding: 0 !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+}
+
+.btn-icon i {
+    margin: 0 !important;
+    font-size: 0.9rem;
+}

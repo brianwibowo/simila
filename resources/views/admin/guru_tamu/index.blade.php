@@ -14,8 +14,9 @@
 
                 <div class="card-body">
                     @if(session('success'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
@@ -31,61 +32,49 @@
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($guruTamus as $guru)
-                        <tr>
-                            <td>{{ $guru->nama_karyawan }}</td>
-                            <td>{{ $guru->jabatan }}</td>
-                            <td>{{ $guru->keahlian }}</td>
-                            <td>{{ $guru->formatted_jadwal }}</td>
-                            <td>{{ $guru->submitter ? $guru->submitter->name : 'Tidak diketahui' }}</td>
-                            <td>                                @php
-                                $statusClasses = [
-                                    'proses' => 'badge bg-warning text-dark',
-                                    'disetujui' => 'badge bg-success'
-                                ];                                $statusLabels = \App\Models\GuruTamu::getStatusOptions();
-                                @endphp
-                                <span class="{{ $statusClasses[$guru->status] }}">
-                                    {{ $statusLabels[$guru->status] }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="btn-group">
-                                    <a href="{{ route('admin-guru-tamu-show', $guru->id) }}" class="btn btn-sm btn-info">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    <a href="{{ route('admin-guru-tamu-edit', $guru->id) }}" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                    @if ($guru->status == 'proses')
-                                    <form action="{{ route('admin-guru-tamu-approve', $guru->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                    </form>
-                                    @endif
-                                    <form action="{{ route('admin-guru-tamu-destroy', $guru->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center">Tidak ada data guru tamu.</td>
-                        </tr>
-                        @endforelse                        </tbody>
+                            </thead>
+                            <tbody>
+                                @forelse ($guruTamus as $guru)
+                                    <tr>
+                                        <td>{{ $guru->nama_karyawan }}</td>
+                                        <td>{{ $guru->jabatan }}</td>
+                                        <td>{{ $guru->keahlian }}</td>
+                                        <td>{{ $guru->formatted_jadwal }}</td>
+                                        <td>{{ $guru->submitter ? $guru->submitter->name : 'Tidak diketahui' }}</td>
+                                        <td>
+                                            @php
+                                                $statusClasses = [
+                                                    'proses' => 'badge bg-warning text-dark',
+                                                    'disetujui' => 'badge bg-success'
+                                                ];
+                                                $statusLabels = \App\Models\GuruTamu::getStatusOptions();
+                                            @endphp
+                                            <span class="{{ $statusClasses[$guru->status] ?? 'badge bg-secondary' }}">
+                                                {{ $statusLabels[$guru->status] ?? $guru->status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <x-table-actions
+                                                :viewRoute="route('admin-guru-tamu-show', $guru->id)"
+                                                :editRoute="route('admin-guru-tamu-edit', $guru->id)"
+                                                :approveRoute="$guru->status === 'proses' ? route('admin-guru-tamu-approve', $guru->id) : null"
+                                                :deleteRoute="route('admin-guru-tamu-destroy', $guru->id)"
+                                                deleteMessage="Apakah Anda yakin ingin menghapus data ini?"
+                                                approveMessage="Apakah Anda yakin ingin menyetujui pengajuan ini?"
+                                                compact
+                                            />
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">Tidak ada data guru tamu.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
                         </table>
                     </div>
-                    
-                    <div class="d-flex justify-content-center mt-3">
+
+                    <div class="d-flex justify-content-center mt-4">
                         {{ $guruTamus->links() }}
                     </div>
                 </div>

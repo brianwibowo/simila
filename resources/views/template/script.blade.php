@@ -35,3 +35,6 @@
 
 <!-- Kaiadmin JS (sidebar toggle, mobile menu, scrollbars) -->
 <script src="{{ asset('template/assets/js/kaiadmin.min.js') }}"></script>
+
+<!-- Theme Manager JS -->
+@vite(['resources/js/theme.js'])
