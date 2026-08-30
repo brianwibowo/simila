@@ -9,11 +9,11 @@
 [data-theme="light"],
 body[data-theme="light"] {
     /* Brand & Accent Colors - Fresh Modern Royal/Sky Blue */
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-primary-light: #3b82f6;
-    --color-primary-subtle: #eff6ff;
-    --color-primary-border: #bfdbfe;
+    --color-primary: #0284c7;
+    --color-primary-dark: #0369a1;
+    --color-primary-light: #38bdf8;
+    --color-primary-subtle: #e0f2fe;
+    --color-primary-border: #bae6fd;
     
     --color-secondary: #64748b;
     --color-secondary-subtle: #f1f5f9;
@@ -26,14 +26,14 @@ body[data-theme="light"] {
     --color-info: #06b6d4;
     --color-info-subtle: #ecfeff;
     
-    /* Background Hierarchy (Slate Scale) */
+    /* Background Hierarchy (Softer Muted Slate Palette - Eliminates Stark Glare & Eye Strain) */
     --bg-primary: #ffffff;
-    --bg-secondary: #f8fafc;
-    --bg-tertiary: #f1f5f9;
+    --bg-secondary: #eef2f6; /* Soothing muted slate background */
+    --bg-tertiary: #f8fafc;
     --bg-hover: #e2e8f0;
     
-    /* Text Typography */
-    --text-primary: #0f172a;
+    /* Text Typography - High readability slate */
+    --text-primary: #1e293b;
     --text-secondary: #475569;
     --text-tertiary: #94a3b8;
     --text-muted: #64748b;
@@ -46,21 +46,21 @@ body[data-theme="light"] {
     /* Cards & Panels */
     --card-bg: #ffffff;
     --card-border: #e2e8f0;
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-    --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    --card-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.03);
+    --card-shadow-hover: 0 4px 12px -1px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.05);
     
     /* Navbar / Topbar */
     --navbar-bg: #ffffff;
-    --navbar-text: #0f172a;
+    --navbar-text: #1e293b;
     --navbar-border: #e2e8f0;
     --navbar-icon-bg: #f1f5f9;
     
     /* Sidebar */
     --sidebar-bg: #ffffff;
-    --sidebar-text: #334155;
-    --sidebar-hover: #f8fafc;
-    --sidebar-active-bg: #eff6ff;
-    --sidebar-active-text: #2563eb;
+    --sidebar-text: #475569;
+    --sidebar-hover: #f1f5f9;
+    --sidebar-active-bg: #e0f2fe;
+    --sidebar-active-text: #0284c7;
     --sidebar-border: #e2e8f0;
     --sidebar-section-title: #94a3b8;
     
@@ -228,25 +228,70 @@ p, span, label, div {
     color: #64748b !important;
 }
 
-/* Role KPI Cards in Dashboard / Users Index */
-[data-theme="dark"] .role-kpi-card {
-    background-color: #1e293b !important;
-    border: 1px solid #334155 !important;
+/* Role KPI Pills in Users Index */
+.role-kpi-pill {
+    border-radius: 50px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
 
-[data-theme="dark"] .role-kpi-card:hover {
+.role-kpi-pill:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+.role-kpi-pill.active-role-pill {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25) !important;
+}
+
+[data-theme="dark"] .role-kpi-pill {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .role-kpi-pill:hover {
     background-color: #273549 !important;
     border-color: var(--color-primary) !important;
+    color: #ffffff !important;
 }
 
-[data-theme="dark"] .role-kpi-card .h4,
-[data-theme="dark"] .role-kpi-card .fw-bold,
-[data-theme="dark"] .role-kpi-card small,
-[data-theme="dark"] .role-kpi-card span {
-    color: #f8fafc !important;
+[data-theme="dark"] .role-kpi-pill.active-role-pill {
+    background-color: var(--color-primary-dark) !important;
+    border-color: var(--color-primary) !important;
+    color: #ffffff !important;
 }
 
 /* Nav Pills / Role Tabs */
+.nav-pills .nav-link {
+    border-radius: 50px !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    padding: 0.35rem 0.85rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.nav-pills .nav-link.bg-light {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.nav-pills .nav-link.bg-light:hover {
+    background-color: #e0f2fe !important;
+    color: #0284c7 !important;
+    border-color: #bae6fd !important;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
+}
+
 [data-theme="dark"] .nav-pills .nav-link.bg-light,
 [data-theme="dark"] .nav-link.bg-light {
     background-color: #1e293b !important;
@@ -254,9 +299,16 @@ p, span, label, div {
     border: 1px solid #334155 !important;
 }
 
+[data-theme="dark"] .nav-pills .nav-link.bg-light:hover {
+    background-color: #273549 !important;
+    color: #38bdf8 !important;
+    border-color: #38bdf8 !important;
+}
+
 [data-theme="dark"] .nav-pills .nav-link.active {
     background-color: var(--color-primary) !important;
     color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4) !important;
 }
 
 /* List Groups in Dashboard */
@@ -323,27 +375,131 @@ p, span, label, div {
 }
 
 /* --------------------------------------------
-   5. SIDEBAR STYLING
+   5. SIDEBAR STYLING (WIDENED & ZERO SCROLLBAR TRACK)
    -------------------------------------------- */
-.sidebar {
+.sidebar,
+.sidebar[data-background-color="white"],
+.sidebar[data-background-color="dark"] {
+    width: 285px !important;
     background-color: var(--sidebar-bg) !important;
     border-right: 1px solid var(--sidebar-border) !important;
     box-shadow: none !important;
-    transition: background-color 0.25s ease, border-color 0.25s ease;
+    transition: width 0.3s ease, background-color 0.25s ease, border-color 0.25s ease !important;
 }
 
-.sidebar .logo-header {
+.sidebar .logo-header,
+.logo-header {
+    width: 285px !important;
     background-color: var(--sidebar-bg) !important;
     border-bottom: 1px solid var(--sidebar-border) !important;
+    transition: width 0.3s ease, background-color 0.25s ease, border-color 0.25s ease !important;
+}
+
+.main-panel {
+    width: calc(100% - 285px) !important;
+    margin-left: 285px !important;
+    background-color: var(--bg-secondary) !important;
+    transition: width 0.3s ease, margin-left 0.3s ease, background-color 0.25s ease !important;
+}
+
+/* Minimized Sidebar */
+.sidebar_minimize .sidebar,
+.sidebar_minimize .sidebar[data-background-color="white"],
+.sidebar_minimize .sidebar[data-background-color="dark"],
+.sidebar_minimize .sidebar .logo-header,
+.sidebar_minimize .logo-header {
+    width: 75px !important;
+}
+
+.sidebar_minimize .main-panel {
+    width: calc(100% - 75px) !important;
+    margin-left: 75px !important;
+}
+
+/* Responsive Tablet/Mobile (< 992px) */
+@media (max-width: 991.98px) {
+    .sidebar,
+    .sidebar[data-background-color="white"],
+    .sidebar[data-background-color="dark"],
+    .sidebar .logo-header,
+    .logo-header {
+        width: 285px !important;
+    }
+
+    .main-panel {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* --------------------------------------------
+   SIDEBAR SCROLLBAR REMOVAL (Clean, Zero Scroll Track)
+   -------------------------------------------- */
+.sidebar .sidebar-wrapper,
+.sidebar-wrapper.scrollbar,
+.sidebar-wrapper.scrollbar-inner,
+.sidebar-wrapper {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE / Edge */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.sidebar .sidebar-wrapper::-webkit-scrollbar,
+.sidebar-wrapper::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Hide jQuery Scrollbar Plugin Elements (.scroll-element) completely */
+.sidebar .scroll-element,
+.sidebar .scroll-element.scroll-y,
+.sidebar .scroll-element.scroll-x,
+.sidebar-wrapper .scroll-element,
+.scrollbar-inner > .scroll-element {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.sidebar .sidebar-wrapper .sidebar-content {
+    padding-top: 6px !important;
+    padding-bottom: 40px !important;
 }
 
 .sidebar .nav-item a {
     color: var(--sidebar-text) !important;
     font-weight: 500 !important;
-    padding: 0.65rem 1rem !important;
-    border-radius: 8px !important;
-    margin: 0.15rem 0.6rem !important;
+    font-size: 0.92rem !important;
+    padding: 0.72rem 1.15rem !important;
+    border-radius: 9px !important;
+    margin: 0.18rem 0.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
     transition: all 0.2s ease !important;
+}
+
+.sidebar .nav-item a p {
+    margin-bottom: 0 !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.sidebar .nav-item a i {
+    font-size: 1.1rem !important;
+    margin-right: 0 !important;
+    width: 22px !important;
+    text-align: center !important;
+    flex-shrink: 0 !important;
 }
 
 .sidebar .nav-item a:hover {
@@ -367,6 +523,7 @@ p, span, label, div {
     font-weight: 700 !important;
     letter-spacing: 0.06em !important;
     text-transform: uppercase !important;
+    padding: 0.6rem 1.25rem 0.3rem 1.25rem !important;
 }
 
 /* --------------------------------------------

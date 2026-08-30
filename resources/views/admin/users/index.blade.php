@@ -32,7 +32,7 @@
         </div>
     @endif
 
-    {{-- 2. Role Overview KPI Cards (Quick Filter Cards) --}}
+    {{-- 2. Role Overview KPI Cards (Pill-Shaped Quick Filter Capsules) --}}
     @php
         $roleMeta = [
             'all' => ['title' => 'Semua Akun', 'icon' => 'fa-users', 'bg' => '#eff6ff', 'text' => '#1d4ed8', 'border' => '#bfdbfe'],
@@ -50,42 +50,45 @@
         $displayRoles = $roles->filter(fn($r) => $r->name !== 'user');
     @endphp
 
-    <div class="row g-2 mb-4">
-        {{-- Card Semua --}}
-        <div class="col-6 col-sm-4 col-md-3 col-xl">
-            <a href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}"
-               class="card h-100 text-decoration-none border shadow-none role-kpi-card p-3 rounded-3 {{ $selectedRole === 'all' ? 'active-role-card' : '' }}"
-               style="background-color: {{ $roleMeta['all']['bg'] }}; border-color: {{ $selectedRole === 'all' ? '#2563eb' : $roleMeta['all']['border'] }} !important;">
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                    <span class="small fw-bold" style="color: {{ $roleMeta['all']['text'] }}; font-size: 0.75rem;">SEMUA</span>
-                    <i class="fas {{ $roleMeta['all']['icon'] }}" style="color: {{ $roleMeta['all']['text'] }};"></i>
-                </div>
-                <div class="h4 mb-0 fw-bold" style="color: {{ $roleMeta['all']['text'] }};">{{ $totalAll }}</div>
-                <small class="text-muted" style="font-size: 0.7rem;">Total Seluruh Akun</small>
-            </a>
-        </div>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        {{-- Pill Semua --}}
+        @php
+            $isAllActive = $selectedRole === 'all';
+        @endphp
+        <a href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}"
+           class="role-kpi-pill text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill border transition-all {{ $isAllActive ? 'active-role-pill shadow-sm' : '' }}"
+           style="background-color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['bg'] }}; border-color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['border'] }} !important; color: {{ $isAllActive ? '#ffffff' : $roleMeta['all']['text'] }};">
+            <span class="role-icon-circle d-flex align-items-center justify-content-center rounded-circle"
+                  style="width: 22px; height: 22px; background-color: {{ $isAllActive ? 'rgba(255,255,255,0.25)' : 'rgba(2, 132, 199, 0.15)' }}; color: {{ $isAllActive ? '#ffffff' : $roleMeta['all']['text'] }}; font-size: 0.7rem;">
+                <i class="fas {{ $roleMeta['all']['icon'] }}"></i>
+            </span>
+            <span class="fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.02em;">Semua</span>
+            <span class="badge rounded-pill fw-bold"
+                  style="font-size: 0.72rem; background-color: {{ $isAllActive ? '#ffffff' : 'rgba(2, 132, 199, 0.12)' }}; color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['text'] }};">
+                {{ $totalAll }}
+            </span>
+        </a>
 
-        {{-- Cards Per Role --}}
+        {{-- Role Pills --}}
         @foreach($displayRoles as $r)
             @php
                 $meta = $roleMeta[$r->name] ?? ['title' => ucfirst($r->name), 'icon' => 'fa-user', 'bg' => '#f8fafc', 'text' => '#475569', 'border' => '#e2e8f0'];
                 $count = $roleCounts[$r->name] ?? 0;
                 $isActive = $selectedRole === $r->name;
             @endphp
-            <div class="col-6 col-sm-4 col-md-3 col-xl">
-                <a href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}"
-                   class="card h-100 text-decoration-none border shadow-none role-kpi-card p-3 rounded-3 {{ $isActive ? 'active-role-card' : '' }}"
-                   style="background-color: {{ $meta['bg'] }}; border-color: {{ $isActive ? $meta['text'] : $meta['border'] }} !important;">
-                    <div class="d-flex align-items-center justify-content-between mb-1 gap-1">
-                        <span class="small fw-bold text-truncate" style="color: {{ $meta['text'] }}; font-size: 0.72rem;" title="{{ $meta['title'] }}">
-                            {{ strtoupper(str_replace('_', ' ', $r->name)) }}
-                        </span>
-                        <i class="fas {{ $meta['icon'] }} flex-shrink-0" style="color: {{ $meta['text'] }};"></i>
-                    </div>
-                    <div class="h4 mb-0 fw-bold" style="color: {{ $meta['text'] }};">{{ $count }}</div>
-                    <small class="text-muted text-truncate d-block" style="font-size: 0.7rem;">{{ $meta['title'] }}</small>
-                </a>
-            </div>
+            <a href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}"
+               class="role-kpi-pill text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill border transition-all {{ $isActive ? 'active-role-pill shadow-sm' : '' }}"
+               style="background-color: {{ $isActive ? $meta['text'] : $meta['bg'] }}; border-color: {{ $isActive ? $meta['text'] : $meta['border'] }} !important; color: {{ $isActive ? '#ffffff' : $meta['text'] }};">
+                <span class="role-icon-circle d-flex align-items-center justify-content-center rounded-circle"
+                      style="width: 22px; height: 22px; background-color: {{ $isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.06)' }}; color: {{ $isActive ? '#ffffff' : $meta['text'] }}; font-size: 0.7rem;">
+                    <i class="fas {{ $meta['icon'] }}"></i>
+                </span>
+                <span class="fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.02em;">{{ strtoupper(str_replace('_', ' ', $r->name)) }}</span>
+                <span class="badge rounded-pill fw-bold"
+                      style="font-size: 0.72rem; background-color: {{ $isActive ? '#ffffff' : 'rgba(0,0,0,0.06)' }}; color: {{ $isActive ? $meta['text'] : $meta['text'] }};">
+                    {{ $count }}
+                </span>
+            </a>
         @endforeach
     </div>
 
@@ -123,7 +126,7 @@
                 <div class="col-md-6 col-lg-7 text-md-end">
                     <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-md-end">
                         @if($selectedRole !== 'all')
-                            <span class="badge bg-light text-dark border px-3 py-2">
+                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
                                 Filter Aktif: <strong>{{ strtoupper(str_replace('_', ' ', $selectedRole)) }}</strong>
                                 <a href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}" class="text-danger ms-2 text-decoration-none" title="Reset filter role">
                                     <i class="fas fa-times-circle"></i>
@@ -132,8 +135,8 @@
                         @endif
 
                         <div class="d-flex align-items-center gap-1">
-                            <span class="small text-muted">Tampilkan:</span>
-                            <select class="form-select form-select-sm" style="width: 80px;" onchange="window.location.href=this.value">
+                            <span class="small text-muted" style="font-size: 0.78rem;">Tampilkan:</span>
+                            <select class="form-select form-select-sm" style="width: 80px; font-size: 0.78rem;" onchange="window.location.href=this.value">
                                 @foreach([10, 25, 50, 100] as $p)
                                     <option value="{{ route('admin-users-index', ['role' => $selectedRole, 'search' => $search, 'per_page' => $p]) }}" {{ $perPage == $p ? 'selected' : '' }}>
                                         {{ $p }}
@@ -147,11 +150,12 @@
 
             {{-- Role Tab Pills --}}
             <div class="mt-3 pt-3 border-top overflow-auto">
-                <ul class="nav nav-pills flex-nowrap gap-1 pb-1" style="min-width: 650px;">
+                <ul class="nav nav-pills flex-nowrap gap-1 pb-1" style="min-width: 600px;">
                     <li class="nav-item">
-                        <a class="nav-link py-1 px-3 small rounded-pill {{ $selectedRole === 'all' ? 'active' : 'bg-light text-dark' }}"
+                        <a class="nav-link py-1 px-3 rounded-pill {{ $selectedRole === 'all' ? 'active' : 'bg-light text-dark' }}"
+                           style="font-size: 0.75rem; font-weight: 600; border-radius: 50px !important;"
                            href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}">
-                            <i class="fas fa-list me-1"></i> Semua ({{ $totalAll }})
+                            <i class="fas fa-list me-1" style="font-size: 0.7rem;"></i> Semua ({{ $totalAll }})
                         </a>
                     </li>
                     @foreach($displayRoles as $r)
@@ -161,9 +165,10 @@
                             $isActive = $selectedRole === $r->name;
                         @endphp
                         <li class="nav-item">
-                            <a class="nav-link py-1 px-3 small rounded-pill {{ $isActive ? 'active' : 'bg-light text-dark' }}"
+                            <a class="nav-link py-1 px-3 rounded-pill {{ $isActive ? 'active' : 'bg-light text-dark' }}"
+                               style="font-size: 0.75rem; font-weight: 600; border-radius: 50px !important;"
                                href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}">
-                                <i class="fas {{ $meta['icon'] }} me-1"></i> {{ ucwords(str_replace('_', ' ', $r->name)) }} ({{ $count }})
+                                <i class="fas {{ $meta['icon'] }} me-1" style="font-size: 0.7rem;"></i> {{ ucwords(str_replace('_', ' ', $r->name)) }} ({{ $count }})
                             </a>
                         </li>
                     @endforeach

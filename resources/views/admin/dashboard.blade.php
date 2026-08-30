@@ -237,7 +237,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($stats['recent_users'] ?? [] as $recentUser)
+                                @forelse(collect($stats['recent_users'] ?? [])->take(3) as $recentUser)
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">

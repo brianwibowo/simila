@@ -115,7 +115,7 @@ Route::middleware(['auth'])->group(function () { // Group for authenticated user
                 'total_scouting' => \App\Models\Talent_Scouting::count(),
                 'total_sertifikasi' => \App\Models\CertificationExam::count(),
                 'total_riset' => \App\Models\Riset::count(),
-                'recent_users' => \App\Models\User::with('roles')->latest()->take(6)->get(),
+                'recent_users' => \App\Models\User::with('roles')->latest()->take(3)->get(),
             ];
             return view('admin.dashboard', compact('stats'));
         })->name('admin-dashboard');

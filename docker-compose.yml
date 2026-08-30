@@ -9,9 +9,9 @@ services:
     ports:
       - "8086:80"
     environment:
-      - APP_ENV=local
-      - APP_DEBUG=true
-      - APP_URL=http://localhost:8086
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=https://simila.my.id
       - RUN_MIGRATIONS=true
     env_file:
       - .env
@@ -35,7 +35,17 @@ services:
     networks:
       - simila-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-similaPass123}"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${DB_PASSWORD:-similaPass123}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10

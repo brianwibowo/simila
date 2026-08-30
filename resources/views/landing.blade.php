@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIMILA - Sistem Informasi Kemitraan & Penyelarasan Vokasi 8+i</title>
+    <title>SIMILA</title>
     <link rel="icon" href="{{ asset('template/assets/img/kaiadmin/favicon.png') }}" type="image/x-icon" />
 
     <!-- Google Fonts: Poppins -->
