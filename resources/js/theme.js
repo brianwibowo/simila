@@ -122,10 +122,12 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         ThemeManager.init();
         setupToggleListeners();
+        setupLogoutConfirmation();
     });
 } else {
     ThemeManager.init();
     setupToggleListeners();
+    setupLogoutConfirmation();
 }
 
 function setupToggleListeners() {
@@ -138,6 +140,90 @@ function setupToggleListeners() {
     });
 }
 
+/**
+ * Global Logout Confirmation Toast/Modal Handler
+ */
+function setupLogoutConfirmation() {
+    let pendingLogoutForm = null;
+
+    document.addEventListener('submit', (e) => {
+        const form = e.target;
+        if (form && form.action && form.action.includes('logout') && !form.dataset.confirmed) {
+            e.preventDefault();
+            pendingLogoutForm = form;
+            showLogoutModal();
+        }
+    });
+
+    const confirmBtn = document.getElementById('confirmLogoutSubmitBtn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            if (pendingLogoutForm) {
+                pendingLogoutForm.dataset.confirmed = 'true';
+                confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Mengeluarkan...';
+                confirmBtn.disabled = true;
+                pendingLogoutForm.submit();
+            } else {
+                const fallbackForm = document.querySelector('form[action*="logout"]');
+                if (fallbackForm) {
+                    fallbackForm.dataset.confirmed = 'true';
+                    confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Mengeluarkan...';
+                    confirmBtn.disabled = true;
+                    fallbackForm.submit();
+                }
+            }
+        });
+    }
+
+    function showLogoutModal() {
+        const modalEl = document.getElementById('logoutConfirmModal');
+        if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+            const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
+        } else if (window.swal) {
+            window.swal({
+                title: 'Yakin ingin keluar?',
+                text: 'Sesi login Anda saat ini akan diakhiri.',
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: 'Batal',
+                        visible: true,
+                        className: 'btn btn-light rounded-pill px-4',
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: 'Ya, Keluar',
+                        className: 'btn btn-danger rounded-pill px-4',
+                        closeModal: true,
+                    }
+                },
+                dangerMode: true,
+            }).then((willLogout) => {
+                if (willLogout) {
+                    if (pendingLogoutForm) {
+                        pendingLogoutForm.dataset.confirmed = 'true';
+                        pendingLogoutForm.submit();
+                    } else {
+                        const fallbackForm = document.querySelector('form[action*="logout"]');
+                        if (fallbackForm) {
+                            fallbackForm.dataset.confirmed = 'true';
+                            fallbackForm.submit();
+                        }
+                    }
+                }
+            });
+        } else {
+            if (confirm('Apakah Anda yakin ingin keluar dari sistem SIMILA?')) {
+                if (pendingLogoutForm) {
+                    pendingLogoutForm.dataset.confirmed = 'true';
+                    pendingLogoutForm.submit();
+                }
+            }
+        }
+    }
+}
+
 // Listen for system theme changes
 if (window.matchMedia) {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
@@ -148,3 +234,4 @@ if (window.matchMedia) {
 }
 
 window.ThemeManager = ThemeManager;
+

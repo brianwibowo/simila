@@ -1,21 +1,20 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="container-fluid px-4 py-4">
-    {{-- 1. Header & Title --}}
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <div>
-            <h1 class="h3 mb-1 text-gray-800 font-weight-bold">
-                <i class="fas fa-users-cog text-primary me-2"></i> Manajemen Akun & Role Pengguna
-            </h1>
-            <p class="text-muted mb-0">Kelola dan pantau seluruh akun terdaftar berdasarkan pembagian hak akses (role) dalam ekosistem SIMILA.</p>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-primary px-3 py-2 rounded-pill fs-6">
-                <i class="fas fa-database me-1"></i> Total: {{ $totalAll }} Akun
-            </span>
-        </div>
+{{-- 1. Header & Title --}}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1 text-dark">
+            <i class="fas fa-users-cog text-primary me-2"></i> Manajemen Akun & Role Pengguna
+        </h3>
+        <p class="text-muted mb-0" style="font-size: 0.85rem;">Kelola dan pantau seluruh akun terdaftar berdasarkan pembagian hak akses (role) dalam ekosistem SIMILA.</p>
     </div>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-primary px-3 py-1.5 rounded-pill" style="font-size: 0.78rem;">
+            <i class="fas fa-database me-1"></i> Total: {{ $totalAll }} Akun
+        </span>
+    </div>
+</div>
 
     {{-- Alerts --}}
     @if(session('success'))
@@ -32,12 +31,12 @@
         </div>
     @endif
 
-    {{-- 2. Role Overview KPI Cards (Pill-Shaped Quick Filter Capsules) --}}
+    {{-- 2. Setup Role Metadata & Display Roles --}}
     @php
         $roleMeta = [
-            'all' => ['title' => 'Semua Akun', 'icon' => 'fa-users', 'bg' => '#eff6ff', 'text' => '#1d4ed8', 'border' => '#bfdbfe'],
+            'all' => ['title' => 'Semua Akun', 'icon' => 'fa-users', 'bg' => '#eff6ff', 'text' => '#0284c7', 'border' => '#bae6fd'],
             'perusahaan' => ['title' => 'Perusahaan (DUDI)', 'icon' => 'fa-building', 'bg' => '#f0fdf4', 'text' => '#15803d', 'border' => '#bbf7d0'],
-            'siswa' => ['title' => 'Siswa Peserta', 'icon' => 'fa-user-graduate', 'bg' => '#f0f9ff', 'text' => '#0369a1', 'border' => '#bae6fd'],
+            'siswa' => ['title' => 'Siswa Peserta', 'icon' => 'fa-user-graduate', 'bg' => '#f0f9ff', 'text' => '#0284c7', 'border' => '#bae6fd'],
             'guru' => ['title' => 'Guru Pembimbing', 'icon' => 'fa-chalkboard-teacher', 'bg' => '#faf5ff', 'text' => '#7e22ce', 'border' => '#e9d5ff'],
             'waka_humas' => ['title' => 'Waka Humas', 'icon' => 'fa-handshake', 'bg' => '#fffbeb', 'text' => '#b45309', 'border' => '#fde68a'],
             'waka_kurikulum' => ['title' => 'Waka Kurikulum', 'icon' => 'fa-book-open', 'bg' => '#f0fdfa', 'text' => '#0f766e', 'border' => '#99f6e4'],
@@ -46,55 +45,12 @@
             'admin' => ['title' => 'Administrator', 'icon' => 'fa-shield-alt', 'bg' => '#fef2f2', 'text' => '#b91c1c', 'border' => '#fecaca'],
         ];
 
-        // Filter out 'user' role from display cards if redundant, or keep standard roles
-        $displayRoles = $roles->filter(fn($r) => $r->name !== 'user');
+        $displayRoles = isset($roles) ? $roles->filter(fn($r) => $r->name !== 'user') : collect([]);
     @endphp
 
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        {{-- Pill Semua --}}
-        @php
-            $isAllActive = $selectedRole === 'all';
-        @endphp
-        <a href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}"
-           class="role-kpi-pill text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill border transition-all {{ $isAllActive ? 'active-role-pill shadow-sm' : '' }}"
-           style="background-color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['bg'] }}; border-color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['border'] }} !important; color: {{ $isAllActive ? '#ffffff' : $roleMeta['all']['text'] }};">
-            <span class="role-icon-circle d-flex align-items-center justify-content-center rounded-circle"
-                  style="width: 22px; height: 22px; background-color: {{ $isAllActive ? 'rgba(255,255,255,0.25)' : 'rgba(2, 132, 199, 0.15)' }}; color: {{ $isAllActive ? '#ffffff' : $roleMeta['all']['text'] }}; font-size: 0.7rem;">
-                <i class="fas {{ $roleMeta['all']['icon'] }}"></i>
-            </span>
-            <span class="fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.02em;">Semua</span>
-            <span class="badge rounded-pill fw-bold"
-                  style="font-size: 0.72rem; background-color: {{ $isAllActive ? '#ffffff' : 'rgba(2, 132, 199, 0.12)' }}; color: {{ $isAllActive ? '#0284c7' : $roleMeta['all']['text'] }};">
-                {{ $totalAll }}
-            </span>
-        </a>
-
-        {{-- Role Pills --}}
-        @foreach($displayRoles as $r)
-            @php
-                $meta = $roleMeta[$r->name] ?? ['title' => ucfirst($r->name), 'icon' => 'fa-user', 'bg' => '#f8fafc', 'text' => '#475569', 'border' => '#e2e8f0'];
-                $count = $roleCounts[$r->name] ?? 0;
-                $isActive = $selectedRole === $r->name;
-            @endphp
-            <a href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}"
-               class="role-kpi-pill text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-1.5 rounded-pill border transition-all {{ $isActive ? 'active-role-pill shadow-sm' : '' }}"
-               style="background-color: {{ $isActive ? $meta['text'] : $meta['bg'] }}; border-color: {{ $isActive ? $meta['text'] : $meta['border'] }} !important; color: {{ $isActive ? '#ffffff' : $meta['text'] }};">
-                <span class="role-icon-circle d-flex align-items-center justify-content-center rounded-circle"
-                      style="width: 22px; height: 22px; background-color: {{ $isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.06)' }}; color: {{ $isActive ? '#ffffff' : $meta['text'] }}; font-size: 0.7rem;">
-                    <i class="fas {{ $meta['icon'] }}"></i>
-                </span>
-                <span class="fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.02em;">{{ strtoupper(str_replace('_', ' ', $r->name)) }}</span>
-                <span class="badge rounded-pill fw-bold"
-                      style="font-size: 0.72rem; background-color: {{ $isActive ? '#ffffff' : 'rgba(0,0,0,0.06)' }}; color: {{ $isActive ? $meta['text'] : $meta['text'] }};">
-                    {{ $count }}
-                </span>
-            </a>
-        @endforeach
-    </div>
-
-    {{-- 3. Main Data Card --}}
+    {{-- 3. Main Data Card with Integrated Pill-Shaped Role Navigation --}}
     <div class="card shadow-sm border-0 mb-4">
-        {{-- Card Header: Nav-Pills Tabs + Search & Filters --}}
+        {{-- Card Header: Integrated Role Pills + Search & Filters --}}
         <div class="card-header bg-white border-0 pt-4 px-4 pb-3">
             <div class="row align-items-center g-3">
                 {{-- Search Box --}}
@@ -127,7 +83,7 @@
                     <div class="d-inline-flex align-items-center gap-2 flex-wrap justify-content-md-end">
                         @if($selectedRole !== 'all')
                             <span class="badge bg-light text-dark border px-3 py-2 rounded-pill" style="font-size: 0.75rem;">
-                                Filter Aktif: <strong>{{ strtoupper(str_replace('_', ' ', $selectedRole)) }}</strong>
+                                Filter: <strong>{{ strtoupper(str_replace('_', ' ', $selectedRole)) }}</strong>
                                 <a href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}" class="text-danger ms-2 text-decoration-none" title="Reset filter role">
                                     <i class="fas fa-times-circle"></i>
                                 </a>
@@ -148,31 +104,32 @@
                 </div>
             </div>
 
-            {{-- Role Tab Pills --}}
+            {{-- Role Tab Pills (Single Clean Pill Bar) --}}
             <div class="mt-3 pt-3 border-top overflow-auto">
-                <ul class="nav nav-pills flex-nowrap gap-1 pb-1" style="min-width: 600px;">
-                    <li class="nav-item">
-                        <a class="nav-link py-1 px-3 rounded-pill {{ $selectedRole === 'all' ? 'active' : 'bg-light text-dark' }}"
-                           style="font-size: 0.75rem; font-weight: 600; border-radius: 50px !important;"
-                           href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}">
-                            <i class="fas fa-list me-1" style="font-size: 0.7rem;"></i> Semua ({{ $totalAll }})
-                        </a>
-                    </li>
+                <div class="d-flex align-items-center flex-nowrap gap-2 pb-1" style="min-width: 650px;">
+                    @php
+                        $isAllActive = $selectedRole === 'all';
+                    @endphp
+                    <a class="role-tab-pill {{ $isAllActive ? 'active' : '' }}"
+                       href="{{ route('admin-users-index', ['role' => 'all', 'search' => $search, 'per_page' => $perPage]) }}">
+                        <i class="fas fa-users" style="{{ $isAllActive ? 'color: #ffffff;' : 'color: #0284c7;' }}"></i>
+                        <span>Semua</span>
+                        <span class="role-tab-count">{{ $totalAll }}</span>
+                    </a>
                     @foreach($displayRoles as $r)
                         @php
-                            $meta = $roleMeta[$r->name] ?? ['title' => ucfirst($r->name), 'icon' => 'fa-user'];
+                            $meta = $roleMeta[$r->name] ?? ['title' => ucfirst($r->name), 'icon' => 'fa-user', 'text' => '#475569'];
                             $count = $roleCounts[$r->name] ?? 0;
                             $isActive = $selectedRole === $r->name;
                         @endphp
-                        <li class="nav-item">
-                            <a class="nav-link py-1 px-3 rounded-pill {{ $isActive ? 'active' : 'bg-light text-dark' }}"
-                               style="font-size: 0.75rem; font-weight: 600; border-radius: 50px !important;"
-                               href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}">
-                                <i class="fas {{ $meta['icon'] }} me-1" style="font-size: 0.7rem;"></i> {{ ucwords(str_replace('_', ' ', $r->name)) }} ({{ $count }})
-                            </a>
-                        </li>
+                        <a class="role-tab-pill {{ $isActive ? 'active' : '' }}"
+                           href="{{ route('admin-users-index', ['role' => $r->name, 'search' => $search, 'per_page' => $perPage]) }}">
+                            <i class="fas {{ $meta['icon'] }}" style="{{ $isActive ? 'color: #ffffff;' : 'color: ' . $meta['text'] . ';' }}"></i>
+                            <span>{{ ucwords(str_replace('_', ' ', $r->name)) }}</span>
+                            <span class="role-tab-count">{{ $count }}</span>
+                        </a>
                     @endforeach
-                </ul>
+                </div>
             </div>
         </div>
 
@@ -322,38 +279,6 @@
             </div>
         @endif
     </div>
-</div>
-
-<style>
-.role-kpi-card {
-    transition: all 0.2s ease-in-out;
-    cursor: pointer;
-}
-.role-kpi-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
-}
-.active-role-card {
-    box-shadow: 0 0 0 2px #2563eb !important;
-    transform: translateY(-2px);
-}
-.avatar-sm {
-    width: 38px;
-    height: 38px;
-}
-.nav-pills .nav-link.active {
-    background-color: #2563eb !important;
-    color: #ffffff !important;
-    font-weight: 600;
-}
-.form-select-sm {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.6rem;
-}
-.table > :not(caption) > * > * {
-    padding: 0.85rem 0.75rem;
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

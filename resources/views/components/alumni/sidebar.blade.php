@@ -22,7 +22,7 @@
 
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
-            <ul class="nav nav-secondary">
+            <ul class="nav nav-primary">
                 <li class="nav-item {{ Route::currentRouteName() == 'alumni-dashboard' ? 'active' : '' }}">
                     <a data-bs-toggle="collapse" href="#dashboard" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>

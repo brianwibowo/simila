@@ -1,28 +1,27 @@
 @extends('layouts.layout')
 
 @section('content')
-<div class="page-inner">
-    {{-- 1. Hero Welcome Banner --}}
-    <div class="card card-round bg-primary-gradient text-white mb-4 shadow-sm" style="background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%); border: none;">
-        <div class="card-body p-4">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                <div class="mb-3 mb-md-0">
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-25 fw-bold px-3 py-1 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+{{-- 1. Hero Welcome Banner --}}
+<div class="card card-round bg-primary-gradient text-white mb-4 shadow-sm">
+        <div class="card-body px-4 py-3.5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                <div class="d-flex flex-column align-items-start">
+                    <div class="d-inline-flex align-items-center gap-2 mb-2 flex-wrap" style="margin-left: 0;">
+                        <span class="badge rounded-pill bg-white bg-opacity-20 text-white border border-white border-opacity-25 fw-bold px-2.5 py-1 text-uppercase" style="font-size: 0.68rem; letter-spacing: 0.04em; margin-left: 0 !important; margin-right: 0 !important;">
                             <i class="fas fa-shield-alt me-1"></i> Administrator Panel
                         </span>
-                        <span class="text-white-50" style="font-size: 0.85rem;">
+                        <span class="badge rounded-pill bg-white bg-opacity-10 text-white border border-white border-opacity-20 px-2.5 py-1" style="font-size: 0.68rem; margin-left: 0 !important; margin-right: 0 !important;">
                             <i class="far fa-calendar-alt me-1"></i> {{ date('l, d F Y') }}
                         </span>
                     </div>
-                    <h2 class="fw-bold mb-1 text-white">Selamat Datang, {{ Auth::user()->name }}! 👋</h2>
-                    <p class="mb-0 text-white-50" style="font-size: 0.95rem;">
+                    <h3 class="fw-bold mb-1 text-white" style="font-size: 1.25rem;">Selamat Datang, {{ Auth::user()->name }}!</h3>
+                    <p class="mb-0 text-white-50" style="font-size: 0.82rem;">
                         Pusat kendali operasional & pemantauan ekosistem kemitraan <strong>SIMILA</strong> (SMK & Dunia Usaha/Industri).
                     </p>
                 </div>
-                <div>
-                    <a href="{{ route('admin-users-index') }}" class="btn btn-light btn-round fw-bold px-4 py-2 shadow-sm">
-                        <i class="fas fa-users-cog me-2"></i> Kelola Pengguna & Role
+                <div class="flex-shrink-0 align-self-start align-self-md-center">
+                    <a href="{{ route('admin-users-index') }}" class="btn btn-light rounded-pill fw-bold px-3.5 py-2 shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.8rem;">
+                        <i class="fas fa-users-cog" style="font-size: 0.85rem;"></i> Kelola Pengguna & Role
                     </a>
                 </div>
             </div>
@@ -141,79 +140,73 @@
     </div>
 
     {{-- 3. Main Row: User Management Spotlight & Activity Table --}}
-    <div class="row mt-2">
+    <div class="row align-items-stretch g-4 mt-1 mb-4">
         {{-- Left: User Distribution & Kelola User Action Card --}}
-        <div class="col-lg-5">
-            <div class="card card-round shadow-sm border-0 mb-4">
-                <div class="card-header bg-white border-0 pt-4 px-4 pb-0 d-flex justify-content-between align-items-center">
+        <div class="col-lg-5 d-flex flex-column">
+            <div class="card card-round shadow-sm border-0 h-100 mb-0">
+                <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title fw-bold text-dark mb-0">
                             <i class="fas fa-user-shield text-primary me-2"></i> Manajemen Akses & Role
                         </h5>
                         <p class="text-muted mb-0" style="font-size: 0.8rem;">Distribusi akun di seluruh peran sistem</p>
                     </div>
-                    <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+                    <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" style="font-size: 0.76rem;">
                         Buka User Manager
                     </a>
                 </div>
-                <div class="card-body px-4 py-3">
+                <div class="card-body px-4 py-3 d-flex flex-column justify-content-between">
                     <div class="list-group list-group-flush">
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-primary rounded-circle p-2 me-3"><i class="fas fa-user-graduate"></i></span>
-                                <span class="fw-medium text-dark">Siswa Vokasi</span>
+                                <span class="badge bg-primary rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-user-graduate"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Siswa Vokasi</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_siswa'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_siswa'] ?? 0 }} Akun</span>
                         </div>
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-success rounded-circle p-2 me-3"><i class="fas fa-building"></i></span>
-                                <span class="fw-medium text-dark">Mitra Industri (Perusahaan)</span>
+                                <span class="badge bg-success rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-building"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Mitra Industri (Perusahaan)</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_perusahaan'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_perusahaan'] ?? 0 }} Akun</span>
                         </div>
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-warning text-white rounded-circle p-2 me-3"><i class="fas fa-chalkboard-teacher"></i></span>
-                                <span class="fw-medium text-dark">Guru & Guru Produktif</span>
+                                <span class="badge bg-warning text-white rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-chalkboard-teacher"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Guru & Guru Produktif</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_guru'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_guru'] ?? 0 }} Akun</span>
                         </div>
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-secondary rounded-circle p-2 me-3"><i class="fas fa-user-tie"></i></span>
-                                <span class="fw-medium text-dark">Waka Kurikulum & Waka Humas</span>
+                                <span class="badge bg-secondary rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-user-tie"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Waka Kurikulum & Waka Humas</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_waka'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_waka'] ?? 0 }} Akun</span>
                         </div>
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-info text-white rounded-circle p-2 me-3"><i class="fas fa-certificate"></i></span>
-                                <span class="fw-medium text-dark">Lembaga Sertifikasi (LSP)</span>
+                                <span class="badge bg-info text-white rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-certificate"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Lembaga Sertifikasi (LSP)</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_lsp'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_lsp'] ?? 0 }} Akun</span>
                         </div>
                         <div class="list-group-item px-0 d-flex justify-content-between align-items-center border-bottom-0 py-2">
                             <div class="d-flex align-items-center">
-                                <span class="badge bg-dark rounded-circle p-2 me-3"><i class="fas fa-briefcase"></i></span>
-                                <span class="fw-medium text-dark">Alumni Pencari Kerja</span>
+                                <span class="badge bg-dark rounded-circle p-2 me-2.5" style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;"><i class="fas fa-briefcase"></i></span>
+                                <span class="fw-medium text-dark" style="font-size: 0.84rem;">Alumni Pencari Kerja</span>
                             </div>
-                            <span class="badge bg-light text-dark fw-bold border px-3 py-1">{{ $stats['total_alumni'] ?? 0 }} Akun</span>
+                            <span class="badge bg-light text-dark fw-bold border rounded-pill px-2.5 py-1" style="font-size: 0.72rem;">{{ $stats['total_alumni'] ?? 0 }} Akun</span>
                         </div>
-                    </div>
-
-                    <div class="mt-3 text-center">
-                        <a href="{{ route('admin-users-index') }}" class="btn btn-primary w-100 btn-round fw-bold py-2 shadow-sm">
-                            <i class="fas fa-plus-circle me-1"></i> Tambah / Kelola Pengguna Baru
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         {{-- Right: Recent Users Table & Quick Overview --}}
-        <div class="col-lg-7">
-            <div class="card card-round shadow-sm border-0 mb-4">
+        <div class="col-lg-7 d-flex flex-column">
+            <div class="card card-round shadow-sm border-0 h-100 mb-0">
                 <div class="card-header bg-white border-0 pt-4 px-4 pb-2 d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title fw-bold text-dark mb-0">
@@ -221,12 +214,12 @@
                         </h5>
                         <p class="text-muted mb-0" style="font-size: 0.8rem;">Daftar akun yang baru saja dibuat atau aktif</p>
                     </div>
-                    <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-link text-primary fw-bold text-decoration-none">
+                    <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-link text-primary fw-bold text-decoration-none" style="font-size: 0.78rem;">
                         Lihat Semua <i class="fas fa-chevron-right ms-1"></i>
                     </a>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
+                <div class="card-body p-0 d-flex flex-column">
+                    <div class="table-responsive flex-grow-1">
                         <table class="table align-middle mb-0 table-hover">
                             <thead class="bg-light">
                                 <tr class="text-muted" style="font-size: 0.78rem;">
@@ -247,25 +240,25 @@
                                                 </span>
                                             </div>
                                             <div>
-                                                <div class="fw-bold text-dark" style="font-size: 0.88rem;">{{ $recentUser->name }}</div>
-                                                <div class="text-muted" style="font-size: 0.78rem;">{{ $recentUser->email }}</div>
+                                                <div class="fw-bold text-dark" style="font-size: 0.85rem;">{{ $recentUser->name }}</div>
+                                                <div class="text-muted" style="font-size: 0.75rem;">{{ $recentUser->email }}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
                                         @foreach($recentUser->roles as $role)
-                                            <span class="badge bg-light text-primary border fw-semibold" style="font-size: 0.75rem;">
+                                            <span class="badge bg-light text-primary border rounded-pill fw-semibold px-2.5 py-1" style="font-size: 0.72rem;">
                                                 {{ ucfirst(str_replace('_', ' ', $role->name)) }}
                                             </span>
                                         @endforeach
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-light text-success fw-bold" style="font-size: 0.75rem; background-color: #dcfce7; padding: 4px 8px; border-radius: 4px;">
+                                        <span class="badge bg-success-light text-success fw-bold rounded-pill px-2.5 py-1" style="font-size: 0.72rem; background-color: #dcfce7;">
                                             <i class="fas fa-check-circle me-1"></i> Aktif
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-outline-secondary btn-icon btn-round" title="Kelola">
+                                        <a href="{{ route('admin-users-index') }}" class="btn btn-sm btn-outline-secondary btn-icon rounded-circle" title="Kelola" style="width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem;">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
                                     </td>
@@ -352,7 +345,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <style>
 .hover-shadow {

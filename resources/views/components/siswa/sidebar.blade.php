@@ -23,7 +23,7 @@
     </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
-            <ul class="nav nav-secondary">
+            <ul class="nav nav-primary">
                 {{-- Dashboard --}}
                 <li class="nav-item {{ Route::is('siswa-dashboard') ? 'active' : '' }}">
                     <a href="{{ route('siswa-dashboard') }}" class="collapsed" aria-expanded="false">

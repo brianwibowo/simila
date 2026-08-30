@@ -23,7 +23,7 @@
     </div>
     <div class="sidebar-wrapper scrollbar scrollbar-inner">
         <div class="sidebar-content">
-            <ul class="nav nav-secondary">                <li class="nav-item {{ Route::currentRouteName() == 'waka-humas-dashboard' ? 'active' : '' }}">
+            <ul class="nav nav-primary">                <li class="nav-item {{ Route::currentRouteName() == 'waka-humas-dashboard' ? 'active' : '' }}">
                     <a href="{{ route('waka-humas-dashboard') }}" class="collapsed" aria-expanded="false">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
